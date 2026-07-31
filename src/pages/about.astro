@@ -1,0 +1,18 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ProfileIntro from "../components/ProfileIntro.astro";
+import config from "virtual:blog-theme/config";
+---
+
+<BaseLayout title="About" description={config.author.bio || config.site.description}>
+  <ProfileIntro />
+  <section class="mx-auto max-w-3xl px-4 pb-20 sm:px-6">
+    <div class="prose">
+      <h2>About this site</h2>
+      <p>
+        This blog is built for technical notes, engineering decisions, and long-lived references. It keeps the author
+        signal visible without pushing the writing below a marketing-style landing page.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

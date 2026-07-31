@@ -1,0 +1,31 @@
+---
+---
+
+<script>
+  const blocks = [...document.querySelectorAll(".prose pre > code")];
+
+  blocks.forEach((code) => {
+    const pre = code.parentElement;
+    if (!pre || pre.parentElement?.classList.contains("code-copy-frame")) return;
+
+    const frame = document.createElement("div");
+    const button = document.createElement("button");
+
+    frame.className = "code-copy-frame";
+    button.type = "button";
+    button.className = "code-copy-button";
+    button.textContent = "Copy";
+    button.setAttribute("aria-label", "Copy code");
+
+    pre.replaceWith(frame);
+    frame.append(button, pre);
+
+    button.addEventListener("click", async () => {
+      await navigator.clipboard.writeText(code.textContent || "");
+      button.textContent = "Copied";
+      window.setTimeout(() => {
+        button.textContent = "Copy";
+      }, 1200);
+    });
+  });
+</script>

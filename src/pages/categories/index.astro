@@ -1,0 +1,18 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { isPublished, uniqueSorted } from "../../utils";
+
+const posts = (await getCollection("posts")).filter(isPublished);
+const categories = uniqueSorted(posts.map((post) => post.data.category));
+---
+
+<BaseLayout title="Categories" description="Browse posts by category">
+  <section class="mx-auto max-w-4xl px-4 py-12 sm:px-6">
+    <p class="font-mono text-xs font-medium uppercase tracking-widest text-[var(--text-muted)]">Index</p>
+    <h1 class="mt-3 text-4xl font-semibold tracking-tight text-[var(--text-strong)]">Categories</h1>
+    <div class="mt-8 grid gap-3 sm:grid-cols-2">
+      {categories.map((category) => <a class="rounded-xl border border-[var(--border-soft)] bg-[var(--panel-bg)] p-4 text-[var(--text-strong)] hover:border-[var(--accent)]" href={`/categories/${category}`}>{category}</a>)}
+    </div>
+  </section>
+</BaseLayout>

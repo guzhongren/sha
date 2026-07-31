@@ -1,0 +1,183 @@
+---
+---
+
+<dialog class="search-dialog" data-search-dialog aria-label="Search">
+  <section class="search-modal" data-search-root data-search-mode="modal" data-search-limit="8">
+    <div class="search-modal-header">
+      <p class="utility-note text-xs">full-text search</p>
+      <button class="search-close" type="button" data-search-close aria-label="Close search">Esc</button>
+    </div>
+    <label class="search-field">
+      <span class="sr-only">Search posts</span>
+      <input data-search-input type="search" placeholder="Search posts..." autocomplete="off" />
+    </label>
+    <p class="search-status" data-search-status>Type at least 2 characters to search.</p>
+    <ol class="search-results" data-search-results></ol>
+  </section>
+</dialog>
+
+<script>
+  const pagefindPath = "/pagefind/pagefind.js";
+  let pagefindModule;
+  let pagefindLoad;
+
+  function loadPagefind() {
+    pagefindLoad ??= import(pagefindPath).then((module) => {
+      pagefindModule = module;
+      return module;
+    });
+    return pagefindLoad;
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;");
+  }
+
+  function escapeRegExp(value) {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  function highlight(value, query) {
+    const safe = escapeHtml(value);
+    const terms = [...new Set(query.split(/\s+/).map((term) => term.trim()).filter(Boolean))];
+    if (terms.length === 0) return safe;
+
+    const pattern = new RegExp(`(${terms.map(escapeRegExp).join("|")})`, "gi");
+    return safe.replace(pattern, "<mark>$1</mark>");
+  }
+
+  function setFallback(root, visible) {
+    const fallback = root.querySelector("[data-search-fallback]");
+    if (fallback) fallback.hidden = !visible;
+  }
+
+  function renderResults(root, results, query) {
+    const list = root.querySelector("[data-search-results]");
+    const status = root.querySelector("[data-search-status]");
+    if (!list || !status) return;
+
+    if (results.length === 0) {
+      list.innerHTML = "";
+      status.textContent = "No matching posts found.";
+      setFallback(root, false);
+      return;
+    }
+
+    status.textContent = `${results.length} result${results.length === 1 ? "" : "s"}`;
+    list.innerHTML = results
+      .map((result) => {
+        const title = result.meta?.title || result.url;
+        const category = result.meta?.category;
+        const date = result.meta?.date;
+        const meta = [category, date].filter(Boolean).join(" / ") || result.url;
+        const excerpt = result.excerpt || result.sub_results?.[0]?.excerpt || "";
+
+        return `
+          <li>
+            <a class="search-result" href="${escapeHtml(result.url)}" data-search-result>
+              <span class="search-result-meta">${escapeHtml(meta)}</span>
+              <span class="search-result-title">${highlight(title, query)}</span>
+              ${excerpt ? `<span class="search-result-excerpt">${excerpt}</span>` : ""}
+            </a>
+          </li>
+        `;
+      })
+      .join("");
+    setFallback(root, false);
+  }
+
+  function initSearchRoot(root) {
+    const input = root.querySelector("[data-search-input]");
+    const status = root.querySelector("[data-search-status]");
+    const list = root.querySelector("[data-search-results]");
+    const limit = Number(root.dataset.searchLimit || 20);
+    let timer;
+    let token = 0;
+
+    if (!input || !status || !list || root.dataset.searchReady === "true") return;
+    root.dataset.searchReady = "true";
+
+    async function runSearch() {
+      const query = input.value.trim();
+      token += 1;
+      const current = token;
+
+      if (query.length < 2) {
+        list.innerHTML = "";
+        status.textContent = "Type at least 2 characters to search.";
+        setFallback(root, root.dataset.searchMode === "page");
+        return;
+      }
+
+      status.textContent = "Searching...";
+      setFallback(root, false);
+
+      try {
+        const pagefind = pagefindModule || (await loadPagefind());
+        const search = await pagefind.search(query);
+        const data = await Promise.all(search.results.slice(0, limit).map((result) => result.data()));
+        if (current !== token) return;
+        renderResults(root, data, query);
+      } catch (error) {
+        if (current !== token) return;
+        list.innerHTML = "";
+        status.textContent = "Search index is available after a production build.";
+        setFallback(root, root.dataset.searchMode === "page");
+        console.error(error);
+      }
+    }
+
+    input.addEventListener("input", () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(runSearch, 150);
+    });
+    input.addEventListener("focus", () => {
+      loadPagefind().catch(() => undefined);
+    });
+
+    root.addEventListener("click", (event) => {
+      const result = event.target.closest("[data-search-result]");
+      if (result) document.querySelector("[data-search-dialog]")?.close();
+    });
+  }
+
+  function initSearch() {
+    const dialog = document.querySelector("[data-search-dialog]");
+    const modalRoot = dialog?.querySelector("[data-search-root]");
+    const modalInput = dialog?.querySelector("[data-search-input]");
+
+    document.querySelectorAll("[data-search-root]").forEach(initSearchRoot);
+
+    function openSearch() {
+      if (!dialog || !modalRoot || !modalInput) return;
+      initSearchRoot(modalRoot);
+      if (!dialog.open) dialog.showModal();
+      window.setTimeout(() => modalInput.focus(), 0);
+    }
+
+    document.querySelectorAll("[data-search-trigger]").forEach((trigger) => {
+      trigger.addEventListener("click", openSearch);
+    });
+
+    document.querySelectorAll("[data-search-close]").forEach((trigger) => {
+      trigger.addEventListener("click", () => dialog?.close());
+    });
+
+    dialog?.addEventListener("click", (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      const isSearchShortcut = (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k";
+      if (!isSearchShortcut) return;
+      event.preventDefault();
+      openSearch();
+    });
+  }
+
+  initSearch();
+</script>

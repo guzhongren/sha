@@ -1,0 +1,12 @@
+---
+import config from "virtual:blog-theme/config";
+---
+
+<footer class="border-t border-[var(--border-soft)] bg-[var(--page-bg)]">
+  <div class="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-10 text-sm text-[var(--text-muted)] sm:flex-row sm:items-center sm:justify-between sm:px-6">
+    <p>&copy; {new Date().getFullYear()} {config.author.name}</p>
+    <div class="flex flex-wrap gap-4">
+      {config.nav.map((item) => <a class="hover:text-[var(--text-strong)]" href={item.href}>{item.label}</a>)}
+    </div>
+  </div>
+</footer>

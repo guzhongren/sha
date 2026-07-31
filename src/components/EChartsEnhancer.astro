@@ -1,0 +1,31 @@
+<script>
+  const chartBlocks = [...document.querySelectorAll("[data-echarts-options]")];
+
+  if (chartBlocks.length > 0) {
+    const echarts = await import("echarts");
+
+    chartBlocks.forEach((chart, index) => {
+      const figure = chart.closest(".echarts-frame");
+      const caption = document.createElement("figcaption");
+
+      chart.setAttribute("role", "img");
+      chart.setAttribute("aria-label", `ECharts chart ${index + 1}`);
+      caption.className = "utility-note echarts-error";
+      caption.hidden = true;
+      figure?.append(caption);
+
+      try {
+        const options = JSON.parse(decodeURIComponent(chart.getAttribute("data-echarts-options") || "%7B%7D"));
+        const instance = echarts.init(chart, document.documentElement.classList.contains("dark") ? "dark" : undefined);
+        instance.setOption(options);
+
+        const resize = () => instance.resize();
+        window.addEventListener("resize", resize);
+      } catch (error) {
+        caption.hidden = false;
+        caption.textContent = "Invalid ECharts options.";
+        console.error(error);
+      }
+    });
+  }
+</script>

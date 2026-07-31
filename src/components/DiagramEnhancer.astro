@@ -1,0 +1,96 @@
+---
+import type { NormalizedBlogThemeOptions } from "../types";
+
+interface Props {
+  diagrams: NormalizedBlogThemeOptions["diagrams"];
+}
+
+const { diagrams } = Astro.props;
+---
+
+<script id="blog-theme-diagrams" type="application/json" set:html={JSON.stringify(diagrams)}></script>
+
+<script>
+  function readDiagramConfig() {
+    const element = document.getElementById("blog-theme-diagrams");
+    return element?.textContent ? JSON.parse(element.textContent) : null;
+  }
+
+  function diagramBlocks(language) {
+    return [
+      ...document.querySelectorAll(`pre[data-language="${language}"] > code`),
+      ...document.querySelectorAll(`pre > code.language-${language}`),
+    ];
+  }
+
+  function plantUmlBlocks() {
+    return [
+      ...diagramBlocks("plantuml"),
+      ...[...document.querySelectorAll('pre[data-language="plaintext"] > code')].filter((code) =>
+        (code.textContent || "").trimStart().startsWith("@startuml"),
+      ),
+    ];
+  }
+
+  async function renderPlantUml(diagrams) {
+    if (!diagrams.plantuml.enabled) return;
+
+    const blocks = plantUmlBlocks();
+    if (blocks.length === 0) return;
+
+    const { encode } = await import("plantuml-encoder");
+
+    blocks.forEach((code) => {
+      const pre = code.parentElement;
+      const source = code.textContent || "";
+      const figure = document.createElement("figure");
+      const img = document.createElement("img");
+      const serverUrl = diagrams.plantuml.serverUrl.replace(/\/$/, "");
+
+      figure.className = "diagram diagram-plantuml";
+      img.alt = "PlantUML diagram";
+      img.loading = "lazy";
+      img.src = `${serverUrl}/${encode(source)}`;
+      figure.append(img);
+      pre.replaceWith(figure);
+    });
+  }
+
+  async function renderMermaid(diagrams) {
+    if (!diagrams.mermaid) return;
+
+    const blocks = diagramBlocks("mermaid");
+    if (blocks.length === 0) return;
+
+    const { default: mermaid } = await import("mermaid/dist/mermaid.esm.min.mjs");
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: "strict",
+      theme: document.documentElement.classList.contains("dark") ? "dark" : "default",
+    });
+
+    await Promise.all(
+      blocks.map(async (code, index) => {
+        const pre = code.parentElement;
+        const source = code.textContent || "";
+        const figure = document.createElement("figure");
+        figure.className = "diagram diagram-mermaid";
+
+        try {
+          const { svg } = await mermaid.render(`mermaid-${index}`, source);
+          figure.innerHTML = svg;
+          pre.replaceWith(figure);
+        } catch (error) {
+          pre.dataset.diagramError = "mermaid";
+          console.error(error);
+        }
+      }),
+    );
+  }
+
+  const diagrams = readDiagramConfig();
+  if (diagrams) {
+    renderPlantUml(diagrams);
+    renderMermaid(diagrams);
+  }
+</script>

@@ -1,0 +1,30 @@
+{
+  "name": "@your-scope/astro-blog-theme",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.14.0",
+  "exports": {
+    ".": "./src/index.ts",
+    "./content": "./src/content.ts",
+    "./styles.css": "./src/styles/global.css"
+  },
+  "scripts": {
+    "dev": "cd example && astro dev",
+    "sync": "cd example && astro sync",
+    "check": "cd example && astro check",
+    "build": "cd example && astro build"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/mdx": "^4.3.1",
+    "@tailwindcss/vite": "^4.1.11",
+    "astro": "^5.12.3",
+    "echarts": "^6.1.0",
+    "mermaid": "^11.16.0",
+    "pagefind": "^1.5.2",
+    "plantuml-encoder": "^1.4.0",
+    "tailwindcss": "^4.1.11",
+    "typescript": "^5.8.3"
+  }
+}

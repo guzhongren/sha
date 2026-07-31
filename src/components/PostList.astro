@@ -1,0 +1,15 @@
+---
+import type { Post } from "../utils";
+import PostCard from "./PostCard.astro";
+
+interface Props {
+  posts: Post[];
+  featuredFirst?: boolean;
+}
+
+const { posts, featuredFirst = false } = Astro.props;
+---
+
+<div>
+  {posts.map((post, index) => <PostCard post={post} featured={featuredFirst && index === 0} />)}
+</div>

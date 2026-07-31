@@ -1,0 +1,58 @@
+---
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import DiagramEnhancer from "../components/DiagramEnhancer.astro";
+import CodeCopyEnhancer from "../components/CodeCopyEnhancer.astro";
+import EmojiEnhancer from "../components/EmojiEnhancer.astro";
+import EChartsEnhancer from "../components/EChartsEnhancer.astro";
+import SearchEnhancer from "../components/SearchEnhancer.astro";
+import { avatarIconDataUri, avatarInitial } from "../avatar";
+import config from "virtual:blog-theme/config";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const title = Astro.props.title ? `${Astro.props.title} - ${config.site.title}` : config.site.title;
+const description = Astro.props.description ?? config.site.description;
+const defaultMode = config.theme.defaultMode;
+const fallbackIcon = avatarIconDataUri(avatarInitial(config.site.name, config.author.name));
+const siteIcon = config.author.avatar ?? fallbackIcon;
+---
+
+<!doctype html>
+<html lang={config.site.lang} data-default-theme={defaultMode}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="icon" href={siteIcon} />
+    <link rel="apple-touch-icon" href={siteIcon} />
+    <title>{title}</title>
+    <script is:inline define:vars={{ defaultMode }}>
+      const stored = localStorage.getItem("theme");
+      const mode = stored || defaultMode;
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.classList.toggle("dark", mode === "dark" || (mode === "system" && prefersDark));
+      document.documentElement.dataset.theme = mode;
+    </script>
+  </head>
+  <body class="min-h-dvh bg-[var(--page-bg)] text-[var(--text-body)] antialiased">
+    <Header />
+    <div class="mx-auto grid min-h-dvh max-w-7xl grid-cols-1 pt-14 lg:grid-cols-[2rem_minmax(0,1fr)_2rem]">
+      <div class="gutter-stripes hidden border-x border-[var(--border-soft)] lg:block" aria-hidden="true"></div>
+      <main id="main-content">
+        <slot />
+      </main>
+      <div class="gutter-stripes hidden border-x border-[var(--border-soft)] lg:block" aria-hidden="true"></div>
+    </div>
+    <Footer />
+    <EmojiEnhancer />
+    <EChartsEnhancer />
+    <CodeCopyEnhancer />
+    {config.routes.search && <SearchEnhancer />}
+    {(config.diagrams.mermaid || config.diagrams.plantuml.enabled) && <DiagramEnhancer diagrams={config.diagrams} />}
+  </body>
+</html>

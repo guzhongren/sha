@@ -1,0 +1,30 @@
+---
+import config from "virtual:blog-theme/config";
+import Avatar from "./Avatar.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+---
+
+<header class="fixed inset-x-0 top-0 z-50 border-b border-[var(--border-soft)] bg-[var(--page-bg)]/90 backdrop-blur">
+  <div class="mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
+    <a href="/" class="flex min-w-0 items-center gap-2 font-semibold text-[var(--text-strong)]" aria-label={config.site.name}>
+      <Avatar size="sm" />
+      <span class="truncate">{config.site.name}</span>
+    </a>
+    <nav class="header-nav hidden items-center text-sm font-medium text-[var(--text-muted)] md:flex" aria-label="Primary">
+      {config.nav.map((item) => <a class="hover:text-[var(--text-strong)]" href={item.href}>{item.label}</a>)}
+      {
+        config.routes.search && (
+          <button class="search-trigger" type="button" data-search-trigger aria-label="Open search">
+            <span>Search</span>
+            <kbd>⌘K</kbd>
+          </button>
+        )
+      }
+      <ThemeToggle />
+    </nav>
+    <div class="flex items-center gap-3 md:hidden">
+      {config.routes.search && <button class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-strong)]" type="button" data-search-trigger>Search</button>}
+      <ThemeToggle />
+    </div>
+  </div>
+</header>

@@ -1,0 +1,30 @@
+---
+import { emojiShortcodes } from "../emoji";
+---
+
+<script is:inline define:vars={{ emojiShortcodes }}>
+  const shortcodePattern = /:([+-]1|[a-z0-9_+-]+):/gi;
+  const skipSelector = "code, pre, kbd, samp, script, style, textarea";
+  const roots = document.querySelectorAll("[data-emoji-shortcodes]");
+
+  function renderShortcodes(value) {
+    return value.replace(shortcodePattern, (match, shortcode) => emojiShortcodes[shortcode.toLowerCase()] || match);
+  }
+
+  function enhance(root) {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        if (!node.nodeValue || !shortcodePattern.test(node.nodeValue)) return NodeFilter.FILTER_REJECT;
+        shortcodePattern.lastIndex = 0;
+        if (node.parentElement?.closest(skipSelector)) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      },
+    });
+
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    for (const node of nodes) node.nodeValue = renderShortcodes(node.nodeValue || "");
+  }
+
+  for (const root of roots) enhance(root);
+</script>

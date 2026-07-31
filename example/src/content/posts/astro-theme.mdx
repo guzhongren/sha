@@ -1,0 +1,54 @@
+---
+title: "用 Astro 构建技术博客主题"
+description: "一次从内容模型到主题集成方式的工程化拆解。"
+publishDate: 2026-07-31
+category: "Engineering"
+tags: ["Astro", "Tailwind", "Theme"]
+cover: "/covers/astro-theme.svg"
+featured: true
+draft: false
+---
+
+## 为什么做成 integration
+
+主题配置应该靠近 `astro.config.mjs`，因为使用者接入主题时最先打开的就是 Astro 配置文件。
+
+```js
+import blogTheme from "@your-scope/astro-blog-theme";
+
+export default {
+  integrations: [
+    blogTheme({
+      site: { name: "谷中的博客" },
+    }),
+  ],
+};
+```
+
+## 内容仍然留给 content collections
+
+文章是内容，不是主题配置。主题只提供 schema 和默认页面，用户继续把 Markdown 或 MDX 放在 `src/content/posts`。
+
+## Mermaid 图表示例
+
+```mermaid
+flowchart TD
+  A[astro.config.mjs] --> B[blogTheme options]
+  B --> C[Injected routes]
+  C --> D[MDX posts]
+```
+
+## PlantUML 图表示例
+
+```plantuml
+@startuml
+actor Author
+Author -> Astro: writes MDX
+Astro -> Theme: renders post
+Theme -> Reader: shows diagram
+@enduml
+```
+
+## v1 不做什么
+
+先不做 CMS、多作者、全文搜索和组件 override。一个可运行、可理解的主题比一个还没用上就复杂的框架更有价值。
