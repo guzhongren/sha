@@ -1,11 +1,11 @@
 {
   "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
       "@your-scope/astro-blog-theme": ["../src/index.ts"],
       "@your-scope/astro-blog-theme/content": ["../src/content.ts"],
-      "@your-scope/astro-blog-theme/*": ["../src/*"]
+      "@your-scope/astro-blog-theme/*": ["../src/*"],
+      "*": ["./*"]
     }
   },
   "include": ["src/**/*", ".astro/**/*"]

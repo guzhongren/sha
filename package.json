@@ -27,5 +27,8 @@
     "plantuml-encoder": "^1.4.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2"
   }
 }
