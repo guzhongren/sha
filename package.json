@@ -22,9 +22,11 @@
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.1.6",
     "echarts": "^6.1.0",
+    "gemoji": "^8.1.0",
     "mermaid": "^11.16.0",
     "pagefind": "^1.5.2",
     "plantuml-encoder": "^1.4.0",
+    "remark-gemoji": "^8.0.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2"
   },

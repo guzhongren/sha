@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import * as pagefind from "pagefind";
 import { unified } from "@astrojs/markdown-remark";
 import { normalizeOptions } from "./config";
-import { remarkEmojiShortcodes } from "./emoji";
+import remarkGemoji from "remark-gemoji";
 import { transformContentShortcodes } from "./shortcodes";
 import type { BlogThemeOptions } from "./types";
 
@@ -51,7 +51,7 @@ export default function blogTheme(options: BlogThemeOptions): AstroIntegration {
       "astro:config:setup": ({ injectRoute, updateConfig }) => {
         updateConfig({
           markdown: {
-            processor: unified({ remarkPlugins: [remarkEmojiShortcodes] }),
+            processor: unified({ remarkPlugins: [remarkGemoji] }),
           },
           vite: {
             plugins: [contentShortcodePlugin(), virtualConfigPlugin(config)],
