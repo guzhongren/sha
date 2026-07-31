@@ -7,7 +7,6 @@ import CodeCopyEnhancer from "../components/CodeCopyEnhancer.astro";
 import EmojiEnhancer from "../components/EmojiEnhancer.astro";
 import EChartsEnhancer from "../components/EChartsEnhancer.astro";
 import SearchEnhancer from "../components/SearchEnhancer.astro";
-import { avatarIconDataUri, avatarInitial } from "../avatar";
 import config from "virtual:blog-theme/config";
 
 interface Props {
@@ -18,8 +17,6 @@ interface Props {
 const title = Astro.props.title ? `${Astro.props.title} - ${config.site.title}` : config.site.title;
 const description = Astro.props.description ?? config.site.description;
 const defaultMode = config.theme.defaultMode;
-const fallbackIcon = avatarIconDataUri(avatarInitial(config.site.name, config.author.name));
-const siteIcon = config.author.avatar ?? fallbackIcon;
 ---
 
 <!doctype html>
@@ -28,8 +25,12 @@ const siteIcon = config.author.avatar ?? fallbackIcon;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <link rel="icon" href={siteIcon} />
-    <link rel="apple-touch-icon" href={siteIcon} />
+    {config.author.avatar && (
+      <>
+        <link rel="icon" href={config.author.avatar} />
+        <link rel="apple-touch-icon" href={config.author.avatar} />
+      </>
+    )}
     <title>{title}</title>
     <script is:inline define:vars={{ defaultMode }}>
       const stored = localStorage.getItem("theme");

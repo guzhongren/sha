@@ -22,7 +22,7 @@
   let pagefindLoad;
 
   function loadPagefind() {
-    pagefindLoad ??= import(pagefindPath).then((module) => {
+    pagefindLoad ??= import(/* @vite-ignore */ pagefindPath).then((module) => {
       pagefindModule = module;
       return module;
     });
