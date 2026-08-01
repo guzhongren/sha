@@ -40,7 +40,7 @@ test.describe("diagram and chart enhancers", () => {
   });
 
   test("echarts shortcode renders a canvas instead of raw text", async ({ page }) => {
-    await page.goto("/posts/2024/05/12/ECharts");
+    await page.goto("/posts/2024/05/12/echarts");
 
     await expect(page.locator("[data-echarts-options]")).toBeVisible();
     const canvas = page.locator("[data-echarts-options] canvas");
@@ -51,7 +51,7 @@ test.describe("diagram and chart enhancers", () => {
 
 test.describe("emoji enhancer", () => {
   test("renders shortcodes as emoji outside of inline code", async ({ page }) => {
-    await page.goto("/posts/2024/05/12/Emoji");
+    await page.goto("/posts/2024/05/12/emoji");
 
     await expect(page.locator("article > h1")).toHaveText("Emoji ✨");
     await expect(page.locator(".prose")).toContainText("🎉");
