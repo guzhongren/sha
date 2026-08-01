@@ -7,7 +7,7 @@ export function isPublished(post: Post) {
 }
 
 export function sortPosts(posts: Post[]) {
-  return [...posts].sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime());
+  return [...posts].sort((a, b) => (b.data.publishDate?.getTime() ?? 0) - (a.data.publishDate?.getTime() ?? 0));
 }
 
 export function formatDate(date: Date, locale = "zh-CN") {

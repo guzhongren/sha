@@ -31,7 +31,7 @@ const description = renderEmojiShortcodes(post.data.description);
     <p class="font-mono text-xs/6 font-medium uppercase tracking-widest text-[var(--text-muted)]">
       <a class="hover:text-[var(--accent)]" href={`/categories/${post.data.category}`}>{post.data.category}</a>
       <span class="px-1 text-[var(--border-soft)]" aria-hidden="true">/</span>
-      <time datetime={post.data.publishDate.toISOString()}>{formatDate(post.data.publishDate)}</time>
+      {post.data.publishDate && <time datetime={post.data.publishDate.toISOString()}>{formatDate(post.data.publishDate)}</time>}
     </p>
     <h2 class:list={["mt-2 font-semibold tracking-tight text-[var(--text-strong)] group-hover:text-[var(--accent)]", featured ? "text-3xl" : "text-xl"]}>
       <a href={postHref(post)}>{title}</a>

@@ -1,9 +1,11 @@
-import type { AstroIntegration } from "astro";
+import { existsSync } from "node:fs";
+import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import * as pagefind from "pagefind";
+import type { AstroIntegration } from "astro";
 import { unified } from "@astrojs/markdown-remark";
-import { normalizeOptions } from "./config";
+import * as pagefind from "pagefind";
 import remarkGemoji from "remark-gemoji";
+import { normalizeOptions } from "./config";
 import { transformContentShortcodes } from "./shortcodes";
 import type { BlogThemeOptions } from "./types";
 
@@ -20,6 +22,32 @@ function virtualConfigPlugin(config: unknown) {
       if (id === resolvedModuleId) {
         return `export const config = ${JSON.stringify(config)}; export default config;`;
       }
+    },
+  };
+}
+
+function virtualAboutPlugin() {
+  const moduleId = "virtual:blog-theme/about-content";
+  const resolvedModuleId = `\0${moduleId}`;
+  let root = "";
+
+  return {
+    name: "astro-blog-theme-about",
+    configResolved(config: any) {
+      root = config.root;
+    },
+    resolveId(id: string) {
+      if (id === moduleId) return resolvedModuleId;
+    },
+    load(id: string) {
+      if (id !== resolvedModuleId) return;
+      const md = resolve(root, "src/content/about.md");
+      const mdx = resolve(root, "src/content/about.mdx");
+      const aboutPath = existsSync(md) ? md : existsSync(mdx) ? mdx : null;
+      if (aboutPath) {
+        return `export { Content } from ${JSON.stringify(aboutPath)}`;
+      }
+      return `export const Content = null`;
     },
   };
 }
@@ -54,7 +82,7 @@ export default function blogTheme(options: BlogThemeOptions): AstroIntegration {
             processor: unified({ remarkPlugins: [remarkGemoji] }),
           },
           vite: {
-            plugins: [contentShortcodePlugin(), virtualConfigPlugin(config)],
+            plugins: [contentShortcodePlugin(), virtualConfigPlugin(config), virtualAboutPlugin()],
           },
         });
 

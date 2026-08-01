@@ -29,7 +29,7 @@ const description = renderEmojiShortcodes(post.data.description);
       <h1 class="mt-3 max-w-3xl text-4xl font-semibold tracking-tight text-[var(--text-strong)]">{title}</h1>
       <p class="mt-5 max-w-2xl text-base/7 text-[var(--text-muted)]">{description}</p>
       <div class="mt-6 flex flex-wrap items-center gap-4 text-sm text-[var(--text-muted)]">
-        <time datetime={post.data.publishDate.toISOString()} data-pagefind-meta="date">{formatDate(post.data.publishDate)}</time>
+        {post.data.publishDate && <time datetime={post.data.publishDate.toISOString()} data-pagefind-meta="date">{formatDate(post.data.publishDate)}</time>}
         {post.data.updatedDate && <span>Updated {formatDate(post.data.updatedDate)}</span>}
       </div>
       <div class="mt-6">

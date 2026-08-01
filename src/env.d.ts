@@ -6,6 +6,11 @@ declare module "virtual:blog-theme/config" {
   export default config;
 }
 
+declare module "virtual:blog-theme/about-content" {
+  import type { AstroComponentFactory } from "astro";
+  export const Content: AstroComponentFactory | null;
+}
+
 declare module "astro:content" {
   export function getCollection(
     collection: string,
