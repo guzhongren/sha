@@ -6,7 +6,8 @@
   "license": "MIT",
   "author": "guzhongren",
   "keywords": ["astro", "astro-component", "astro-integration", "withastro", "blog", "theme"],
-  "files": ["src/", "README.md", "LICENSE"],
+  "files": ["src/", "create.mjs", "README.md", "LICENSE"],
+  "bin": { "create-sha-blog": "./create.mjs" },
   "exports": {
     ".": "./src/index.ts",
     "./content": "./src/content.ts",

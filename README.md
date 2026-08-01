@@ -2,16 +2,28 @@
 
 Config-driven Astro blog theme for technical writing. The theme is consumed as an Astro integration and injects default pages, layouts, and styling.
 
-## Install
+## Quick Start
+
+Scaffold a new blog in one command:
 
 ```sh
-pnpm add @guzhongren/sha astro @astrojs/mdx tailwindcss @tailwindcss/vite
+pnpm dlx @guzhongren/sha my-blog
+cd my-blog && pnpm dev
 ```
 
-## Configure
+This creates a complete project with `astro.config.mjs`, content collections bridge, and a sample post.
+
+## Manual Setup
+
+If you prefer to set up manually or add the theme to an existing Astro project:
+
+```sh
+pnpm add @guzhongren/sha astro @astrojs/mdx @astrojs/markdown-remark tailwindcss @tailwindcss/vite
+```
+
+### astro.config.mjs
 
 ```js
-// astro.config.mjs
 import { defineConfig } from "astro/config";
 import mdx from "@astrojs/mdx";
 import tailwindcss from "@tailwindcss/vite";
@@ -22,21 +34,13 @@ export default defineConfig({
   integrations: [
     blogTheme({
       site: {
-        name: "谷中的博客",
-        description: "全栈开发者的技术写作与知识沉淀",
-        lang: "zh-CN",
+        name: "My Blog",
+        title: "My Blog",
+        description: "A blog powered by @guzhongren/sha",
+        lang: "en",
       },
       author: {
-        name: "谷中",
-        headline: "全栈开发者 / 技术顾问",
-        bio: "写工程实践、架构思考、开源与日常观察。",
-        avatar: "/avatar.svg",
-      },
-      diagrams: {
-        mermaid: true,
-        plantuml: {
-          serverUrl: "https://www.plantuml.com/plantuml/svg",
-        },
+        name: "Author",
       },
     }),
     mdx(),
@@ -49,9 +53,7 @@ export default defineConfig({
 
 Register `blogTheme(...)` before `mdx()` when using theme shortcodes such as ECharts. The theme pre-processes content before MDX parses it.
 
-## Content collections
-
-Astro requires the app to export content collections:
+### Content collections bridge
 
 ```ts
 // src/content.config.ts
