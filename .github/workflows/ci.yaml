@@ -71,7 +71,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   pages:
-    needs: e2e
+    needs: check
     runs-on: ubuntu-latest
     permissions:
       contents: read
