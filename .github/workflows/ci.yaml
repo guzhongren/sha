@@ -24,7 +24,7 @@ jobs:
           node-version: 22
           cache: pnpm
 
-      - run: pnpm install
+      - run: pnpm install --config.minimumReleaseAge=0
 
   check:
     needs: setup
@@ -41,7 +41,7 @@ jobs:
           node-version: 22
           cache: pnpm
 
-      - run: pnpm install
+      - run: pnpm install --config.minimumReleaseAge=0
       - run: pnpm run sync
       - run: pnpm run check
 
@@ -61,7 +61,7 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
 
-      - run: pnpm install
+      - run: pnpm install --config.minimumReleaseAge=0
       - run: pnpm publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
