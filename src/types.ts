@@ -50,6 +50,10 @@ export type BlogThemeOptions = {
         search?: boolean;
         rss?: boolean;
       };
+  rss?: {
+    /** Number of most recent posts included in the RSS feed. Defaults to 10. */
+    maxItems?: number;
+  };
 };
 
 export type NormalizedBlogThemeOptions = {
@@ -95,5 +99,8 @@ export type NormalizedBlogThemeOptions = {
     about: boolean;
     search: boolean;
     rss: boolean;
+  };
+  rss: {
+    maxItems: number;
   };
 };

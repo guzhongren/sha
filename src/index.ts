@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { AstroIntegration } from "astro";
+import icon from "astro-icon";
 import { unified } from "@astrojs/markdown-remark";
 import * as pagefind from "pagefind";
 import remarkGemoji from "remark-gemoji";
@@ -84,6 +85,14 @@ export default function blogTheme(options: BlogThemeOptions): AstroIntegration {
           vite: {
             plugins: [contentShortcodePlugin(), virtualConfigPlugin(config), virtualAboutPlugin()],
           },
+          integrations: [
+            icon({
+              include: {
+                "simple-icons": ["github", "x", "rss"],
+                ph: ["envelope-simple-fill", "link-simple-fill"],
+              },
+            }),
+          ],
         });
 
         if (config.routes.home) injectRoute({ pattern: "/", entrypoint: route("./pages/index.astro") });

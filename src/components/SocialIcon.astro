@@ -1,0 +1,20 @@
+---
+import { Icon } from "astro-icon/components";
+import type { SocialIcon } from "../types";
+
+const ICONIFY_NAMES: Record<SocialIcon, string> = {
+  github: "simple-icons:github",
+  x: "simple-icons:x",
+  rss: "simple-icons:rss",
+  mail: "ph:envelope-simple-fill",
+  link: "ph:link-simple-fill",
+};
+
+interface Props {
+  name: SocialIcon;
+}
+
+const { name } = Astro.props;
+---
+
+<Icon name={ICONIFY_NAMES[name]} class="size-5" aria-hidden="true" />

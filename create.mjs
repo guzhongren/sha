@@ -31,6 +31,8 @@ writeFileSync(
         preview: "astro preview",
       },
       dependencies: {
+        "@iconify-json/ph": "^1.2.2",
+        "@iconify-json/simple-icons": "^1.2.92",
         "@astrojs/markdown-remark": "^7.0.0",
         "@astrojs/mdx": "^7.0.5",
         "@guzhongren/sha": "^0.1.1",

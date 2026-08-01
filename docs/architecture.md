@@ -43,7 +43,7 @@ Major option groups:
 - `site`: name, title, description, language.
 - `author`: name, headline, bio, optional avatar.
 - `nav`: primary navigation labels and hrefs, with an optional `newTab` flag to open a link in a new browser tab.
-- `socialLinks`: simple social links with optional icon identifiers.
+- `socialLinks`: social links rendered as icon-only buttons. `icon` maps to Iconify sets (simple-icons / ph), and `label` is used as the accessible name (`aria-label` / `title`) instead of visible text.
 - `theme`: `system`, `light`, or `dark` default mode plus accent token.
 - `diagrams`: Mermaid and PlantUML rendering toggles.
 - `routes`: individual route switches or `false` to disable all injected pages.

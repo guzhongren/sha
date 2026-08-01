@@ -93,6 +93,25 @@ Post files can be placed directly under `src/content/posts` or nested by date, f
 
 Set `routes: false` to disable injected pages and use the exported components manually.
 
+## Social links
+
+Home page social links render as icon-only buttons. Configure them in `blogTheme(...)`:
+
+```js
+socialLinks: [
+  { label: "GitHub", href: "https://github.com/username", icon: "github" },
+  { label: "RSS", href: "/rss.xml", icon: "rss" },
+],
+```
+
+Supported `icon` values: `github`, `x`, `rss`, `mail`, `link`. The `label` is used as the accessible name (`aria-label` / `title`) instead of visible text.
+
+Because icons come from Iconify sets, projects that use social links must also install the icon sets:
+
+```sh
+pnpm add @iconify-json/simple-icons @iconify-json/ph
+```
+
 ## Diagrams
 
 Enable Mermaid and PlantUML from `astro.config.mjs`:

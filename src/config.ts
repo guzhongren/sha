@@ -63,5 +63,8 @@ export function normalizeOptions(options: BlogThemeOptions): NormalizedBlogTheme
             search: options.routes?.search ?? true,
             rss: options.routes?.rss ?? true,
           },
+    rss: {
+      maxItems: options.rss?.maxItems ?? 10,
+    },
   };
 }
