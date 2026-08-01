@@ -78,7 +78,7 @@ Run the full suite:
 pnpm test:e2e
 ```
 
-The suite always starts its own `astro preview` server (default port `4322`); it never reuses an already-listening server. If port `4322` is occupied by another process, override it for a one-off run:
+The suite always starts its own `astro preview` server (default `127.0.0.1:4322`, explicitly bound to IPv4 loopback for Linux CI); it never reuses an already-listening server. If port `4322` is occupied by another process, override it for a one-off run:
 
 ```sh
 E2E_PORT=4323 pnpm test:e2e

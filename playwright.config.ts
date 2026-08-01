@@ -33,7 +33,10 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `pnpm preview --port ${e2ePort}`,
+    // Bind explicitly to IPv4 loopback: on Linux CI, `astro preview` would
+    // otherwise resolve "localhost" to ::1 and Playwright would never reach
+    // the server at 127.0.0.1.
+    command: `pnpm preview --port ${e2ePort} --host 127.0.0.1`,
     url: `http://127.0.0.1:${e2ePort}`,
     // Never reuse a foreign server: an unrelated process may already be
     // listening on the port and would silently serve wrong content.
