@@ -1,1 +1,1 @@
-export { collections } from "@your-scope/astro-blog-theme/content";
+export { collections } from "@guzhongren/sha/content";

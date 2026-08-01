@@ -5,7 +5,7 @@ Config-driven Astro blog theme for technical writing. The theme is consumed as a
 ## Install
 
 ```sh
-pnpm add @your-scope/astro-blog-theme astro @astrojs/mdx tailwindcss @tailwindcss/vite
+pnpm add @guzhongren/sha astro @astrojs/mdx tailwindcss @tailwindcss/vite
 ```
 
 ## Configure
@@ -15,7 +15,7 @@ pnpm add @your-scope/astro-blog-theme astro @astrojs/mdx tailwindcss @tailwindcs
 import { defineConfig } from "astro/config";
 import mdx from "@astrojs/mdx";
 import tailwindcss from "@tailwindcss/vite";
-import blogTheme from "@your-scope/astro-blog-theme";
+import blogTheme from "@guzhongren/sha";
 
 export default defineConfig({
   site: "https://example.com",
@@ -55,7 +55,7 @@ Astro requires the app to export content collections:
 
 ```ts
 // src/content.config.ts
-export { collections } from "@your-scope/astro-blog-theme/content";
+export { collections } from "@guzhongren/sha/content";
 ```
 
 Posts live in `src/content/posts`.

@@ -74,7 +74,7 @@ export default function blogTheme(options: BlogThemeOptions): AstroIntegration {
   const config = normalizeOptions(options);
 
   return {
-    name: "@your-scope/astro-blog-theme",
+    name: "@guzhongren/sha",
     hooks: {
       "astro:config:setup": ({ injectRoute, updateConfig }) => {
         updateConfig({

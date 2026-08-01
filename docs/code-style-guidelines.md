@@ -45,7 +45,7 @@
 - Preserve the consumer bridge:
 
 ```ts
-export { collections } from "@your-scope/astro-blog-theme/content";
+export { collections } from "@guzhongren/sha/content";
 ```
 
 - Add sample posts when new schema behavior needs demonstration.

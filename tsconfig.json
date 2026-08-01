@@ -2,9 +2,9 @@
   "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
     "paths": {
-      "@your-scope/astro-blog-theme": ["./src/index.ts"],
-      "@your-scope/astro-blog-theme/content": ["./src/content.ts"],
-      "@your-scope/astro-blog-theme/*": ["./src/*"],
+      "@guzhongren/sha": ["./src/index.ts"],
+      "@guzhongren/sha/content": ["./src/content.ts"],
+      "@guzhongren/sha/*": ["./src/*"],
       "*": ["./*"]
     }
   },

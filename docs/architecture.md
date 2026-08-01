@@ -10,9 +10,9 @@ The theme injects routes, provides layouts/components/styles, and passes user co
 
 `package.json` exposes three public entries:
 
-- `@your-scope/astro-blog-theme` -> `src/index.ts`
-- `@your-scope/astro-blog-theme/content` -> `src/content.ts`
-- `@your-scope/astro-blog-theme/styles.css` -> `src/styles/global.css`
+- `@guzhongren/sha` -> `src/index.ts`
+- `@guzhongren/sha/content` -> `src/content.ts`
+- `@guzhongren/sha/styles.css` -> `src/styles/global.css`
 
 The package is currently private and uses source-file exports rather than a compiled distribution.
 
@@ -61,7 +61,7 @@ export const collections = { posts };
 Consumers bridge it from their app:
 
 ```ts
-export { collections } from "@your-scope/astro-blog-theme/content";
+export { collections } from "@guzhongren/sha/content";
 ```
 
 Posts are loaded from `./src/content/posts/**/*.{md,mdx}` in the consuming app and validated with this schema:

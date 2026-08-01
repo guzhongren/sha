@@ -1,9 +1,12 @@
 {
-  "name": "@your-scope/astro-blog-theme",
+  "name": "@guzhongren/sha",
   "version": "0.1.0",
-  "private": true,
   "type": "module",
-  "packageManager": "pnpm@9.14.0",
+  "description": "个人 Astro 博客主题 — 开箱即用的内容驱动博客",
+  "license": "MIT",
+  "author": "guzhongren",
+  "keywords": ["astro", "astro-component", "astro-integration", "withastro", "blog", "theme"],
+  "files": ["src/", "README.md", "LICENSE"],
   "exports": {
     ".": "./src/index.ts",
     "./content": "./src/content.ts",
@@ -15,22 +18,24 @@
     "check": "cd example && astro check",
     "build": "cd example && astro build"
   },
+  "peerDependencies": {
+    "astro": "^7.0.0",
+    "@astrojs/mdx": "^7.0.0",
+    "@astrojs/markdown-remark": "^7.0.0",
+    "@tailwindcss/vite": "^4.0.0",
+    "tailwindcss": "^4.0.0"
+  },
   "dependencies": {
-    "@astrojs/check": "^0.9.10",
-    "@astrojs/markdown-remark": "^7.2.2",
-    "@astrojs/mdx": "^7.0.5",
-    "@tailwindcss/vite": "^4.3.3",
-    "astro": "^7.1.6",
     "echarts": "^6.1.0",
     "gemoji": "^8.1.0",
     "mermaid": "^11.16.0",
     "pagefind": "^1.5.2",
     "plantuml-encoder": "^1.4.0",
-    "remark-gemoji": "^8.0.0",
-    "tailwindcss": "^4.3.3",
-    "typescript": "^7.0.2"
+    "remark-gemoji": "^8.0.0"
   },
   "devDependencies": {
-    "@types/node": "^26.1.2"
+    "@astrojs/check": "^0.9.10",
+    "@types/node": "^26.1.2",
+    "typescript": "^7.0.2"
   }
 }
