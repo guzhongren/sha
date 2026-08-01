@@ -49,6 +49,7 @@ export function normalizeOptions(options: BlogThemeOptions): NormalizedBlogTheme
             categories: false,
             about: false,
             search: false,
+            rss: false,
           }
         : {
             home: options.routes?.home ?? true,
@@ -57,6 +58,7 @@ export function normalizeOptions(options: BlogThemeOptions): NormalizedBlogTheme
             categories: options.routes?.categories ?? true,
             about: options.routes?.about ?? true,
             search: options.routes?.search ?? true,
+            rss: options.routes?.rss ?? true,
           },
   };
 }

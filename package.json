@@ -5,9 +5,23 @@
   "description": "个人 Astro 博客主题 — 开箱即用的内容驱动博客",
   "license": "MIT",
   "author": "guzhongren",
-  "keywords": ["astro", "astro-component", "astro-integration", "withastro", "blog", "theme"],
-  "files": ["src/", "create.mjs", "README.md", "LICENSE"],
-  "bin": { "create-sha-blog": "./create.mjs" },
+  "keywords": [
+    "astro",
+    "astro-component",
+    "astro-integration",
+    "withastro",
+    "blog",
+    "theme"
+  ],
+  "files": [
+    "src/",
+    "create.mjs",
+    "README.md",
+    "LICENSE"
+  ],
+  "bin": {
+    "create-sha-blog": "./create.mjs"
+  },
   "exports": {
     ".": "./src/index.ts",
     "./content": "./src/content.ts",
@@ -20,13 +34,14 @@
     "build": "cd example && astro build"
   },
   "peerDependencies": {
-    "astro": "^7.1.3",
-    "@astrojs/mdx": "^7.0.0",
     "@astrojs/markdown-remark": "^7.0.0",
+    "@astrojs/mdx": "^7.0.0",
     "@tailwindcss/vite": "^4.0.0",
+    "astro": "^7.1.3",
     "tailwindcss": "^4.0.0"
   },
   "dependencies": {
+    "@astrojs/rss": "^4.0.19",
     "echarts": "^6.1.0",
     "gemoji": "^8.1.0",
     "mermaid": "^11.16.0",

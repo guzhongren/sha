@@ -46,6 +46,7 @@ export type BlogThemeOptions = {
         categories?: boolean;
         about?: boolean;
         search?: boolean;
+        rss?: boolean;
       };
 };
 
@@ -90,5 +91,6 @@ export type NormalizedBlogThemeOptions = {
     categories: boolean;
     about: boolean;
     search: boolean;
+    rss: boolean;
   };
 };

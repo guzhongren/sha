@@ -100,6 +100,7 @@ export default function blogTheme(options: BlogThemeOptions): AstroIntegration {
         }
         if (config.routes.about) injectRoute({ pattern: "/about", entrypoint: route("./pages/about.astro") });
         if (config.routes.search) injectRoute({ pattern: "/search", entrypoint: route("./pages/search.astro") });
+        if (config.routes.rss) injectRoute({ pattern: "/rss.xml", entrypoint: route("./pages/rss.xml.ts") });
       },
       "astro:build:done": async ({ dir }) => {
         if (!config.routes.search) return;
