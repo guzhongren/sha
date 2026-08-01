@@ -18,7 +18,7 @@ This creates a complete project with `astro.config.mjs`, content collections bri
 If you prefer to set up manually or add the theme to an existing Astro project:
 
 ```sh
-pnpm add @guzhongren/sha astro @astrojs/mdx @astrojs/markdown-remark tailwindcss @tailwindcss/vite
+pnpm add @guzhongren/sha astro @astrojs/mdx @astrojs/markdown-remark tailwindcss @tailwindcss/vite @iconify-json/ph @iconify-json/simple-icons
 ```
 
 ### astro.config.mjs
