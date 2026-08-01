@@ -19,6 +19,7 @@ export default defineConfig({
         bio: "写工程实践、架构思考、开源与日常观察。",
         avatar: "/avatar.svg",
       },
+      postsPerPage: 10,
       nav: [
         { label: "Posts", href: "/posts" },
         { label: "Tags", href: "/tags" },

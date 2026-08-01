@@ -24,6 +24,7 @@ export type BlogThemeOptions = {
     href: string;
     icon?: SocialIcon;
   }>;
+  postsPerPage?: number;
   theme?: {
     defaultMode?: ThemeMode;
     accent?: AccentColor;
@@ -70,6 +71,7 @@ export type NormalizedBlogThemeOptions = {
     href: string;
     icon: SocialIcon;
   }>;
+  postsPerPage: number;
   theme: {
     defaultMode: ThemeMode;
     accent: AccentColor;

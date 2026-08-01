@@ -90,6 +90,7 @@ export default function blogTheme(options: BlogThemeOptions): AstroIntegration {
         if (config.routes.posts) injectRoute({ pattern: "/posts", entrypoint: route("./pages/posts/index.astro") });
         if (config.routes.posts) {
           injectRoute({ pattern: "/posts/[...slug]", entrypoint: route("./pages/posts/[...slug].astro") });
+          injectRoute({ pattern: "/posts/page/[page]", entrypoint: route("./pages/posts/page/[page].astro") });
         }
         if (config.routes.tags) injectRoute({ pattern: "/tags", entrypoint: route("./pages/tags/index.astro") });
         if (config.routes.tags) injectRoute({ pattern: "/tags/[tag]", entrypoint: route("./pages/tags/[tag].astro") });

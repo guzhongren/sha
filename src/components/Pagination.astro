@@ -1,0 +1,29 @@
+---
+interface Props {
+  current: number;
+  total: number;
+  base: string;
+}
+
+const { current, total, base } = Astro.props;
+---
+
+{
+  total > 1 && (
+    <nav class="mt-12 flex items-center justify-between border-t border-[var(--border-soft)] pt-8" aria-label="Pagination">
+      {current > 1 ? (
+        <a class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--accent)]" href={current === 2 ? base : `${base}page/${current - 1}/`}>
+          ← Newer posts
+        </a>
+      ) : <span />}
+      <span class="text-sm text-[var(--text-muted)]">
+        Page {current} of {total}
+      </span>
+      {current < total ? (
+        <a class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--accent)]" href={`${base}page/${current + 1}/`}>
+          Older posts →
+        </a>
+      ) : <span />}
+    </nav>
+  )
+}

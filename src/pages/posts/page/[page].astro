@@ -1,0 +1,37 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Pagination from "../../../components/Pagination.astro";
+import PostList from "../../../components/PostList.astro";
+import config from "virtual:blog-theme/config";
+import { isPublished, sortPosts } from "../../../utils";
+
+export async function getStaticPaths() {
+  const allPosts = sortPosts((await getCollection("posts")).filter(isPublished));
+  const total = Math.ceil(allPosts.length / config.postsPerPage);
+  // Start from page 2 since page 1 is handled by /posts
+  const pages = Array.from({ length: total - 1 }, (_, i) => i + 2);
+  return pages.map((page) => ({
+    params: { page: String(page) },
+    props: {
+      page,
+      total,
+      posts: allPosts.slice((page - 1) * config.postsPerPage, page * config.postsPerPage),
+    },
+  }));
+}
+
+const { page, total, posts } = Astro.props;
+---
+
+<BaseLayout title={`Posts — Page ${page}`} description={`All posts, page ${page}`}>
+  <section class="mx-auto max-w-4xl px-4 py-12 sm:px-6">
+    <p class="font-mono text-xs font-medium uppercase tracking-widest text-[var(--text-muted)]">Archive</p>
+    <h1 class="mt-3 text-4xl font-semibold tracking-tight text-[var(--text-strong)]">Posts</h1>
+    <p class="mt-4 text-sm/7 text-[var(--text-muted)]">All published notes, essays, and technical write-ups.</p>
+    <div class="mt-8">
+      <PostList posts={posts} />
+    </div>
+    <Pagination current={page} total={total} base="/posts/" />
+  </section>
+</BaseLayout>

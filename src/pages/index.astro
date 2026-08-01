@@ -3,12 +3,11 @@ import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ProfileIntro from "../components/ProfileIntro.astro";
 import PostList from "../components/PostList.astro";
-import { isPublished, sortPosts } from "../utils";
 import config from "virtual:blog-theme/config";
+import { isPublished, sortPosts } from "../utils";
 
-const posts = sortPosts((await getCollection("posts")).filter(isPublished));
-const featured = posts.find((post) => post.data.featured);
-const latest = featured ? [featured, ...posts.filter((post) => post.id !== featured.id).slice(0, 5)] : posts.slice(0, 6);
+const allPosts = sortPosts((await getCollection("posts")).filter(isPublished));
+const posts = allPosts.slice(0, config.postsPerPage);
 ---
 
 <BaseLayout title="Home" description={config.site.description}>
@@ -17,6 +16,13 @@ const latest = featured ? [featured, ...posts.filter((post) => post.id !== featu
     <div class="line-y bg-[var(--panel-bg)] px-3 py-5 sm:px-4">
       <p class="font-mono text-xs font-medium uppercase tracking-widest text-[var(--text-muted)]">Latest writing</p>
     </div>
-    <PostList posts={latest} featuredFirst={true} />
+    <PostList posts={posts} featuredFirst={true} />
+    {allPosts.length > config.postsPerPage && (
+      <div class="mt-10 text-center">
+        <a class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--accent)]" href="/posts/">
+          View all posts →
+        </a>
+      </div>
+    )}
   </section>
 </BaseLayout>

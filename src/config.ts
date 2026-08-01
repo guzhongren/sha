@@ -14,6 +14,7 @@ export function normalizeOptions(options: BlogThemeOptions): NormalizedBlogTheme
       bio: options.author.bio ?? "",
       avatar: options.author.avatar,
     },
+    postsPerPage: options.postsPerPage ?? 8,
     nav:
       options.nav ?? [
         { label: "Posts", href: "/posts" },
