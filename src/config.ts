@@ -16,12 +16,15 @@ export function normalizeOptions(options: BlogThemeOptions): NormalizedBlogTheme
     },
     postsPerPage: options.postsPerPage ?? 8,
     nav:
-      options.nav ?? [
+      (options.nav ?? [
         { label: "Posts", href: "/posts" },
         { label: "Tags", href: "/tags" },
         { label: "Categories", href: "/categories" },
         { label: "About", href: "/about" },
-      ],
+      ]).map((item) => ({
+        ...item,
+        newTab: item.newTab ?? false,
+      })),
     socialLinks: (options.socialLinks ?? []).map((link) => ({
       ...link,
       icon: link.icon ?? "link",

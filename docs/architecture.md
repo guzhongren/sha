@@ -42,7 +42,7 @@ Major option groups:
 
 - `site`: name, title, description, language.
 - `author`: name, headline, bio, optional avatar.
-- `nav`: primary navigation labels and hrefs.
+- `nav`: primary navigation labels and hrefs, with an optional `newTab` flag to open a link in a new browser tab.
 - `socialLinks`: simple social links with optional icon identifiers.
 - `theme`: `system`, `light`, or `dark` default mode plus accent token.
 - `diagrams`: Mermaid and PlantUML rendering toggles.

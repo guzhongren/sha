@@ -24,6 +24,7 @@ export default defineConfig({
         { label: "Posts", href: "/posts" },
         { label: "Tags", href: "/tags" },
         { label: "Categories", href: "/categories" },
+        { label: "Astro", href: "https://astro.build/", newTab: true },
         { label: "关于", href: "/about" },
       ],
       socialLinks: [

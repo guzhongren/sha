@@ -18,6 +18,8 @@ export type BlogThemeOptions = {
   nav?: Array<{
     label: string;
     href: string;
+    /** Open the link in a new browser tab. Defaults to `false` (same tab). */
+    newTab?: boolean;
   }>;
   socialLinks?: Array<{
     label: string;
@@ -66,6 +68,7 @@ export type NormalizedBlogThemeOptions = {
   nav: Array<{
     label: string;
     href: string;
+    newTab: boolean;
   }>;
   socialLinks: Array<{
     label: string;
