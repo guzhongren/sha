@@ -15,7 +15,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: "lts/*"
 
       - run: corepack enable
 
@@ -32,7 +32,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: "lts/*"
           registry-url: https://registry.npmjs.org
 
       - run: corepack enable
