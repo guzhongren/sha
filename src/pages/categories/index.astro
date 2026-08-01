@@ -3,8 +3,12 @@ import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { isPublished, uniqueSorted } from "../../utils";
 
+export function getStaticPaths() {
+  return [{ params: {} }];
+}
+
 const posts = (await getCollection("posts")).filter(isPublished);
-const categories = uniqueSorted(posts.map((post) => post.data.category));
+const categories = uniqueSorted(posts.map((post) => post.data.category).filter(Boolean));
 ---
 
 <BaseLayout title="Categories" description="Browse posts by category">

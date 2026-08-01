@@ -6,7 +6,7 @@ import { isPublished, sortPosts, uniqueSorted } from "../../utils";
 
 export async function getStaticPaths() {
   const allPosts = (await getCollection("posts")).filter(isPublished);
-  const tags = uniqueSorted(allPosts.flatMap((post) => post.data.tags));
+  const tags = uniqueSorted(allPosts.flatMap((post) => post.data.tags).filter(Boolean));
   return tags.map((tag) => ({
     params: { tag },
     props: {

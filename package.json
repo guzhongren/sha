@@ -31,7 +31,8 @@
     "dev": "cd example && astro dev",
     "sync": "cd example && astro sync",
     "check": "cd example && astro check",
-    "build": "cd example && astro build"
+    "build": "cd example && astro build",
+    "preview": "cd example && astro preview"
   },
   "peerDependencies": {
     "@astrojs/markdown-remark": "^7.0.0",

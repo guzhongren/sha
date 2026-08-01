@@ -92,11 +92,11 @@ export default function blogTheme(options: BlogThemeOptions): AstroIntegration {
           injectRoute({ pattern: "/posts/[...slug]", entrypoint: route("./pages/posts/[...slug].astro") });
           injectRoute({ pattern: "/posts/page/[page]", entrypoint: route("./pages/posts/page/[page].astro") });
         }
-        if (config.routes.tags) injectRoute({ pattern: "/tags", entrypoint: route("./pages/tags/index.astro") });
         if (config.routes.tags) injectRoute({ pattern: "/tags/[tag]", entrypoint: route("./pages/tags/[tag].astro") });
+        if (config.routes.tags) injectRoute({ pattern: "/tags", entrypoint: route("./pages/tags/index.astro") });
         if (config.routes.categories) {
-          injectRoute({ pattern: "/categories", entrypoint: route("./pages/categories/index.astro") });
           injectRoute({ pattern: "/categories/[category]", entrypoint: route("./pages/categories/[category].astro") });
+          injectRoute({ pattern: "/categories", entrypoint: route("./pages/categories/index.astro") });
         }
         if (config.routes.about) injectRoute({ pattern: "/about", entrypoint: route("./pages/about.astro") });
         if (config.routes.search) injectRoute({ pattern: "/search", entrypoint: route("./pages/search.astro") });

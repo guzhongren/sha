@@ -3,8 +3,12 @@ import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { isPublished, uniqueSorted } from "../../utils";
 
+export function getStaticPaths() {
+  return [{ params: {} }];
+}
+
 const posts = (await getCollection("posts")).filter(isPublished);
-const tags = uniqueSorted(posts.flatMap((post) => post.data.tags));
+const tags = uniqueSorted(posts.flatMap((post) => post.data.tags).filter(Boolean));
 ---
 
 <BaseLayout title="Tags" description="Browse posts by tag">
