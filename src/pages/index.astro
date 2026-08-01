@@ -4,7 +4,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import ProfileIntro from "../components/ProfileIntro.astro";
 import PostList from "../components/PostList.astro";
 import config from "virtual:blog-theme/config";
-import { isPublished, sortPosts } from "../utils";
+import { isPublished, sortPosts, withBase } from "../utils";
 
 const allPosts = sortPosts((await getCollection("posts")).filter(isPublished));
 const posts = allPosts.slice(0, config.postsPerPage);
@@ -19,7 +19,7 @@ const posts = allPosts.slice(0, config.postsPerPage);
     <PostList posts={posts} featuredFirst={true} />
     {allPosts.length > config.postsPerPage && (
       <div class="mt-10 text-center">
-        <a class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--accent)]" href="/posts/">
+        <a class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--accent)]" href={withBase("/posts/")}>
           View all posts →
         </a>
       </div>

@@ -1,6 +1,6 @@
 ---
 import type { Post } from "../utils";
-import { formatDate, postHref } from "../utils";
+import { formatDate, postHref, withBase } from "../utils";
 import { renderEmojiShortcodes } from "../emoji";
 import TagList from "./TagList.astro";
 
@@ -23,13 +23,13 @@ const description = renderEmojiShortcodes(post.data.description);
   {
     post.data.cover && (
       <a href={postHref(post)} class:list={["surface-block block overflow-hidden p-1", !featured && "sm:order-last"]}>
-        <img class:list={["w-full rounded-lg object-cover", featured ? "aspect-[16/8] md:aspect-[16/10]" : "aspect-[16/9] sm:aspect-square"]} src={post.data.cover} alt="" />
+        <img class:list={["w-full rounded-lg object-cover", featured ? "aspect-[16/8] md:aspect-[16/10]" : "aspect-[16/9] sm:aspect-square"]} src={withBase(post.data.cover)} alt="" />
       </a>
     )
   }
   <div>
     <p class="font-mono text-xs/6 font-medium uppercase tracking-widest text-[var(--text-muted)]">
-      <a class="hover:text-[var(--accent)]" href={`/categories/${post.data.category}`}>{post.data.category}</a>
+      <a class="hover:text-[var(--accent)]" href={withBase(`/categories/${post.data.category}`)}>{post.data.category}</a>
       <span class="px-1 text-[var(--border-soft)]" aria-hidden="true">/</span>
       {post.data.publishDate && <time datetime={post.data.publishDate.toISOString()}>{formatDate(post.data.publishDate)}</time>}
     </p>

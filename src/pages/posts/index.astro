@@ -4,7 +4,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Pagination from "../../components/Pagination.astro";
 import PostList from "../../components/PostList.astro";
 import config from "virtual:blog-theme/config";
-import { isPublished, sortPosts } from "../../utils";
+import { isPublished, sortPosts, withBase } from "../../utils";
 
 const allPosts = sortPosts((await getCollection("posts")).filter(isPublished));
 const total = Math.ceil(allPosts.length / config.postsPerPage);
@@ -19,6 +19,6 @@ const posts = allPosts.slice(0, config.postsPerPage);
     <div class="mt-8">
       <PostList posts={posts} />
     </div>
-    <Pagination current={1} total={total} base="/posts/" />
+    <Pagination current={1} total={total} base={withBase("/posts/")} />
   </section>
 </BaseLayout>

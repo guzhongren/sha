@@ -2,11 +2,12 @@
 import config from "virtual:blog-theme/config";
 import Avatar from "./Avatar.astro";
 import ThemeToggle from "./ThemeToggle.astro";
+import { withBase } from "../utils";
 ---
 
 <header class="fixed inset-x-0 top-0 z-50 border-b border-[var(--border-soft)] bg-[var(--page-bg)]/90 backdrop-blur">
   <div class="mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
-    <a href="/" class="flex min-w-0 items-center gap-2 font-semibold text-[var(--text-strong)]" aria-label={config.site.name}>
+    <a href={withBase("/")} class="flex min-w-0 items-center gap-2 font-semibold text-[var(--text-strong)]" aria-label={config.site.name}>
       <Avatar size="sm" />
       <span class="truncate">{config.site.name}</span>
     </a>
@@ -14,7 +15,7 @@ import ThemeToggle from "./ThemeToggle.astro";
       {config.nav.map((item) => (
         <a
           class="hover:text-[var(--text-strong)]"
-          href={item.href}
+          href={withBase(item.href)}
           target={item.newTab ? "_blank" : undefined}
           rel={item.newTab ? "noopener noreferrer" : undefined}
         >

@@ -3,8 +3,16 @@ import mdx from "@astrojs/mdx";
 import tailwindcss from "@tailwindcss/vite";
 import blogTheme from "@guzhongren/sha";
 
+// GitHub Pages project sites are served under /<repo>/; local dev keeps
+// root-relative URLs. The deploy workflow sets GITHUB_PAGES=true when building.
+const isGithubPages = process.env.GITHUB_PAGES === "true";
+const [pagesOwner = "guzhongren", pagesRepo = "sha"] = (process.env.GITHUB_REPOSITORY || "guzhongren/sha").split("/");
+// A user page repo (<owner>.github.io) is served at the domain root.
+const isUserPage = pagesRepo === `${pagesOwner}.github.io`;
+
 export default defineConfig({
-  site: "https://example.com",
+  site: isGithubPages ? `https://${pagesOwner}.github.io` : "https://example.com",
+  base: isGithubPages && !isUserPage ? `/${pagesRepo}/` : "/",
   integrations: [
     blogTheme({
       site: {

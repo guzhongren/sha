@@ -17,7 +17,9 @@
 </dialog>
 
 <script>
-  const pagefindPath = "/pagefind/pagefind.js";
+  import { withBase } from "../utils";
+
+  const pagefindPath = withBase("/pagefind/pagefind.js");
   let pagefindModule;
   let pagefindLoad;
 

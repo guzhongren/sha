@@ -92,6 +92,8 @@ jobs:
 
       - run: pnpm install --no-frozen-lockfile --ignore-scripts
       - run: pnpm build
+        env:
+          GITHUB_PAGES: "true"
 
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5

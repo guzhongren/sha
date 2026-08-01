@@ -9,6 +9,7 @@ import HeadingLinkEnhancer from "../components/HeadingLinkEnhancer.astro";
 import EChartsEnhancer from "../components/EChartsEnhancer.astro";
 import SearchEnhancer from "../components/SearchEnhancer.astro";
 import config from "virtual:blog-theme/config";
+import { withBase } from "../utils";
 
 interface Props {
   title?: string;
@@ -28,8 +29,8 @@ const defaultMode = config.theme.defaultMode;
     <meta name="description" content={description} />
     {config.author.avatar && (
       <>
-        <link rel="icon" href={config.author.avatar} />
-        <link rel="apple-touch-icon" href={config.author.avatar} />
+        <link rel="icon" href={withBase(config.author.avatar)} />
+        <link rel="apple-touch-icon" href={withBase(config.author.avatar)} />
       </>
     )}
     <title>{title}</title>

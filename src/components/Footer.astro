@@ -1,5 +1,6 @@
 ---
 import config from "virtual:blog-theme/config";
+import { withBase } from "../utils";
 ---
 
 <footer class="border-t border-[var(--border-soft)] bg-[var(--page-bg)]">
@@ -9,7 +10,7 @@ import config from "virtual:blog-theme/config";
       {config.nav.map((item) => (
         <a
           class="hover:text-[var(--text-strong)]"
-          href={item.href}
+          href={withBase(item.href)}
           target={item.newTab ? "_blank" : undefined}
           rel={item.newTab ? "noopener noreferrer" : undefined}
         >

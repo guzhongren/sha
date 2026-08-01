@@ -31,5 +31,18 @@ export function uniqueSorted(values: string[]) {
 }
 
 export function postHref(post: Post) {
-  return `/posts/${post.id}`;
+  return withBase(`/posts/${post.id}`);
+}
+
+/**
+ * Prefix a root-relative path with the configured `base` (Astro BASE_URL).
+ * Leaves external URLs, protocol-relative URLs, fragments, and already-prefixed
+ * paths untouched, so it is safe to apply to user-supplied links.
+ */
+export function withBase(path: string) {
+  if (!path.startsWith("/")) return path;
+  if (path.startsWith("//")) return path;
+  const base = import.meta.env.BASE_URL ?? "/";
+  if (base === "/" || path.startsWith(base)) return path;
+  return `${base.replace(/\/$/, "")}${path}`;
 }

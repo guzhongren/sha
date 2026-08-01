@@ -4,7 +4,7 @@ import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import { loadRenderers } from "astro:container";
 import { getContainerRenderer as getMDXRenderer } from "@astrojs/mdx/container-renderer";
 import config from "virtual:blog-theme/config";
-import { isPublished, sortPosts, postHref } from "../utils";
+import { isPublished, sortPosts, postHref, withBase } from "../utils";
 
 const KEEP_AS_IS_URL_RE = /^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i;
 
@@ -40,7 +40,7 @@ export async function GET(context: { site: URL }) {
     xmlns: { atom: "http://www.w3.org/2005/Atom" },
     title: config.site.title,
     description: config.site.description,
-    site: context.site,
+    site: new URL(withBase("/"), context.site),
     items,
     customData: `<language>${config.site.lang}</language>`,
   });

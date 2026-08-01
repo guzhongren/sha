@@ -4,7 +4,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import TableOfContents from "../../components/TableOfContents.astro";
 import TagList from "../../components/TagList.astro";
 import { renderEmojiShortcodes } from "../../emoji";
-import { formatDate, isPublished } from "../../utils";
+import { formatDate, isPublished, withBase } from "../../utils";
 
 export async function getStaticPaths() {
   const posts = (await getCollection("posts")).filter(isPublished);
@@ -24,7 +24,7 @@ const description = renderEmojiShortcodes(post.data.description);
   <div class="mx-auto grid max-w-6xl grid-cols-1 xl:grid-cols-[minmax(0,1fr)_18rem]">
     <article class="min-w-0 px-4 py-12 sm:px-6 lg:px-10" data-pagefind-body>
       <p class="font-mono text-xs font-medium uppercase tracking-widest text-[var(--text-muted)]">
-        <a class="hover:text-[var(--accent)]" href={`/categories/${post.data.category}`} data-pagefind-meta="category">{post.data.category}</a>
+        <a class="hover:text-[var(--accent)]" href={withBase(`/categories/${post.data.category}`)} data-pagefind-meta="category">{post.data.category}</a>
       </p>
       <h1 class="mt-3 max-w-3xl text-4xl font-semibold tracking-tight text-[var(--text-strong)]">{title}</h1>
       <p class="mt-5 max-w-2xl text-base/7 text-[var(--text-muted)]">{description}</p>
@@ -37,7 +37,7 @@ const description = renderEmojiShortcodes(post.data.description);
       </div>
       {
         post.data.cover && (
-          <img class="mt-10 aspect-[16/8] w-full rounded-xl border border-[var(--border-soft)] object-cover" src={post.data.cover} alt="" />
+          <img class="mt-10 aspect-[16/8] w-full rounded-xl border border-[var(--border-soft)] object-cover" src={withBase(post.data.cover)} alt="" />
         )
       }
       <div class="prose mt-10 max-w-none" data-emoji-shortcodes>

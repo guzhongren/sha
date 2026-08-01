@@ -18,6 +18,14 @@ ASTRO_TELEMETRY_DISABLED=1 ./node_modules/.bin/astro build --root example
 
 For small style-only changes, `check` and `build` are usually sufficient, but `sync` should be run after content schema, route, or integration changes.
 
+When changes affect routing or links, also verify the GitHub Pages subpath build, which sets `base` to `/<repo>/`:
+
+```sh
+GITHUB_PAGES=true GITHUB_REPOSITORY=guzhongren/sha ASTRO_TELEMETRY_DISABLED=1 ./node_modules/.bin/astro build --root example
+```
+
+Confirm generated URLs are prefixed with `/sha/` (navigation, pagination, assets, pagefind, and RSS links).
+
 ## Package Scripts
 
 `package.json` also provides convenience scripts:

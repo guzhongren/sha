@@ -1,5 +1,6 @@
 ---
 import { avatarInitial } from "../avatar";
+import { withBase } from "../utils";
 import config from "virtual:blog-theme/config";
 
 interface Props {
@@ -14,7 +15,7 @@ const initial = avatarInitial(config.site.name, config.author.name);
 
 {
   config.author.avatar ? (
-    <img class:list={["avatar-mark shrink-0 rounded-full object-cover", sizeClass, className]} src={config.author.avatar} alt={config.author.name} />
+    <img class:list={["avatar-mark shrink-0 rounded-full object-cover", sizeClass, className]} src={withBase(config.author.avatar)} alt={config.author.name} />
   ) : (
     <span class:list={["avatar-mark grid shrink-0 place-items-center rounded-full font-mono font-semibold text-[var(--text-muted)]", sizeClass, className]} aria-label={config.author.name}>
       {initial}

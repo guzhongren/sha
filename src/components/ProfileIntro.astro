@@ -2,6 +2,7 @@
 import Avatar from "./Avatar.astro";
 import SocialIcon from "./SocialIcon.astro";
 import config from "virtual:blog-theme/config";
+import { withBase } from "../utils";
 ---
 
 <section class="mx-auto max-w-4xl px-4 py-12 text-center sm:px-6 sm:py-16">
@@ -15,7 +16,7 @@ import config from "virtual:blog-theme/config";
     {config.socialLinks.map((link) => (
       <a
         class="grid size-9 place-items-center rounded-full hover:text-[var(--accent)]"
-        href={link.href}
+        href={withBase(link.href)}
         aria-label={link.label}
         title={link.label}
       >
