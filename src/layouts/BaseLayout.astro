@@ -5,6 +5,7 @@ import Footer from "../components/Footer.astro";
 import DiagramEnhancer from "../components/DiagramEnhancer.astro";
 import CodeCopyEnhancer from "../components/CodeCopyEnhancer.astro";
 import EmojiEnhancer from "../components/EmojiEnhancer.astro";
+import HeadingLinkEnhancer from "../components/HeadingLinkEnhancer.astro";
 import EChartsEnhancer from "../components/EChartsEnhancer.astro";
 import SearchEnhancer from "../components/SearchEnhancer.astro";
 import config from "virtual:blog-theme/config";
@@ -51,6 +52,7 @@ const defaultMode = config.theme.defaultMode;
     </div>
     <Footer />
     <EmojiEnhancer />
+    <HeadingLinkEnhancer />
     <EChartsEnhancer />
     <CodeCopyEnhancer />
     {config.routes.search && <SearchEnhancer />}
