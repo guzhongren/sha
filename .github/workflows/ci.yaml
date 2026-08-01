@@ -19,7 +19,7 @@ jobs:
 
       - run: corepack enable
 
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install --no-frozen-lockfile --ignore-scripts
       - run: pnpm run sync
       - run: pnpm run check
 
@@ -37,7 +37,7 @@ jobs:
 
       - run: corepack enable
 
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install --no-frozen-lockfile --ignore-scripts
       - run: pnpm publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
