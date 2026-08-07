@@ -65,6 +65,7 @@ export function normalizeOptions(options: BlogThemeOptions): NormalizedBlogTheme
           },
     rss: {
       maxItems: options.rss?.maxItems ?? 10,
+      followChallenge: options.rss?.followChallenge ?? null,
     },
   };
 }

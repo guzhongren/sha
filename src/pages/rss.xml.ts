@@ -15,6 +15,23 @@ function absolutizeHtmlUrls(html: string, baseUrl: URL) {
   });
 }
 
+function xmlEscape(value: string) {
+  return value.replace(/[<>&'"]/g, (char) => {
+    switch (char) {
+      case "<":
+        return "&lt;";
+      case ">":
+        return "&gt;";
+      case "&":
+        return "&amp;";
+      case "'":
+        return "&apos;";
+      default:
+        return "&quot;";
+    }
+  });
+}
+
 export async function GET(context: { site: URL }) {
   const posts = sortPosts((await getCollection("posts")).filter(isPublished)).slice(0, config.rss.maxItems);
 
@@ -42,6 +59,18 @@ export async function GET(context: { site: URL }) {
     description: config.site.description,
     site: new URL(withBase("/"), context.site),
     items,
-    customData: `<language>${config.site.lang}</language>`,
+    customData: [
+      `<language>${config.site.lang}</language>`,
+      config.rss.followChallenge
+        ? [
+            "<follow_challenge>",
+            `  <feedId>${xmlEscape(config.rss.followChallenge.feedId)}</feedId>`,
+            `  <userId>${xmlEscape(config.rss.followChallenge.userId)}</userId>`,
+            "</follow_challenge>",
+          ].join("\n")
+        : "",
+    ]
+      .filter(Boolean)
+      .join("\n"),
   });
 }
