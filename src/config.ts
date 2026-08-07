@@ -67,5 +67,15 @@ export function normalizeOptions(options: BlogThemeOptions): NormalizedBlogTheme
       maxItems: options.rss?.maxItems ?? 10,
       followChallenge: options.rss?.followChallenge ?? null,
     },
+    analytics: {
+      googleAnalytics: options.analytics?.googleAnalytics?.id?.trim()
+        ? {
+            id: options.analytics.googleAnalytics.id.trim(),
+            partytown: options.analytics.googleAnalytics.partytown ?? true,
+            includeInDev: options.analytics.googleAnalytics.includeInDev ?? false,
+            config: options.analytics.googleAnalytics.config ?? {},
+          }
+        : null,
+    },
   };
 }

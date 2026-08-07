@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import type { AstroIntegration } from "astro";
 import icon from "astro-icon";
 import { unified } from "@astrojs/markdown-remark";
+import partytown from "@astrojs/partytown";
 import * as pagefind from "pagefind";
 import remarkGemoji from "remark-gemoji";
 import { normalizeOptions } from "./config";
@@ -78,6 +79,19 @@ export default function blogTheme(options: BlogThemeOptions): AstroIntegration {
     name: "@guzhongren/sha",
     hooks: {
       "astro:config:setup": ({ injectRoute, updateConfig }) => {
+        const integrations: AstroIntegration[] = [
+          icon({
+            include: {
+              "simple-icons": ["github", "x", "rss"],
+              ph: ["envelope-simple-fill", "link-simple-fill"],
+            },
+          }),
+        ];
+
+        if (config.analytics.googleAnalytics?.partytown) {
+          integrations.push(partytown({ config: { forward: ["dataLayer.push"] } }));
+        }
+
         updateConfig({
           markdown: {
             processor: unified({ remarkPlugins: [remarkGemoji] }),
@@ -85,14 +99,7 @@ export default function blogTheme(options: BlogThemeOptions): AstroIntegration {
           vite: {
             plugins: [contentShortcodePlugin(), virtualConfigPlugin(config), virtualAboutPlugin()],
           },
-          integrations: [
-            icon({
-              include: {
-                "simple-icons": ["github", "x", "rss"],
-                ph: ["envelope-simple-fill", "link-simple-fill"],
-              },
-            }),
-          ],
+          integrations,
         });
 
         if (config.routes.home) injectRoute({ pattern: "/", entrypoint: route("./pages/index.astro") });

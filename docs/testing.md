@@ -167,6 +167,16 @@ When changing `SearchEnhancer.astro` or search route behavior:
 - Confirm listing/search/category/tag pages are not marked as Pagefind bodies.
 - Confirm draft content does not appear in generated public pages or search results.
 
+### Analytics
+
+When changing analytics configuration or snippet output:
+
+- Confirm `example/astro.config.mjs` still builds and every HTML page includes the standard gtag snippet with the placeholder ID (`G-XXXXXXXXXX`).
+- Confirm partytown mode renders `type="text/partytown"` on both the loader and the inline snippet, and `/~partytown/partytown.js` exists in the build output.
+- Confirm `partytown: false` falls back to the classic snippet without any `text/partytown` type.
+- Confirm `includeInDev` defaults to `false`: the snippet is absent from dev output unless enabled.
+- Confirm that without a `googleAnalytics` configuration, pages contain no gtag markup.
+
 ### Theme And Styling
 
 When changing `src/styles/global.css` or class-heavy components:

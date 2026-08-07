@@ -126,6 +126,15 @@ export default defineConfig({
         //   userId: "your-user-id",
         // },
       },
+
+      // Google Analytics 4 (optional). partytown: true (default) runs the
+      // gtag.js snippet in a Web Worker via @astrojs/partytown.
+      // analytics: {
+      //   googleAnalytics: {
+      //     id: "G-XXXXXXXXXX",
+      //     partytown: true,
+      //   },
+      // },
     }),
     mdx(),
   ],
