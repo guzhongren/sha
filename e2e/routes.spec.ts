@@ -60,3 +60,23 @@ test.describe("rss feed", () => {
     expect(xml).toContain("</follow_challenge>");
   });
 });
+
+test.describe("sitemap", () => {
+  test("lists the homepage and blog routes with the configured site URL", async ({ request }) => {
+    const response = await request.get("/sitemap-0.xml");
+    expect(response.status()).toBe(200);
+    const xml = await response.text();
+    expect(xml).toContain("<urlset");
+    expect(xml).toContain("<loc>https://example.com/</loc>");
+    expect(xml).toContain("<loc>https://example.com/posts/astro-theme/</loc>");
+    expect(xml).toContain("<loc>https://example.com/search/</loc>");
+  });
+
+  test("sitemap index references the generated sitemap file", async ({ request }) => {
+    const response = await request.get("/sitemap-index.xml");
+    expect(response.status()).toBe(200);
+    const xml = await response.text();
+    expect(xml).toContain("<sitemapindex");
+    expect(xml).toContain("<loc>https://example.com/sitemap-0.xml</loc>");
+  });
+});

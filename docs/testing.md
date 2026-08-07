@@ -179,6 +179,15 @@ When changing analytics configuration or snippet output:
 - Confirm `includeInDev` defaults to `false`: the snippet is absent from dev output unless enabled.
 - Confirm that without a `googleAnalytics` configuration, pages contain no gtag markup.
 
+### Sitemap
+
+When changing sitemap configuration or output:
+
+- Confirm `sitemap-index.xml` and `sitemap-0.xml` exist in the build output and use the configured `site` URL.
+- Confirm the sitemap includes injected blog routes such as `/posts/astro-theme`.
+- Confirm the GitHub Pages subpath build generates URLs prefixed with `/sha/`.
+- Confirm `seo.sitemap: false` disables the integration and produces no sitemap files.
+
 ### Theme And Styling
 
 When changing `src/styles/global.css` or class-heavy components:

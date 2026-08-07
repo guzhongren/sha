@@ -188,6 +188,18 @@ blogTheme({
 
 When partytown is enabled, the theme registers `@astrojs/partytown` automatically and forwards `dataLayer.push`, so custom events pushed from the main thread still reach GA4. Without a `googleAnalytics` configuration, no analytics markup is rendered.
 
+## SEO
+
+Every build generates a sitemap (`sitemap-index.xml` and `sitemap-0.xml`) with `@astrojs/sitemap`, so search engines can discover all published pages. Sitemap generation is enabled by default and requires the `site` option in `astro.config.mjs` (already needed for RSS). To disable it:
+
+```js
+blogTheme({
+  seo: {
+    sitemap: false,
+  },
+});
+```
+
 ## GitHub Pages
 
 The CI workflow builds the `example/` app and deploys it to GitHub Pages as a project site (served under `/<repo>/`). The example config derives `site` and `base` from the `GITHUB_PAGES` and `GITHUB_REPOSITORY` environment variables, so local development keeps root-relative URLs while the Pages build outputs subpath URLs. The theme prefixes internal links and assets with the configured `base`, so navigation, search, and styling work under a subpath.
