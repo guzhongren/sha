@@ -53,6 +53,11 @@ export type BlogThemeOptions = {
   rss?: {
     /** Number of most recent posts included in the RSS feed. Defaults to 10. */
     maxItems?: number;
+    /** RSSHubHub follow verification. Renders a `<follow_challenge>` element in the feed channel. */
+    followChallenge?: {
+      feedId: string;
+      userId: string;
+    };
   };
 };
 
@@ -102,5 +107,6 @@ export type NormalizedBlogThemeOptions = {
   };
   rss: {
     maxItems: number;
+    followChallenge: { feedId: string; userId: string } | null;
   };
 };

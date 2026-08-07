@@ -49,6 +49,12 @@ export default defineConfig({
           serverUrl: "https://www.plantuml.com/plantuml/svg",
         },
       },
+      rss: {
+        followChallenge: {
+          feedId: "74621993392456704",
+          userId: "74619979585483776",
+        },
+      },
     }),
     mdx(),
   ],
