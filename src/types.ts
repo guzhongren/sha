@@ -59,6 +59,25 @@ export type BlogThemeOptions = {
       userId: string;
     };
   };
+  analytics?: {
+    googleAnalytics?: {
+      /** GA4 measurement ID, e.g. `"G-XXXXXXXXXX"`. */
+      id: string;
+      /**
+       * Run the gtag.js snippet in a Partytown web worker instead of the main
+       * thread. When enabled, the theme registers `@astrojs/partytown` and
+       * forwards `dataLayer.push`. Defaults to `true`.
+       */
+      partytown?: boolean;
+      /**
+       * Load the snippet during `astro dev` too. Defaults to `false`
+       * (production builds only).
+       */
+      includeInDev?: boolean;
+      /** Extra options passed to `gtag('config', id, config)`, e.g. `{ debug_mode: true }`. */
+      config?: Record<string, unknown>;
+    };
+  };
 };
 
 export type NormalizedBlogThemeOptions = {
@@ -108,5 +127,13 @@ export type NormalizedBlogThemeOptions = {
   rss: {
     maxItems: number;
     followChallenge: { feedId: string; userId: string } | null;
+  };
+  analytics: {
+    googleAnalytics: {
+      id: string;
+      partytown: boolean;
+      includeInDev: boolean;
+      config: Record<string, unknown>;
+    } | null;
   };
 };

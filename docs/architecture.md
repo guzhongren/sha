@@ -24,7 +24,8 @@ At setup time it:
 
 1. Normalizes user options with `normalizeOptions` from `src/config.ts`.
 2. Adds a Vite plugin that exposes `virtual:blog-theme/config`.
-3. Injects enabled routes with Astro `injectRoute`.
+3. Registers `@astrojs/partytown` with `forward: ["dataLayer.push"]` when `analytics.googleAnalytics.partytown` is enabled.
+4. Injects enabled routes with Astro `injectRoute`.
 
 The virtual config plugin serializes normalized options into an ESM module:
 
@@ -47,6 +48,7 @@ Major option groups:
 - `theme`: `system`, `light`, or `dark` default mode plus accent token.
 - `diagrams`: Mermaid and PlantUML rendering toggles.
 - `routes`: individual route switches or `false` to disable all injected pages.
+- `analytics`: optional GA4 measurement. `googleAnalytics.id` enables the standard gtag.js snippet in the shared layout; `partytown` (default `true`) offloads it to a Web Worker through the auto-registered Partytown integration; `includeInDev` controls dev loading; `config` is passed through to `gtag('config', ...)`.
 
 `src/config.ts` applies defaults for optional fields, default navigation, theme mode, diagram configuration, and route switches.
 

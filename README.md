@@ -167,6 +167,27 @@ The `/search` route and header search button use Pagefind full-text search. The 
 
 Search indexes only post detail pages marked by the theme, so drafts and listing pages are excluded from results. During `astro dev`, the Pagefind bundle may not exist yet; the search page keeps a static published-post fallback.
 
+## Analytics
+
+Google Analytics 4 (GA4) is built in with the standard gtag.js snippet. Enable it from `astro.config.mjs`:
+
+```js
+blogTheme({
+  analytics: {
+    googleAnalytics: {
+      id: "G-XXXXXXXXXX",
+      // partytown: true (default) runs the snippet in a Web Worker via
+      // @astrojs/partytown, keeping gtag.js off the main thread.
+      // partytown: false falls back to the classic head snippet.
+      // includeInDev: false (default) loads the snippet only in production builds.
+      // config: { debug_mode: true }, // optional, passed to gtag('config', id, config)
+    },
+  },
+});
+```
+
+When partytown is enabled, the theme registers `@astrojs/partytown` automatically and forwards `dataLayer.push`, so custom events pushed from the main thread still reach GA4. Without a `googleAnalytics` configuration, no analytics markup is rendered.
+
 ## GitHub Pages
 
 The CI workflow builds the `example/` app and deploys it to GitHub Pages as a project site (served under `/<repo>/`). The example config derives `site` and `base` from the `GITHUB_PAGES` and `GITHUB_REPOSITORY` environment variables, so local development keeps root-relative URLs while the Pages build outputs subpath URLs. The theme prefixes internal links and assets with the configured `base`, so navigation, search, and styling work under a subpath.

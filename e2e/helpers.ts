@@ -42,6 +42,7 @@ export const HTML_ROUTES = [
 export const ASSET_ROUTES = [
   "/rss.xml",
   "/pagefind/pagefind.js",
+  "/~partytown/partytown.js",
   "/avatar.svg",
   "/covers/astro-theme.svg",
 ] as const;

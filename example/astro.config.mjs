@@ -55,6 +55,14 @@ export default defineConfig({
           userId: "74619979585483776",
         },
       },
+      analytics: {
+        googleAnalytics: {
+          // Placeholder GA4 Measurement ID used by the e2e suite. Replace with
+          // the real ID before deploying to a live site.
+          id: "G-XXXXXXXXXX",
+          partytown: true,
+        },
+      },
     }),
     mdx(),
   ],

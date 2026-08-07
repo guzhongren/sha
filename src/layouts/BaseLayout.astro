@@ -19,6 +19,13 @@ interface Props {
 const title = Astro.props.title ? `${Astro.props.title} - ${config.site.title}` : config.site.title;
 const description = Astro.props.description ?? config.site.description;
 const defaultMode = config.theme.defaultMode;
+const ga = config.analytics.googleAnalytics;
+const gaInlineScript = ga
+  ? `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', ${JSON.stringify(ga.id)}${Object.keys(ga.config).length > 0 ? `, ${JSON.stringify(ga.config)}` : ""});`
+  : "";
 ---
 
 <!doctype html>
@@ -34,6 +41,12 @@ const defaultMode = config.theme.defaultMode;
       </>
     )}
     <title>{title}</title>
+    {ga && (import.meta.env.PROD || ga.includeInDev) && (
+      <>
+        <script is:inline type={ga.partytown ? "text/partytown" : undefined} src={`https://www.googletagmanager.com/gtag/js?id=${ga.id}`} async></script>
+        <script is:inline type={ga.partytown ? "text/partytown" : undefined} set:html={gaInlineScript}></script>
+      </>
+    )}
     <script is:inline define:vars={{ defaultMode }}>
       const stored = localStorage.getItem("theme");
       const mode = stored || defaultMode;
