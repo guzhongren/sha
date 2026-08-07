@@ -58,14 +58,73 @@ export default defineConfig({
   site: "https://example.com",
   integrations: [
     blogTheme({
+      // Site identity
       site: {
         name: "My Blog",
         title: "My Blog",
         description: "A blog powered by @guzhongren/sha",
         lang: "en",
       },
+
+      // Author profile
       author: {
         name: "Author",
+        headline: "Your headline",
+        bio: "A short bio shown on the profile card.",
+        avatar: "/avatar.svg",
+      },
+
+      // Number of posts shown on list pages. Defaults to 8.
+      postsPerPage: 8,
+
+      // Primary navigation. Use newTab: true for external links.
+      nav: [
+        { label: "Posts", href: "/posts" },
+        { label: "Tags", href: "/tags" },
+        { label: "Categories", href: "/categories" },
+        { label: "About", href: "/about" },
+      ],
+
+      // Social links render as icon-only buttons.
+      // Supported icons: github, x, rss, mail, link.
+      socialLinks: [
+        { label: "GitHub", href: "https://github.com/username", icon: "github" },
+        { label: "RSS", href: "/rss.xml", icon: "rss" },
+      ],
+
+      // Theme mode and accent color. Accents: sky, teal, violet, pink.
+      theme: {
+        defaultMode: "system",
+        accent: "sky",
+      },
+
+      // Diagram rendering (optional).
+      diagrams: {
+        mermaid: false,
+        // plantuml: { serverUrl: "https://www.plantuml.com/plantuml/svg" },
+        plantuml: false,
+      },
+
+      // Route switches. Set routes: false to disable all injected pages.
+      routes: {
+        home: true,
+        posts: true,
+        tags: true,
+        categories: true,
+        about: true,
+        search: true,
+        rss: true,
+      },
+
+      // RSS feed options.
+      rss: {
+        maxItems: 10,
+        // RSSHubHub follow verification (optional). Renders a
+        // <follow_challenge> element in the feed channel.
+        // followChallenge: {
+        //   feedId: "your-feed-id",
+        //   userId: "your-user-id",
+        // },
       },
     }),
     mdx(),
@@ -74,6 +133,18 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
 });
+`,
+);
+
+// public/avatar.svg (placeholder referenced by author.avatar)
+mkdirSync(join(root, "public"), { recursive: true });
+writeFileSync(
+  join(root, "public", "avatar.svg"),
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Avatar">
+  <rect width="96" height="96" rx="48" fill="#111827"/>
+  <circle cx="48" cy="25" r="10" fill="none" stroke="#94a3b8" stroke-width="4"/>
+  <path d="M48 35v34M48 44 28 56M48 44l20 12M48 69 31 86M48 69l17 17" fill="none" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
+</svg>
 `,
 );
 
