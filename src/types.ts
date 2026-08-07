@@ -78,6 +78,14 @@ export type BlogThemeOptions = {
       config?: Record<string, unknown>;
     };
   };
+  seo?: {
+    /**
+     * Generate `sitemap-index.xml` and `sitemap-0.xml` with
+     * `@astrojs/sitemap` on every build. Defaults to `true` and requires
+     * the `site` option in `astro.config.mjs`.
+     */
+    sitemap?: boolean;
+  };
 };
 
 export type NormalizedBlogThemeOptions = {
@@ -135,5 +143,8 @@ export type NormalizedBlogThemeOptions = {
       includeInDev: boolean;
       config: Record<string, unknown>;
     } | null;
+  };
+  seo: {
+    sitemap: boolean;
   };
 };

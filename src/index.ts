@@ -5,6 +5,7 @@ import type { AstroIntegration } from "astro";
 import icon from "astro-icon";
 import { unified } from "@astrojs/markdown-remark";
 import partytown from "@astrojs/partytown";
+import sitemap from "@astrojs/sitemap";
 import * as pagefind from "pagefind";
 import remarkGemoji from "remark-gemoji";
 import { normalizeOptions } from "./config";
@@ -87,6 +88,10 @@ export default function blogTheme(options: BlogThemeOptions): AstroIntegration {
             },
           }),
         ];
+
+        if (config.seo.sitemap) {
+          integrations.push(sitemap());
+        }
 
         if (config.analytics.googleAnalytics?.partytown) {
           integrations.push(partytown({ config: { forward: ["dataLayer.push"] } }));

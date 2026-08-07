@@ -77,5 +77,8 @@ export function normalizeOptions(options: BlogThemeOptions): NormalizedBlogTheme
           }
         : null,
     },
+    seo: {
+      sitemap: options.seo?.sitemap ?? true,
+    },
   };
 }

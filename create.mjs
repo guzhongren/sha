@@ -135,6 +135,12 @@ export default defineConfig({
       //     partytown: true,
       //   },
       // },
+
+      // SEO. sitemap: true (default) generates sitemap-index.xml and
+      // sitemap-0.xml with @astrojs/sitemap. Requires the `site` option.
+      // seo: {
+      //   sitemap: true,
+      // },
     }),
     mdx(),
   ],

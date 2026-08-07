@@ -45,6 +45,8 @@ export const HTML_ROUTES = [
 /** Static assets and non-HTML endpoints that must exist after a build. */
 export const ASSET_ROUTES = [
   "/rss.xml",
+  "/sitemap-index.xml",
+  "/sitemap-0.xml",
   "/pagefind/pagefind.js",
   "/~partytown/partytown.js",
   "/avatar.svg",
