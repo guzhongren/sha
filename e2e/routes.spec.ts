@@ -2,6 +2,8 @@ import { expect, test } from "@playwright/test";
 import {
   ASSET_ROUTES,
   DRAFT_TITLE,
+  FOLLOW_CHALLENGE_FEED_ID,
+  FOLLOW_CHALLENGE_USER_ID,
   HTML_ROUTES,
   expectStatus,
   fetchFeedPosts,
@@ -46,5 +48,15 @@ test.describe("rss feed", () => {
       expect(renderTitleShortcodes(post.title)).not.toBe(DRAFT_TITLE);
       expect(post.link).toMatch(/\/posts\//);
     }
+  });
+
+  test("renders the configured follow challenge feedId and userId", async ({ request }) => {
+    const response = await request.get("/rss.xml");
+    expect(response.status()).toBe(200);
+    const xml = await response.text();
+    expect(xml).toContain("<follow_challenge>");
+    expect(xml).toContain(`<feedId>${FOLLOW_CHALLENGE_FEED_ID}</feedId>`);
+    expect(xml).toContain(`<userId>${FOLLOW_CHALLENGE_USER_ID}</userId>`);
+    expect(xml).toContain("</follow_challenge>");
   });
 });

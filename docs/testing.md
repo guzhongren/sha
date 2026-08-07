@@ -104,6 +104,8 @@ The suite covers: public route inventory and draft 404s, RSS validity, home/prof
 
 Keep the suite data-driven: post lists are derived from `/rss.xml`, so adding or removing fixture posts requires no test edits. If `example/astro.config.mjs` changes `postsPerPage`, update `POSTS_PER_PAGE` in `e2e/helpers.ts`. If new route families are added, extend `HTML_ROUTES`/`ASSET_ROUTES` there.
 
+When changing RSS follow verification, keep `FOLLOW_CHALLENGE_FEED_ID`/`FOLLOW_CHALLENGE_USER_ID` in `e2e/helpers.ts` in sync with `followChallenge` in `example/astro.config.mjs`.
+
 ## Feature-Specific Checks
 
 ### Integration And Config

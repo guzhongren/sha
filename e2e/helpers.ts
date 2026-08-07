@@ -10,6 +10,10 @@ export const POSTS_PER_PAGE = 10;
 /** Title of the draft fixture post (example/src/content/posts/draft-note.mdx). */
 export const DRAFT_TITLE = "这是一篇草稿";
 
+/** Mirrors `followChallenge` in example/astro.config.mjs. */
+export const FOLLOW_CHALLENGE_FEED_ID = "74621993392456704";
+export const FOLLOW_CHALLENGE_USER_ID = "74619979585483776";
+
 export interface FeedPost {
   title: string;
   link: string;
