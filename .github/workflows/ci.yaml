@@ -55,8 +55,8 @@ jobs:
       - e2e
     if: always() && github.event_name == 'pull_request'
     permissions:
-      contents: write
-      issues: write
+      contents: read
+      pull-requests: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
