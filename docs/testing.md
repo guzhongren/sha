@@ -206,6 +206,7 @@ When changing `src/styles/global.css` or class-heavy components:
 - Check light, dark, and system modes.
 - Check mobile, tablet, and desktop widths.
 - Confirm header remains fixed and content is not hidden under it.
+- Confirm the mobile hamburger menu exposes every `config.nav` link, closes after navigation, Escape, or an outside click, and the mobile theme toggle cycles modes and persists (`e2e/mobile.spec.ts`).
 - Confirm text does not overflow buttons, cards, or tags.
 - Confirm prose headings are plain and readable.
 - Confirm code blocks scroll horizontally instead of breaking layout.

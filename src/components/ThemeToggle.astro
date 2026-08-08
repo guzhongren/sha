@@ -11,15 +11,17 @@
 </button>
 
 <script>
-  const button = document.querySelector("[data-theme-toggle]");
+  const buttons = document.querySelectorAll("[data-theme-toggle]");
   const modes = ["system", "light", "dark"];
 
-  button?.addEventListener("click", () => {
-    const current = document.documentElement.dataset.theme || "system";
-    const next = modes[(modes.indexOf(current) + 1) % modes.length];
-    localStorage.setItem("theme", next);
-    document.documentElement.dataset.theme = next;
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    document.documentElement.classList.toggle("dark", next === "dark" || (next === "system" && prefersDark));
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const current = document.documentElement.dataset.theme || "system";
+      const next = modes[(modes.indexOf(current) + 1) % modes.length];
+      localStorage.setItem("theme", next);
+      document.documentElement.dataset.theme = next;
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.classList.toggle("dark", next === "dark" || (next === "system" && prefersDark));
+    });
   });
 </script>
