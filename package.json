@@ -1,6 +1,6 @@
 {
   "name": "@guzhongren/sha",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "type": "module",
   "description": "个人 Astro 博客主题 — 开箱即用的内容驱动博客",
   "license": "MIT",
