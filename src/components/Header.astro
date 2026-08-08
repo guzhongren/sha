@@ -1,5 +1,6 @@
 ---
 import config from "virtual:blog-theme/config";
+import { Icon } from "astro-icon/components";
 import Avatar from "./Avatar.astro";
 import ThemeToggle from "./ThemeToggle.astro";
 import { withBase } from "../utils";
@@ -35,6 +36,66 @@ import { withBase } from "../utils";
     <div class="flex items-center gap-3 md:hidden">
       {config.routes.search && <button class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-strong)]" type="button" data-search-trigger>Search</button>}
       <ThemeToggle />
+      <button
+        type="button"
+        class="grid size-8 cursor-pointer place-items-center rounded-full border border-[var(--border-soft)] text-[var(--text-muted)] hover:text-[var(--text-strong)]"
+        aria-label="Open menu"
+        aria-controls="mobile-menu"
+        aria-expanded="false"
+        data-menu-toggle
+      >
+        <Icon name="ph:list" class="size-5" aria-hidden="true" />
+      </button>
     </div>
   </div>
+  <div id="mobile-menu" class="md:hidden" hidden>
+    <nav class="border-t border-[var(--border-soft)] bg-[var(--page-bg)]/95 px-4 py-2 backdrop-blur" aria-label="Primary">
+      <ul class="divide-y divide-[var(--border-hairline)]">
+        {config.nav.map((item) => (
+          <li>
+            <a
+              class="block py-2.5 text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-strong)]"
+              href={withBase(item.href)}
+              target={item.newTab ? "_blank" : undefined}
+              rel={item.newTab ? "noopener noreferrer" : undefined}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
 </header>
+
+<script>
+  const toggle = document.querySelector("[data-menu-toggle]");
+  const menu = document.getElementById("mobile-menu");
+
+  function closeMenu() {
+    if (!menu || menu.hidden) return;
+    menu.hidden = true;
+    toggle?.setAttribute("aria-expanded", "false");
+    toggle?.setAttribute("aria-label", "Open menu");
+  }
+
+  toggle?.addEventListener("click", () => {
+    if (!menu) return;
+    const opening = menu.hidden;
+    menu.hidden = !opening;
+    toggle.setAttribute("aria-expanded", String(opening));
+    toggle.setAttribute("aria-label", opening ? "Close menu" : "Open menu");
+  });
+
+  menu?.addEventListener("click", (event) => {
+    if ((event.target as HTMLElement).closest("a")) closeMenu();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeMenu();
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!(event.target as HTMLElement).closest("#mobile-menu, [data-menu-toggle]")) closeMenu();
+  });
+</script>

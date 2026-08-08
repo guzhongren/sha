@@ -85,7 +85,7 @@ export default function blogTheme(options: BlogThemeOptions): AstroIntegration {
           icon({
             include: {
               "simple-icons": SIMPLE_ICONS_INCLUDE,
-              ph: ["envelope-simple-fill", "link-simple-fill"],
+              ph: ["envelope-simple-fill", "link-simple-fill", "list"],
             },
           }),
         ];
