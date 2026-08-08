@@ -1,0 +1,41 @@
+---
+import SocialIcon from "./SocialIcon.astro";
+import type { SocialIcon as SocialIconName } from "../types";
+import { withBase } from "../utils";
+
+interface Props {
+  icon: SocialIconName;
+  href: string;
+  label: string;
+}
+
+const { icon, href, label } = Astro.props;
+const isWechat = icon === "wechat";
+---
+
+{
+  isWechat ? (
+    <a
+      class="group relative grid size-9 place-items-center rounded-full hover:text-[var(--accent)]"
+      href={withBase(href)}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={label}
+      title={label}
+    >
+      <SocialIcon name={icon} />
+      <span class="absolute bottom-full left-1/2 z-10 mb-3 hidden w-max -translate-x-1/2 rounded-lg border border-[var(--border-soft)] bg-[var(--page-bg)] p-2 shadow-lg group-hover:block group-focus-within:block">
+        <img src={withBase(href)} alt={`${label} QR code`} class="min-w-[8rem] max-w-[16rem] max-h-[16rem] rounded-sm bg-white" />
+      </span>
+    </a>
+  ) : (
+    <a
+      class="grid size-9 place-items-center rounded-full hover:text-[var(--accent)]"
+      href={withBase(href)}
+      aria-label={label}
+      title={label}
+    >
+      <SocialIcon name={icon} />
+    </a>
+  )
+}

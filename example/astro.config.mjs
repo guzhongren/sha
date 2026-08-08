@@ -35,10 +35,11 @@ export default defineConfig({
         { label: "Astro", href: "https://astro.build/", newTab: true },
         { label: "About", href: "/about" },
       ],
-      socialLinks: [
-        { label: "GitHub", href: "https://github.com/username", icon: "github" },
-        { label: "RSS", href: "/rss.xml", icon: "rss" },
-      ],
+      socialLinks: {
+        github: "https://github.com/username",
+        rss: true,
+        wechat: "/qr/wechat.svg",
+      },
       theme: {
         defaultMode: "system",
         accent: "sky",

@@ -1,4 +1,5 @@
-import type { BlogThemeOptions, NormalizedBlogThemeOptions } from "./types";
+import type { BlogThemeOptions, NormalizedBlogThemeOptions, SocialIcon } from "./types";
+import { SOCIAL_LABELS } from "./socialIcons";
 
 export function normalizeOptions(options: BlogThemeOptions): NormalizedBlogThemeOptions {
   return {
@@ -25,10 +26,18 @@ export function normalizeOptions(options: BlogThemeOptions): NormalizedBlogTheme
         ...item,
         newTab: item.newTab ?? false,
       })),
-    socialLinks: (options.socialLinks ?? []).map((link) => ({
-      ...link,
-      icon: link.icon ?? "link",
-    })),
+    socialLinks: Object.entries(options.socialLinks ?? {})
+      .filter((entry): entry is [SocialIcon, string | true] => entry[0] in SOCIAL_LABELS)
+      .flatMap(([icon, value]) => {
+        if (value !== true) {
+          return [{ icon, href: value, label: SOCIAL_LABELS[icon] }];
+        }
+        // `rss: true` resolves to the theme's RSS route when it is enabled.
+        const rssEnabled = options.routes !== false && (options.routes?.rss ?? true);
+        return icon === "rss" && rssEnabled
+          ? [{ icon, href: "/rss.xml", label: SOCIAL_LABELS[icon] }]
+          : [];
+      }),
     theme: {
       defaultMode: options.theme?.defaultMode ?? "system",
       accent: options.theme?.accent ?? "sky",

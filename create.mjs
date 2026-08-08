@@ -85,12 +85,46 @@ export default defineConfig({
         { label: "About", href: "/about" },
       ],
 
-      // Social links render as icon-only buttons.
-      // Supported icons: github, x, rss, mail, link.
-      socialLinks: [
-        { label: "GitHub", href: "https://github.com/username", icon: "github" },
-        { label: "RSS", href: "/rss.xml", icon: "rss" },
-      ],
+      // Social links render as icon-only buttons on the home page. Keys are
+      // icon values and values are profile URLs. Icons cover the top 20
+      // global social platforms plus github, x, rss, mail, and link.
+      // rss: true links to the theme's /rss.xml route automatically.
+      // wechat takes the path to a QR code image shown on hover.
+      // Uncomment the entries you need and fill in your URLs.
+      socialLinks: {
+        github: "https://github.com/username",
+        rss: true,
+        wechat: "/qr/wechat.svg",
+      },
+
+      // Demo config with every supported icon (replace with your profiles):
+      // socialLinks: {
+      //   github: "https://github.com/username",
+      //   x: "https://x.com/username",
+      //   rss: true,
+      //   wechat: "/qr/wechat.svg",
+      //   mail: "mailto:hello@example.com",
+      //   link: "https://example.com",
+      //   facebook: "https://facebook.com/username",
+      //   youtube: "https://youtube.com/@username",
+      //   instagram: "https://instagram.com/username",
+      //   whatsapp: "https://wa.me/8613800000000",
+      //   tiktok: "https://tiktok.com/@username",
+      //   wechat: "https://weixin.qq.com/",
+      //   telegram: "https://t.me/username",
+      //   messenger: "https://m.me/username",
+      //   snapchat: "https://snapchat.com/add/username",
+      //   reddit: "https://reddit.com/user/username",
+      //   kuaishou: "https://kuaishou.com/profile/username",
+      //   weibo: "https://weibo.com/u/username",
+      //   qq: "https://user.qzone.qq.com/username",
+      //   pinterest: "https://pinterest.com/username",
+      //   linkedin: "https://linkedin.com/in/username",
+      //   quora: "https://quora.com/profile/username",
+      //   discord: "https://discord.com/users/username",
+      //   tumblr: "https://tumblr.com/blog/username",
+      //   threads: "https://threads.net/@username",
+      // },
 
       // Theme mode and accent color. Accents: sky, teal, violet, pink.
       theme: {
@@ -137,7 +171,7 @@ export default defineConfig({
       // },
 
       // SEO. sitemap: true (default) generates sitemap-index.xml and
-      // sitemap-0.xml with @astrojs/sitemap. Requires the `site` option.
+      // sitemap-0.xml with @astrojs/sitemap. Requires the site option.
       // seo: {
       //   sitemap: true,
       // },

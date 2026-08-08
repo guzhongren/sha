@@ -1,6 +1,30 @@
 export type ThemeMode = "system" | "light" | "dark";
 export type AccentColor = "sky" | "teal" | "violet" | "pink";
-export type SocialIcon = "github" | "x" | "rss" | "mail" | "link";
+export type SocialIcon =
+  | "github"
+  | "x"
+  | "rss"
+  | "mail"
+  | "link"
+  | "facebook"
+  | "youtube"
+  | "instagram"
+  | "whatsapp"
+  | "tiktok"
+  | "wechat"
+  | "telegram"
+  | "messenger"
+  | "snapchat"
+  | "reddit"
+  | "kuaishou"
+  | "weibo"
+  | "qq"
+  | "pinterest"
+  | "linkedin"
+  | "quora"
+  | "discord"
+  | "tumblr"
+  | "threads";
 
 export type BlogThemeOptions = {
   site: {
@@ -21,11 +45,15 @@ export type BlogThemeOptions = {
     /** Open the link in a new browser tab. Defaults to `false` (same tab). */
     newTab?: boolean;
   }>;
-  socialLinks?: Array<{
-    label: string;
-    href: string;
-    icon?: SocialIcon;
-  }>;
+  /**
+   * Social links rendered as icon-only buttons. Keys are `SocialIcon` values
+   * and values are the profile URLs, for example
+   * `{ github: "https://github.com/username", rss: true }`. `rss` accepts
+   * `true` as shorthand for the theme's `/rss.xml` route.
+   */
+  socialLinks?: {
+    [K in SocialIcon]?: K extends "rss" ? string | true : string;
+  };
   postsPerPage?: number;
   theme?: {
     defaultMode?: ThemeMode;

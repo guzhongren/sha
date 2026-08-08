@@ -98,13 +98,16 @@ Set `routes: false` to disable injected pages and use the exported components ma
 Home page social links render as icon-only buttons. Configure them in `blogTheme(...)`:
 
 ```js
-socialLinks: [
-  { label: "GitHub", href: "https://github.com/username", icon: "github" },
-  { label: "RSS", href: "/rss.xml", icon: "rss" },
-],
+socialLinks: {
+  github: "https://github.com/username",
+  x: "https://x.com/username",
+  linkedin: "https://linkedin.com/in/username",
+  rss: true,
+  wechat: "/qr/wechat.svg",
+},
 ```
 
-Supported `icon` values: `github`, `x`, `rss`, `mail`, `link`. The `label` is used as the accessible name (`aria-label` / `title`) instead of visible text.
+Each key is an `icon` value and each value is the profile URL. `rss` also accepts `true` as shorthand, which links to the theme's `/rss.xml` route automatically (when the RSS route is enabled). `wechat` takes the path to an image of your WeChat QR code; hovering the icon shows the QR code in a popup. The image keeps its aspect ratio: it is scaled up to a minimum width of 128px and scaled down to fit a maximum of 256×256px, so a square source of at least 256×256 pixels (500×500 recommended) with white margins around the code scans reliably. Supported keys cover the top 20 global social platforms (`facebook`, `youtube`, `instagram`, `whatsapp`, `tiktok`, `wechat`, `telegram`, `messenger`, `snapchat`, `reddit`, `kuaishou`, `weibo`, `qq`, `x`, `pinterest`, `linkedin`, `quora`, `discord`, `tumblr`, `threads`) plus `github`, `rss`, `mail`, and `link`. The accessible name (`aria-label` / `title`) is derived from the icon automatically, and links render in the order they appear in the object.
 
 Because icons come from Iconify sets, projects that use social links must also install the icon sets:
 

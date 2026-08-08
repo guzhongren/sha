@@ -10,6 +10,7 @@ import * as pagefind from "pagefind";
 import remarkGemoji from "remark-gemoji";
 import { normalizeOptions } from "./config";
 import { transformContentShortcodes } from "./shortcodes";
+import { SIMPLE_ICONS_INCLUDE } from "./socialIcons";
 import type { BlogThemeOptions } from "./types";
 
 function virtualConfigPlugin(config: unknown) {
@@ -83,7 +84,7 @@ export default function blogTheme(options: BlogThemeOptions): AstroIntegration {
         const integrations: AstroIntegration[] = [
           icon({
             include: {
-              "simple-icons": ["github", "x", "rss"],
+              "simple-icons": SIMPLE_ICONS_INCLUDE,
               ph: ["envelope-simple-fill", "link-simple-fill"],
             },
           }),

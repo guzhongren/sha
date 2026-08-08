@@ -188,6 +188,17 @@ When changing sitemap configuration or output:
 - Confirm the GitHub Pages subpath build generates URLs prefixed with `/sha/`.
 - Confirm `seo.sitemap: false` disables the integration and produces no sitemap files.
 
+### Social Icons
+
+When adding or changing social icons:
+
+- Confirm every key in `SOCIAL_ICONIFY_NAMES` (`src/socialIcons.ts`) is part of the `SocialIcon` union in `src/types.ts`.
+- Confirm new `simple-icons` names exist in `@iconify-json/simple-icons` and are covered by `SIMPLE_ICONS_INCLUDE` (`e2e/social-icons.spec.ts` validates both).
+- Confirm `SOCIAL_LABELS` provides a display name for every `SocialIcon` key, since it backs `aria-label` / `title` on rendered links.
+- Confirm `rss: true` renders a link to the RSS route and is dropped when the RSS route is disabled.
+- Confirm hovering the WeChat icon shows its QR image popup and moving the pointer away hides it (`e2e/home.spec.ts`).
+- Confirm `astro build --root example` passes, since the astro-icon whitelist fails the build for unknown icon names.
+
 ### Theme And Styling
 
 When changing `src/styles/global.css` or class-heavy components:
