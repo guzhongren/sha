@@ -1,8 +1,7 @@
 ---
 import Avatar from "./Avatar.astro";
-import SocialIcon from "./SocialIcon.astro";
+import SocialLink from "./SocialLink.astro";
 import config from "virtual:blog-theme/config";
-import { withBase } from "../utils";
 ---
 
 <section class="mx-auto max-w-4xl px-4 py-12 text-center sm:px-6 sm:py-16">
@@ -14,14 +13,7 @@ import { withBase } from "../utils";
   {config.author.bio && <p class="mx-auto mt-4 max-w-2xl text-sm/7 text-[var(--text-muted)]">{config.author.bio}</p>}
   <div class="mt-5 flex justify-center gap-4 text-[var(--text-muted)]">
     {config.socialLinks.map((link) => (
-      <a
-        class="grid size-9 place-items-center rounded-full hover:text-[var(--accent)]"
-        href={withBase(link.href)}
-        aria-label={link.label}
-        title={link.label}
-      >
-        <SocialIcon name={link.icon} />
-      </a>
+      <SocialLink icon={link.icon} href={link.href} label={link.label} />
     ))}
   </div>
   </div>

@@ -18,8 +18,10 @@ test.describe("home page", () => {
 
     const github = page.getByRole("link", { name: "GitHub" });
     await expect(github).toHaveAttribute("href", "https://github.com/username");
+    await expect(github.locator("svg")).toBeVisible();
     const rss = page.getByRole("link", { name: "RSS" });
     await expect(rss).toHaveAttribute("href", "/rss.xml");
+    await expect(rss.locator("svg")).toBeVisible();
   });
 
   test("lists published posts in feed order without drafts", async ({ page, request }) => {
@@ -72,5 +74,24 @@ test.describe("home page", () => {
 
     await expect(page.locator("footer")).toContainText(`© ${new Date().getFullYear()} 谷中仁`);
     await expect(page.locator("footer").getByRole("link", { name: "About" })).toBeVisible();
+  });
+
+  test("wechat link shows its QR code popup on hover and hides on mouse leave", async ({ page }) => {
+    // Tailwind gates hover variants behind `@media (hover: hover)`, which
+    // headless Chromium reports as disabled by default.
+    await page.emulateMedia({ hover: "hover" });
+    await page.goto("/");
+
+    const wechat = page.getByRole("link", { name: "WeChat" });
+    await expect(wechat).toHaveAttribute("href", "/qr/wechat.svg");
+
+    const qr = wechat.locator("img[alt='WeChat QR code']");
+    await expect(qr).toBeHidden();
+
+    await wechat.hover();
+    await expect(qr).toBeVisible();
+
+    await page.mouse.move(0, 0);
+    await expect(qr).toBeHidden();
   });
 });
