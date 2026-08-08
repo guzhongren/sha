@@ -92,6 +92,8 @@ jobs:
         uses: actions/checkout@v7
       - name: Release
         uses: softprops/action-gh-release@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   pages:
     needs: publish
