@@ -67,6 +67,11 @@ export type BlogThemeOptions = {
           serverUrl?: string;
         };
   };
+  /**
+   * Open images inside post content in a full-screen viewer dialog with
+   * zoom and pan. Defaults to `true`.
+   */
+  imageViewer?: boolean;
   routes?:
     | false
     | {
@@ -151,6 +156,7 @@ export type NormalizedBlogThemeOptions = {
       serverUrl: string;
     };
   };
+  imageViewer: boolean;
   routes: {
     home: boolean;
     posts: boolean;

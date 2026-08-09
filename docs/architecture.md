@@ -48,6 +48,7 @@ Major option groups:
 - `socialLinks`: social links rendered as icon-only buttons, given as a record where each key is an icon value and each value is the profile URL (e.g. `{ github: "https://github.com/username" }`). `rss` also accepts `true`, which resolves to the theme's `/rss.xml` route when the RSS route is enabled. `wechat` takes the path to a WeChat QR code image; hovering the icon shows it in a popup (`SocialLink.astro`). Icons map to Iconify sets (simple-icons / ph) and cover the top 20 global social platforms plus `github`, `x`, `rss`, `mail`, and `link`; the accessible name (`aria-label` / `title`) is derived from the icon via `SOCIAL_LABELS`.
 - `theme`: `system`, `light`, or `dark` default mode plus accent token.
 - `diagrams`: Mermaid and PlantUML rendering toggles.
+- `imageViewer`: opens post content images in a full-screen viewer dialog with zoom and pan; `true` by default.
 - `routes`: individual route switches or `false` to disable all injected pages.
 - `analytics`: optional GA4 measurement. `googleAnalytics.id` enables the standard gtag.js snippet in the shared layout; `partytown` (default `true`) offloads it to a Web Worker through the auto-registered Partytown integration; `includeInDev` controls dev loading; `config` is passed through to `gtag('config', ...)`.
 - `seo`: `sitemap` (default `true`) generates `sitemap-index.xml` and `sitemap-0.xml` through the auto-registered `@astrojs/sitemap` integration.
@@ -114,6 +115,7 @@ Core components:
 - `ThemeToggle.astro`: pure toggle button markup; `BaseLayout` owns theme state and wiring.
 - `CodeCopyEnhancer.astro`: adds copy buttons to prose code blocks.
 - `SearchEnhancer.astro`: global search dialog, `Ctrl/Cmd+K` shortcut, Pagefind queries, and custom result rendering.
+- `ImageViewerEnhancer.astro`: full-screen dialog viewer for post content images with zoom and pan.
 - `DiagramEnhancer.astro`: renders Mermaid and PlantUML code fences when enabled.
 
 ## Client Enhancements
@@ -125,6 +127,8 @@ Theme initialization and switching run inline in `BaseLayout.astro` before page 
 `CodeCopyEnhancer.astro` scans `.prose pre > code`, wraps each block in a frame, inserts a `Copy` button, writes code text to the Clipboard API, and briefly changes the label to `Copied`.
 
 `SearchEnhancer.astro` provides a native `<dialog>` search modal and upgrades the `/search` page. It lazy-loads `/pagefind/pagefind.js`, debounces queries, renders a custom result template with highlighted titles and Pagefind excerpts, and falls back to the static post list when the search bundle is unavailable.
+
+`ImageViewerEnhancer.astro` wraps eligible `.prose` images (excluding covers, diagram figures, and linked images) in a button that opens a native `<dialog>` viewer. The image starts fitted to the viewport; wheel and pinch gestures zoom anchored at the cursor, double-click toggles between fit and 2.5×, arrow keys and drag/touch gestures pan in all four directions, and Esc or the close button resets and closes the viewer.
 
 `DiagramEnhancer.astro` reads the serialized diagram config from a JSON script tag. Mermaid blocks are rendered client-side with dynamic import from `mermaid`. PlantUML blocks are encoded with `plantuml-encoder` and replaced with lazy-loaded images from the configured PlantUML server. Plaintext Shiki fallback is supported by detecting blocks whose text starts with `@startuml`.
 
@@ -177,6 +181,7 @@ Current scope:
 - Mermaid and PlantUML support.
 - Copy buttons for code blocks.
 - Pagefind full-text search page and global search dialog.
+- Image viewer for post content images with zoom and pan.
 
 Known limits:
 

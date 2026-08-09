@@ -52,6 +52,7 @@ export function normalizeOptions(options: BlogThemeOptions): NormalizedBlogTheme
             : "https://www.plantuml.com/plantuml/svg",
       },
     },
+    imageViewer: options.imageViewer ?? true,
     routes:
       options.routes === false
         ? {

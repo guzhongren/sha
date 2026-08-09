@@ -100,7 +100,7 @@ ASTRO_TELEMETRY_DISABLED=1 pnpm build
 ./node_modules/.bin/playwright test e2e/search.spec.ts
 ```
 
-The suite covers: public route inventory and draft 404s, RSS validity, home/profile and post ordering, post detail metadata/TOC/anchors, post list descriptions (two-line clamp and hover tooltip), tags and categories, the search page and global dialog (including `Cmd/Ctrl+K`), theme modes and persistence, code copy, Mermaid/ECharts/Emoji rendering, and mobile layout sanity checks. GitHub Actions runs it in the `e2e` job and uploads `playwright-report/` on failure.
+The suite covers: public route inventory and draft 404s, RSS validity, home/profile and post ordering, post detail metadata/TOC/anchors, post list descriptions (two-line clamp and hover tooltip), tags and categories, the search page and global dialog (including `Cmd/Ctrl+K`), theme modes and persistence, code copy, Mermaid/ECharts/Emoji rendering, the image viewer, and mobile layout sanity checks. GitHub Actions runs it in the `e2e` job and uploads `playwright-report/` on failure.
 
 Keep the suite data-driven: post lists are derived from `/rss.xml`, so adding or removing fixture posts requires no test edits. If `example/astro.config.mjs` changes `postsPerPage`, update `POSTS_PER_PAGE` in `e2e/helpers.ts`. If new route families are added, extend `HTML_ROUTES`/`ASSET_ROUTES` there.
 
@@ -168,6 +168,17 @@ When changing `SearchEnhancer.astro` or search route behavior:
 - Confirm post detail pages contain `data-pagefind-body`.
 - Confirm listing/search/category/tag pages are not marked as Pagefind bodies.
 - Confirm draft content does not appear in generated public pages or search results.
+
+### Image Viewer
+
+When changing `ImageViewerEnhancer.astro`, `imageViewer` config, or viewer styles:
+
+- Confirm clicking a post content image opens the dialog with the correct `src`/`alt` and Escape closes it (`e2e/image-viewer.spec.ts`).
+- Confirm wheel zoom changes the image transform, drag changes the pan offset, and double-click toggles between fit and 2.5×.
+- Confirm the post cover, PlantUML/Mermaid diagram images, and images inside links are not wrapped by the lightbox trigger.
+- Confirm `imageViewer: false` renders no viewer dialog or wrapped images.
+- Confirm the viewer opens from a touch tap and the page does not overflow horizontally on mobile.
+- Confirm zoom/pan state resets after close and on window resize.
 
 ### Analytics
 
