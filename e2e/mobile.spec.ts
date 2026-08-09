@@ -56,7 +56,7 @@ test.describe("mobile layout", () => {
   });
 
   test("pages do not overflow horizontally", async ({ page }) => {
-    for (const path of ["/", "/posts", "/posts/astro-theme"]) {
+    for (const path of ["/", "/posts", "/posts/astro-theme", "/posts/2024/05/12/links"]) {
       await page.goto(path);
       const fits = await page.evaluate(
         () => document.documentElement.scrollWidth <= window.innerWidth + 1,

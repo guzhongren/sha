@@ -53,6 +53,7 @@ export function normalizeOptions(options: BlogThemeOptions): NormalizedBlogTheme
       },
     },
     imageViewer: options.imageViewer ?? true,
+    linkReferences: options.linkReferences ?? true,
     routes:
       options.routes === false
         ? {

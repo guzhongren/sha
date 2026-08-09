@@ -159,6 +159,18 @@ blogTheme({
 
 The post cover, Mermaid/PlantUML diagrams, and images wrapped in links are left untouched.
 
+## Link references
+
+External `http(s)` links inside post content are numbered in document order with superscript markers, and a "参考" section is appended at the end of the article listing each link as `link text: URL`. Posts without external links get no markers and no references section. Enabled by default; disable it from `astro.config.mjs`:
+
+```js
+blogTheme({
+  linkReferences: false,
+});
+```
+
+Internal links, anchors, `mailto:` links, image-only links, and links inside code blocks are left untouched.
+
 ## ECharts
 
 Use Hugo-style shortcode blocks for ECharts options:

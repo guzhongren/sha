@@ -72,6 +72,12 @@ export type BlogThemeOptions = {
    * zoom and pan. Defaults to `true`.
    */
   imageViewer?: boolean;
+  /**
+   * Number external http(s) links in post content with superscripts and
+   * list them in a "参考" (references) section at the end of the article.
+   * Defaults to `true`.
+   */
+  linkReferences?: boolean;
   routes?:
     | false
     | {
@@ -157,6 +163,7 @@ export type NormalizedBlogThemeOptions = {
     };
   };
   imageViewer: boolean;
+  linkReferences: boolean;
   routes: {
     home: boolean;
     posts: boolean;
