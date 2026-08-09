@@ -13,7 +13,8 @@ test.describe("theme", () => {
     await expect(page.locator("html")).not.toHaveClass(/dark/);
   });
 
-  test("toggle cycles system -> light -> dark -> system and persists", async ({ page }) => {
+  test("toggle switches only between light and dark and persists", async ({ page }) => {
+    await page.emulateMedia({ colorScheme: "light" });
     await page.goto("/");
     const html = page.locator("html");
     // Desktop header toggle; the mobile header renders a second toggle.
@@ -21,18 +22,21 @@ test.describe("theme", () => {
 
     await expect(html).toHaveAttribute("data-theme", "system");
 
-    await toggle.click();
-    await expect(html).toHaveAttribute("data-theme", "light");
-    expect(await page.evaluate(() => localStorage.getItem("theme"))).toBe("light");
-
+    // OS is light, so the first click leaves system and goes to dark.
     await toggle.click();
     await expect(html).toHaveAttribute("data-theme", "dark");
     await expect(html).toHaveClass(/dark/);
     expect(await page.evaluate(() => localStorage.getItem("theme"))).toBe("dark");
 
     await toggle.click();
-    await expect(html).toHaveAttribute("data-theme", "system");
-    expect(await page.evaluate(() => localStorage.getItem("theme"))).toBe("system");
+    await expect(html).toHaveAttribute("data-theme", "light");
+    await expect(html).not.toHaveClass(/dark/);
+    expect(await page.evaluate(() => localStorage.getItem("theme"))).toBe("light");
+
+    await toggle.click();
+    await expect(html).toHaveAttribute("data-theme", "dark");
+    await expect(html).toHaveClass(/dark/);
+    expect(await page.evaluate(() => localStorage.getItem("theme"))).toBe("dark");
   });
 
   test("stored preference survives reload", async ({ page }) => {
@@ -41,6 +45,32 @@ test.describe("theme", () => {
     await page.reload();
     await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
     await expect(page.locator("html")).toHaveClass(/dark/);
+  });
+
+  test("every toggle click gives visible feedback even when system matches the OS", async ({ page }) => {
+    await page.emulateMedia({ colorScheme: "dark" });
+    await page.goto("/");
+
+    const html = page.locator("html");
+    const toggle = page.locator("nav.header-nav [data-theme-toggle]");
+    const icon = async () => (await toggle.textContent())!.trim();
+
+    // Starts in system, which looks identical to dark on a dark OS, but the
+    // first click leaves system and the icon flips, so it is never a no-op.
+    await expect(html).toHaveAttribute("data-theme", "system");
+    expect(await icon()).toBe("◐");
+
+    await toggle.click();
+    await expect(html).toHaveAttribute("data-theme", "light");
+    expect(await icon()).toBe("☀");
+
+    await toggle.click();
+    await expect(html).toHaveAttribute("data-theme", "dark");
+    expect(await icon()).toBe("☾");
+
+    await toggle.click();
+    await expect(html).toHaveAttribute("data-theme", "light");
+    expect(await icon()).toBe("☀");
   });
 
   test("light and dark modes use different computed backgrounds", async ({ page }) => {

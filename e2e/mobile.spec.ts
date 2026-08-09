@@ -29,19 +29,22 @@ test.describe("mobile layout", () => {
     await expect(page.locator("[data-menu-toggle]")).toHaveAttribute("aria-expanded", "false");
   });
 
-  test("mobile theme toggle cycles modes and persists", async ({ page }) => {
+  test("mobile theme toggle switches between light and dark and persists", async ({ page }) => {
+    await page.emulateMedia({ colorScheme: "light" });
     await page.goto("/");
     const html = page.locator("html");
     const toggle = page.locator("header [data-theme-toggle]").last();
 
-    await toggle.click();
-    await expect(html).toHaveAttribute("data-theme", "light");
-    expect(await page.evaluate(() => localStorage.getItem("theme"))).toBe("light");
-
+    // OS is light, so the first click leaves system for dark.
     await toggle.click();
     await expect(html).toHaveAttribute("data-theme", "dark");
     await expect(html).toHaveClass(/dark/);
     expect(await page.evaluate(() => localStorage.getItem("theme"))).toBe("dark");
+
+    await toggle.click();
+    await expect(html).toHaveAttribute("data-theme", "light");
+    await expect(html).not.toHaveClass(/dark/);
+    expect(await page.evaluate(() => localStorage.getItem("theme"))).toBe("light");
   });
 
   test("main content is not hidden under the fixed header", async ({ page }) => {
