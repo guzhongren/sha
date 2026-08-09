@@ -8,6 +8,7 @@ import EmojiEnhancer from "../components/EmojiEnhancer.astro";
 import HeadingLinkEnhancer from "../components/HeadingLinkEnhancer.astro";
 import EChartsEnhancer from "../components/EChartsEnhancer.astro";
 import SearchEnhancer from "../components/SearchEnhancer.astro";
+import ImageViewerEnhancer from "../components/ImageViewerEnhancer.astro";
 import config from "virtual:blog-theme/config";
 import { withBase } from "../utils";
 
@@ -134,6 +135,7 @@ gtag('config', ${JSON.stringify(ga.id)}${Object.keys(ga.config).length > 0 ? `, 
     <EChartsEnhancer />
     <CodeCopyEnhancer />
     {config.routes.search && <SearchEnhancer />}
+    {config.imageViewer && <ImageViewerEnhancer />}
     {(config.diagrams.mermaid || config.diagrams.plantuml.enabled) && <DiagramEnhancer diagrams={config.diagrams} />}
   </body>
 </html>

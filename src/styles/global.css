@@ -386,6 +386,102 @@ a {
   padding-inline: 0.12rem;
 }
 
+.prose img {
+  max-width: 100%;
+  height: auto;
+}
+
+.image-lightbox-trigger {
+  display: inline-block;
+  max-width: 100%;
+  border: 0;
+  padding: 0;
+  background: none;
+  line-height: 0;
+  cursor: zoom-in;
+}
+
+.image-lightbox-trigger:focus-visible {
+  border-radius: 0.25rem;
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.image-viewer-dialog {
+  position: fixed;
+  inset: 0;
+  width: 100dvw;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  overflow: hidden;
+  overscroll-behavior: contain;
+  color: inherit;
+}
+
+.image-viewer-dialog::backdrop {
+  background: color-mix(in oklab, var(--color-gray-950) 78%, transparent);
+  backdrop-filter: blur(6px);
+}
+
+.image-viewer-stage {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  cursor: zoom-in;
+  user-select: none;
+  touch-action: none;
+}
+
+.image-viewer-stage.is-grabbing {
+  cursor: grabbing;
+}
+
+.image-viewer-stage img {
+  max-width: 92vw;
+  max-height: 88dvh;
+  object-fit: contain;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.image-viewer-close {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1;
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  background: var(--panel-bg);
+  padding: 0.25rem 0.55rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.image-viewer-close:hover {
+  color: var(--text-strong);
+  border-color: color-mix(in oklab, var(--accent) 35%, var(--border-soft));
+}
+
+.image-viewer-hint {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 50%;
+  z-index: 1;
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  background: var(--panel-bg);
+  padding: 0.35rem 0.75rem;
+  transform: translateX(-50%);
+}
+
 .prose {
   color: var(--text-body);
   font-size: 0.9375rem;

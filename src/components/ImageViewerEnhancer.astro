@@ -1,0 +1,234 @@
+---
+---
+
+<dialog class="image-viewer-dialog" data-image-viewer-dialog aria-label="Image viewer">
+  <div class="image-viewer-stage" data-image-viewer-stage>
+    <img data-image-viewer-image alt="" draggable="false" />
+  </div>
+  <button class="image-viewer-close" type="button" data-image-viewer-close aria-label="Close">Esc</button>
+  <p class="utility-note image-viewer-hint">drag to pan · scroll to zoom</p>
+</dialog>
+
+<script>
+  const EXCLUDE_SELECTOR = "a[href], .diagram, .echarts-frame, pre, code";
+  const MIN_SCALE = 1;
+  const MAX_SCALE = 6;
+  const DOUBLE_CLICK_SCALE = 2.5;
+  const ZOOM_STEP = 1.15;
+  const PAN_KEY_STEP = 48;
+  const DRAG_THRESHOLD = 5;
+
+  const dialog = document.querySelector("[data-image-viewer-dialog]");
+  const stage = dialog?.querySelector("[data-image-viewer-stage]");
+  const viewerImage = dialog?.querySelector("[data-image-viewer-image]");
+
+  let scale = MIN_SCALE;
+  let tx = 0;
+  let ty = 0;
+  let fitWidth = 1;
+  let fitHeight = 1;
+  let pointerStart = null;
+  let pointers = new Map();
+  let pinch = null;
+  let dragMoved = false;
+
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+  }
+
+  function applyTransform() {
+    if (!viewerImage) return;
+    viewerImage.style.transform = `translate3d(${tx}px, ${ty}px, 0) scale(${scale})`;
+  }
+
+  function stageSize() {
+    const rect = stage?.getBoundingClientRect() ?? { width: 0, height: 0 };
+    return { width: rect.width, height: rect.height };
+  }
+
+  function panBounds() {
+    const { width, height } = stageSize();
+    return {
+      maxX: Math.max(0, (fitWidth * scale - width) / 2),
+      maxY: Math.max(0, (fitHeight * scale - height) / 2),
+    };
+  }
+
+  function clampPan() {
+    const { maxX, maxY } = panBounds();
+    tx = clamp(tx, -maxX, maxX);
+    ty = clamp(ty, -maxY, maxY);
+    applyTransform();
+  }
+
+  function measureFit() {
+    if (!viewerImage) return;
+    viewerImage.style.transform = "none";
+    const rect = viewerImage.getBoundingClientRect();
+    fitWidth = rect.width || 1;
+    fitHeight = rect.height || 1;
+    applyTransform();
+  }
+
+  function zoomAround(clientX, clientY, nextScale) {
+    const { width, height } = stageSize();
+    const cursorX = clientX - width / 2;
+    const cursorY = clientY - height / 2;
+    const imageX = (cursorX - tx) / scale;
+    const imageY = (cursorY - ty) / scale;
+    scale = clamp(nextScale, MIN_SCALE, MAX_SCALE);
+    tx = cursorX - imageX * scale;
+    ty = cursorY - imageY * scale;
+    clampPan();
+  }
+
+  function resetView() {
+    scale = MIN_SCALE;
+    tx = 0;
+    ty = 0;
+    applyTransform();
+  }
+
+  function openViewer(image) {
+    if (!dialog || !viewerImage) return;
+    viewerImage.src = image.currentSrc || image.src;
+    viewerImage.alt = image.alt || "";
+    resetView();
+    if (!dialog.open) dialog.showModal();
+    measureFit();
+  }
+
+  stage?.addEventListener("wheel", (event) => {
+    event.preventDefault();
+    let delta = event.deltaY;
+    if (event.deltaMode === 1) delta *= 16;
+    zoomAround(event.clientX, event.clientY, scale * Math.exp(-delta * 0.002));
+  }, { passive: false });
+
+  stage?.addEventListener("pointerdown", (event) => {
+    pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    if (pointers.size === 1) {
+      pointerStart = { x: event.clientX, y: event.clientY, tx, ty };
+      dragMoved = false;
+      stage.classList.add("is-grabbing");
+    } else if (pointers.size === 2) {
+      const [first, second] = [...pointers.values()];
+      pinch = {
+        distance: Math.hypot(first.x - second.x, first.y - second.y),
+        scale,
+        midX: (first.x + second.x) / 2,
+        midY: (first.y + second.y) / 2,
+        tx,
+        ty,
+      };
+      dragMoved = false;
+    }
+  });
+
+  window.addEventListener("pointermove", (event) => {
+    if (!pointers.has(event.pointerId)) return;
+    pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+    if (pointers.size === 1 && pointerStart) {
+      const dx = event.clientX - pointerStart.x;
+      const dy = event.clientY - pointerStart.y;
+      if (Math.hypot(dx, dy) > DRAG_THRESHOLD) dragMoved = true;
+      tx = pointerStart.tx + dx;
+      ty = pointerStart.ty + dy;
+      clampPan();
+    } else if (pointers.size === 2 && pinch) {
+      const [first, second] = [...pointers.values()];
+      const distance = Math.hypot(first.x - second.x, first.y - second.y);
+      const midX = (first.x + second.x) / 2;
+      const midY = (first.y + second.y) / 2;
+      const { width, height } = stageSize();
+      const startX = pinch.midX - width / 2;
+      const startY = pinch.midY - height / 2;
+      const imageX = (startX - pinch.tx) / pinch.scale;
+      const imageY = (startY - pinch.ty) / pinch.scale;
+      scale = clamp(pinch.scale * (distance / pinch.distance), MIN_SCALE, MAX_SCALE);
+      tx = (midX - width / 2) - imageX * scale;
+      ty = (midY - height / 2) - imageY * scale;
+      clampPan();
+    }
+  });
+
+  function endPointer(event) {
+    if (!pointers.has(event.pointerId)) return;
+    pointers.delete(event.pointerId);
+    if (pointers.size === 0) {
+      pointerStart = null;
+      pinch = null;
+      stage?.classList.remove("is-grabbing");
+    } else if (pointers.size === 1 && pinch) {
+      const [remaining] = [...pointers.values()];
+      pointerStart = { x: remaining.x, y: remaining.y, tx, ty };
+      pinch = null;
+      dragMoved = false;
+    }
+  }
+
+  window.addEventListener("pointerup", endPointer);
+  window.addEventListener("pointercancel", endPointer);
+
+  stage?.addEventListener("dblclick", (event) => {
+    if (scale > 1.01) {
+      resetView();
+    } else {
+      zoomAround(event.clientX, event.clientY, DOUBLE_CLICK_SCALE);
+    }
+  });
+
+  stage?.addEventListener("click", (event) => {
+    if (event.target !== stage || dragMoved) return;
+    dialog?.close();
+  });
+
+  dialog?.addEventListener("keydown", (event) => {
+    if (event.key === "+" || event.key === "=") {
+      event.preventDefault();
+      const { width, height } = stageSize();
+      zoomAround(width / 2, height / 2, scale * ZOOM_STEP);
+    } else if (event.key === "-" || event.key === "_") {
+      event.preventDefault();
+      const { width, height } = stageSize();
+      zoomAround(width / 2, height / 2, scale / ZOOM_STEP);
+    } else if (event.key.startsWith("Arrow")) {
+      event.preventDefault();
+      const dx = event.key === "ArrowLeft" ? -PAN_KEY_STEP : event.key === "ArrowRight" ? PAN_KEY_STEP : 0;
+      const dy = event.key === "ArrowUp" ? -PAN_KEY_STEP : event.key === "ArrowDown" ? PAN_KEY_STEP : 0;
+      tx += dx;
+      ty += dy;
+      clampPan();
+    }
+  });
+
+  dialog?.addEventListener("close", () => {
+    resetView();
+    pointers.clear();
+    pointerStart = null;
+    pinch = null;
+    dragMoved = false;
+    stage?.classList.remove("is-grabbing");
+  });
+
+  window.addEventListener("resize", () => {
+    if (dialog?.open) {
+      resetView();
+      measureFit();
+    }
+  });
+
+  document.querySelectorAll(".prose img").forEach((image) => {
+    if (image.closest(EXCLUDE_SELECTOR)) return;
+    if (image.parentElement?.classList.contains("image-lightbox-trigger")) return;
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "image-lightbox-trigger";
+    button.setAttribute("aria-label", "Enlarge image");
+    image.replaceWith(button);
+    button.append(image);
+    button.addEventListener("click", () => openViewer(image));
+  });
+</script>

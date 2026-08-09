@@ -75,4 +75,24 @@ test.describe("mobile layout", () => {
     await expect(page).toHaveURL(/\/about$/);
     await expect(page.getByRole("heading", { level: 1 })).toContainText("谷中仁的博客");
   });
+
+  test("image viewer opens from a content image tap and closes with Escape", async ({ page }) => {
+    await page.goto("/posts/astro-theme");
+
+    const trigger = page.locator(".image-lightbox-trigger");
+    await expect(trigger).toHaveCount(1);
+    await trigger.tap();
+
+    const dialog = page.locator("[data-image-viewer-dialog]");
+    await expect(dialog).toHaveAttribute("open", "");
+    await expect(dialog.locator("[data-image-viewer-image]")).toBeVisible();
+
+    const fits = await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth + 1,
+    );
+    expect(fits).toBe(true);
+
+    await page.keyboard.press("Escape");
+    await expect(dialog).not.toHaveAttribute("open", "");
+  });
 });

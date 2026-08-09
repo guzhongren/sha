@@ -147,6 +147,18 @@ A -> B
 
 Mermaid is rendered client-side from the bundled `mermaid` package. PlantUML is rendered as an image using the configured PlantUML server.
 
+## Image viewer
+
+Images inside post content open in a full-screen viewer on click, with wheel/pinch/double-click zoom and drag/touch panning. It is enabled by default; disable it from `astro.config.mjs`:
+
+```js
+blogTheme({
+  imageViewer: false,
+});
+```
+
+The post cover, Mermaid/PlantUML diagrams, and images wrapped in links are left untouched.
+
 ## ECharts
 
 Use Hugo-style shortcode blocks for ECharts options:
