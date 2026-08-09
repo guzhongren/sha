@@ -482,6 +482,48 @@ a {
   transform: translateX(-50%);
 }
 
+.ref-mark {
+  margin-left: 0.15em;
+  vertical-align: super;
+  font-size: 0.72em;
+  font-weight: 650;
+  line-height: 0;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.prose .post-references {
+  margin-top: 3rem;
+  border: 1px solid var(--border-soft);
+  border-radius: 0.75rem;
+  background: var(--panel-bg);
+  padding: 1.25rem 1.5rem;
+  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--color-white) 8%, transparent);
+}
+
+.post-references-title {
+  color: var(--text-strong);
+  font-size: 1.1rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.post-references-list {
+  margin-top: 0.75rem;
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+
+.post-references-list li {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+.post-references-list a {
+  overflow-wrap: anywhere;
+}
+
 .prose {
   color: var(--text-body);
   font-size: 0.9375rem;

@@ -100,7 +100,7 @@ ASTRO_TELEMETRY_DISABLED=1 pnpm build
 ./node_modules/.bin/playwright test e2e/search.spec.ts
 ```
 
-The suite covers: public route inventory and draft 404s, RSS validity, home/profile and post ordering, post detail metadata/TOC/anchors, post list descriptions (two-line clamp and hover tooltip), tags and categories, the search page and global dialog (including `Cmd/Ctrl+K`), theme modes and persistence, code copy, Mermaid/ECharts/Emoji rendering, the image viewer, and mobile layout sanity checks. GitHub Actions runs it in the `e2e` job and uploads `playwright-report/` on failure.
+The suite covers: public route inventory and draft 404s, RSS validity, home/profile and post ordering, post detail metadata/TOC/anchors, post list descriptions (two-line clamp and hover tooltip), tags and categories, the search page and global dialog (including `Cmd/Ctrl+K`), theme modes and persistence, code copy, Mermaid/ECharts/Emoji rendering, the image viewer, link references, and mobile layout sanity checks. GitHub Actions runs it in the `e2e` job and uploads `playwright-report/` on failure.
 
 Keep the suite data-driven: post lists are derived from `/rss.xml`, so adding or removing fixture posts requires no test edits. If `example/astro.config.mjs` changes `postsPerPage`, update `POSTS_PER_PAGE` in `e2e/helpers.ts`. If new route families are added, extend `HTML_ROUTES`/`ASSET_ROUTES` there.
 
@@ -179,6 +179,17 @@ When changing `ImageViewerEnhancer.astro`, `imageViewer` config, or viewer style
 - Confirm `imageViewer: false` renders no viewer dialog or wrapped images.
 - Confirm the viewer opens from a touch tap and the page does not overflow horizontally on mobile.
 - Confirm zoom/pan state resets after close and on window resize.
+
+### Link References
+
+When changing `src/rehype-link-references.ts`, `linkReferences` config, or reference styles:
+
+- Confirm external links get `[1]`, `[2]`, … superscripts in document order, including repeated URLs (`e2e/link-references.spec.ts`).
+- Confirm internal, anchor, `mailto:`, image-only, and code-block links are not numbered.
+- Confirm the "参考" section lists every numbered link as `text: URL` and is absent when a post has no external links.
+- Confirm markers and the references section are present in the static HTML without JavaScript (build-time generation).
+- Confirm `linkReferences: false` disables both markers and the references section.
+- Confirm long reference URLs do not overflow on mobile.
 
 ### Analytics
 

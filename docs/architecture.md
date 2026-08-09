@@ -27,6 +27,7 @@ At setup time it:
 3. Registers `@astrojs/sitemap` when `seo.sitemap` is enabled (default `true`).
 4. Registers `@astrojs/partytown` with `forward: ["dataLayer.push"]` when `analytics.googleAnalytics.partytown` is enabled.
 5. Injects enabled routes with Astro `injectRoute`.
+6. Configures the markdown processor with `remark-gemoji` and the link-references rehype plugin when `linkReferences` is enabled (default `true`).
 
 The virtual config plugin serializes normalized options into an ESM module:
 
@@ -49,6 +50,7 @@ Major option groups:
 - `theme`: `system`, `light`, or `dark` default mode plus accent token.
 - `diagrams`: Mermaid and PlantUML rendering toggles.
 - `imageViewer`: opens post content images in a full-screen viewer dialog with zoom and pan; `true` by default.
+- `linkReferences`: numbers external `http(s)` links in post content with superscripts and appends a "参考" section listing each link; `true` by default.
 - `routes`: individual route switches or `false` to disable all injected pages.
 - `analytics`: optional GA4 measurement. `googleAnalytics.id` enables the standard gtag.js snippet in the shared layout; `partytown` (default `true`) offloads it to a Web Worker through the auto-registered Partytown integration; `includeInDev` controls dev loading; `config` is passed through to `gtag('config', ...)`.
 - `seo`: `sitemap` (default `true`) generates `sitemap-index.xml` and `sitemap-0.xml` through the auto-registered `@astrojs/sitemap` integration.
@@ -182,6 +184,7 @@ Current scope:
 - Copy buttons for code blocks.
 - Pagefind full-text search page and global search dialog.
 - Image viewer for post content images with zoom and pan.
+- Link references: numbered external links with a "参考" section at the end of posts.
 
 Known limits:
 
