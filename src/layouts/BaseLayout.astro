@@ -48,11 +48,75 @@ gtag('config', ${JSON.stringify(ga.id)}${Object.keys(ga.config).length > 0 ? `, 
       </>
     )}
     <script is:inline define:vars={{ defaultMode }}>
-      const stored = localStorage.getItem("theme");
-      const mode = stored || defaultMode;
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      document.documentElement.classList.toggle("dark", mode === "dark" || (mode === "system" && prefersDark));
-      document.documentElement.dataset.theme = mode;
+      (function () {
+        const icons = { system: "◐", light: "☀", dark: "☾" };
+        const labels = { system: "Follow system", light: "Light", dark: "Dark" };
+        const prefersDarkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+        function currentMode() {
+          return document.documentElement.dataset.theme || defaultMode || "system";
+        }
+
+        // Clicks only ever switch between the two themes. From the initial
+        // "system" state, resolve to the opposite of the OS appearance so the
+        // first click is always a visible change.
+        function nextMode(current) {
+          if (current === "light" || current === "dark") {
+            return current === "light" ? "dark" : "light";
+          }
+          return prefersDarkQuery.matches ? "light" : "dark";
+        }
+
+        function applyMode(mode) {
+          const prefersDark = prefersDarkQuery.matches;
+          document.documentElement.classList.toggle("dark", mode === "dark" || (mode === "system" && prefersDark));
+          document.documentElement.dataset.theme = mode;
+          document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
+            button.textContent = icons[mode] || "◐";
+            button.setAttribute("aria-label", `Toggle color theme (${labels[mode] || mode})`);
+          });
+        }
+
+        let stored = null;
+        try {
+          stored = localStorage.getItem("theme");
+        } catch {
+          // Storage can be unavailable (private mode, blocked cookies); fall back to default.
+        }
+        applyMode(stored === "light" || stored === "dark" ? stored : defaultMode);
+
+        // Delegated listener attaches before the toggles exist, so a click is
+        // never lost to script-load timing. Toggles rendered later still work.
+        document.addEventListener("click", (event) => {
+          const target = event.target;
+          if (!target || typeof target.closest !== "function") return;
+          if (!target.closest("[data-theme-toggle]")) return;
+          const next = nextMode(currentMode());
+          try {
+            localStorage.setItem("theme", next);
+          } catch {
+            // Persistence is best-effort; still switch for this page.
+          }
+          applyMode(next);
+        });
+
+        // In "system" mode, follow OS color-scheme changes live.
+        function onSchemeChange() {
+          if (currentMode() === "system") applyMode("system");
+        }
+        if (prefersDarkQuery.addEventListener) {
+          prefersDarkQuery.addEventListener("change", onSchemeChange);
+        } else if (prefersDarkQuery.addListener) {
+          prefersDarkQuery.addListener(onSchemeChange);
+        }
+
+        // Keep toggle icons/labels in sync once the DOM (or a view transition) is ready.
+        function syncToggles() {
+          applyMode(currentMode());
+        }
+        document.addEventListener("DOMContentLoaded", syncToggles);
+        document.addEventListener("astro:page-load", syncToggles);
+      })();
     </script>
   </head>
   <body class="min-h-dvh bg-[var(--page-bg)] text-[var(--text-body)] antialiased">

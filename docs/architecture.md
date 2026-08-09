@@ -111,7 +111,7 @@ Core components:
 - `PostList.astro`: simple post collection renderer.
 - `TagList.astro`: tag pill links.
 - `TableOfContents.astro`: sticky desktop TOC for `h2` and `h3`.
-- `ThemeToggle.astro`: small inline script cycling `system`, `light`, `dark`.
+- `ThemeToggle.astro`: pure toggle button markup; `BaseLayout` owns theme state and wiring.
 - `CodeCopyEnhancer.astro`: adds copy buttons to prose code blocks.
 - `SearchEnhancer.astro`: global search dialog, `Ctrl/Cmd+K` shortcut, Pagefind queries, and custom result rendering.
 - `DiagramEnhancer.astro`: renders Mermaid and PlantUML code fences when enabled.
@@ -120,7 +120,7 @@ Core components:
 
 Client JavaScript is intentionally small and progressive.
 
-Theme initialization runs inline in `BaseLayout.astro` before page rendering to avoid a visible theme flash. `ThemeToggle.astro` writes the selected mode to `localStorage` and updates the root class/data attributes.
+Theme initialization and switching run inline in `BaseLayout.astro` before page rendering to avoid a visible theme flash and to make every toggle click respond immediately. `system` is the initial default; the first click resolves it to the opposite of the OS appearance, then a delegated document listener toggles only between `light` and `dark`, persists the selected mode to `localStorage`, updates the root class/data attributes, and reflects the active mode on the toggle buttons.
 
 `CodeCopyEnhancer.astro` scans `.prose pre > code`, wraps each block in a frame, inserts a `Copy` button, writes code text to the Clipboard API, and briefly changes the label to `Copied`.
 
