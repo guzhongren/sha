@@ -30,6 +30,55 @@ test.describe("posts listing", () => {
       expect(response.status()).toBe(404);
     }
   });
+
+  test("numeric pagination links navigate between pages and mark the current page", async ({ page, request }) => {
+    const feed = await fetchFeedPosts(request);
+    test.skip(feed.length <= POSTS_PER_PAGE, "requires more posts than postsPerPage");
+    const total = Math.ceil(feed.length / POSTS_PER_PAGE);
+
+    await page.goto("/posts");
+    const pagination = page.getByRole("navigation", { name: "Pagination" });
+    await expect(pagination.locator("[aria-current='page']")).toHaveText("1");
+    await expect(pagination.getByRole("link", { name: String(total) })).toHaveAttribute(
+      "href",
+      `/posts/page/${total}/`,
+    );
+    // Prev/next keep content width instead of stretching across the nav.
+    const nextBox = await pagination.getByRole("link", { name: /Older posts/ }).boundingBox();
+    expect(nextBox!.width).toBeLessThan((await pagination.boundingBox())!.width / 2);
+
+    await pagination.getByRole("link", { name: String(total) }).click();
+    await expect(page).toHaveURL(new RegExp(`/posts/page/${total}/?$`));
+    const lastPage = page.getByRole("navigation", { name: "Pagination" });
+    await expect(lastPage.locator("[aria-current='page']")).toHaveText(String(total));
+    await expect(lastPage.getByRole("link", { name: "1" })).toHaveAttribute("href", "/posts/");
+    const prevBox = await lastPage.getByRole("link", { name: /Newer posts/ }).boundingBox();
+    expect(prevBox!.width).toBeLessThan((await lastPage.boundingBox())!.width / 2);
+  });
+
+  test("jump input navigates to the typed page and clamps out-of-range values", async ({ page, request }) => {
+    const feed = await fetchFeedPosts(request);
+    test.skip(feed.length <= POSTS_PER_PAGE, "requires more posts than postsPerPage");
+    const total = Math.ceil(feed.length / POSTS_PER_PAGE);
+
+    await page.goto("/posts");
+    const jump = page.locator("[data-page-jump]");
+    await expect(jump).toBeVisible();
+
+    await jump.locator("input").fill("99");
+    await jump.locator("button").click();
+    await expect(page).toHaveURL(new RegExp(`/posts/page/${total}/?$`));
+
+    await page.goto("/posts");
+    await page.locator("[data-page-jump] input").fill(String(total));
+    await page.locator("[data-page-jump] input").press("Enter");
+    await expect(page).toHaveURL(new RegExp(`/posts/page/${total}/?$`));
+
+    await page.goto("/posts");
+    await page.locator("[data-page-jump] input").fill("0");
+    await page.locator("[data-page-jump] input").press("Enter");
+    await expect(page).toHaveURL(/\/posts\/?$/);
+  });
 });
 
 test.describe("post detail page", () => {

@@ -24,15 +24,16 @@ test.describe("home page", () => {
     await expect(rss.locator("svg")).toBeVisible();
   });
 
-  test("lists published posts in feed order without drafts", async ({ page, request }) => {
+  test("lists the latest published posts in feed order without drafts", async ({ page, request }) => {
     const feed = await fetchFeedPosts(request);
     expect(feed.length).toBeGreaterThan(0);
 
     await page.goto("/");
 
-    await expect(page.locator(".post-item")).toHaveCount(feed.length);
+    const expectedCount = Math.min(feed.length, POSTS_PER_PAGE);
+    await expect(page.locator(".post-item")).toHaveCount(expectedCount);
     const titles = page.locator(".post-item h2 a");
-    for (let index = 0; index < feed.length; index += 1) {
+    for (let index = 0; index < expectedCount; index += 1) {
       await expect(titles.nth(index)).toHaveText(renderTitleShortcodes(feed[index].title));
     }
     await expect(page.locator("body")).not.toContainText(DRAFT_TITLE);

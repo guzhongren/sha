@@ -90,7 +90,7 @@ Posts are loaded from `./src/content/posts/**/*.{md,mdx}` in the consuming app a
 Routes are injected from `src/pages`:
 
 - `/` -> latest posts with a compact author intro.
-- `/posts` -> all published posts.
+- `/posts` -> all published posts, paginated with clickable page numbers and a page-jump input.
 - `/posts/[...slug]` -> article page with metadata, tags, optional cover, prose content, and table of contents. This rest route supports direct post files and nested date paths such as `/posts/2024/05/12/my-post`.
 - `/tags` -> tag index.
 - `/tags/[tag]` -> posts for one tag.
@@ -112,6 +112,7 @@ Core components:
 - `ProfileIntro.astro`: config-driven author/profile intro block.
 - `PostCard.astro`: list item and featured-post rendering.
 - `PostList.astro`: simple post collection renderer.
+- `Pagination.astro`: previous/next links, windowed page-number links, and a progressive page-jump input for the posts archive.
 - `TagList.astro`: tag pill links.
 - `TableOfContents.astro`: sticky desktop TOC for `h2` and `h3`.
 - `ThemeToggle.astro`: pure toggle button markup; `BaseLayout` owns theme state and wiring.
@@ -133,6 +134,8 @@ Theme initialization and switching run inline in `BaseLayout.astro` before page 
 `ImageViewerEnhancer.astro` wraps eligible `.prose` images (excluding covers, diagram figures, and linked images) in a button that opens a native `<dialog>` viewer. The image starts fitted to the viewport; wheel and pinch gestures zoom anchored at the cursor, double-click toggles between fit and 2.5×, arrow keys and drag/touch gestures pan in all four directions, and Esc or the close button resets and closes the viewer.
 
 `DiagramEnhancer.astro` reads the serialized diagram config from a JSON script tag. Mermaid blocks are rendered client-side with dynamic import from `mermaid`. PlantUML blocks are encoded with `plantuml-encoder` and replaced with lazy-loaded images from the configured PlantUML server. Plaintext Shiki fallback is supported by detecting blocks whose text starts with `@startuml`.
+
+`Pagination.astro` renders the previous/next links, a windowed list of page-number links (collapsed with ellipsis when there are many pages), and a `Go to page` input. The jump input is a progressive enhancement: it stays hidden until a small bundled script unhides it and turns submits into client-side navigation to the clamped page URL, so static hosting works without a form handler.
 
 `EChartsEnhancer.astro` initializes chart containers generated from `{{< echarts >}}...{{< /echarts >}}` shortcode blocks. `src/shortcodes.ts` converts those blocks before MDX parsing, so consumer apps must register `blogTheme(...)` before `mdx()` in `astro.config.mjs`.
 

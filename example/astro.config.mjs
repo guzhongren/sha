@@ -51,6 +51,9 @@ export default defineConfig({
         },
       },
       rss: {
+        // Keep the feed in sync with all fixture posts: the e2e suite treats
+        // /rss.xml as the source of truth for published post counts.
+        maxItems: 50,
         followChallenge: {
           feedId: "74621993392456704",
           userId: "74619979585483776",

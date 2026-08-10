@@ -1,0 +1,17 @@
+---
+title: "静态站点的渐进增强"
+description: "无脚本可用时内容完整，有脚本时交互升级。"
+publishDate: "2026-07-24"
+category: Engineering
+tags: ["Astro", "Performance"]
+featured: false
+draft: false
+---
+
+## 内容优先
+
+核心内容由服务端渲染，脚本只负责锦上添花，例如这里的分页跳转输入框。
+
+## 脚本要小
+
+浏览器端逻辑保持单一职责，避免为一个小功能引入整套框架。

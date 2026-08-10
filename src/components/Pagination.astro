@@ -6,24 +6,151 @@ interface Props {
 }
 
 const { current, total, base } = Astro.props;
+
+/**
+ * Windowed page list: keep the first/last pages and the neighbors of the
+ * current page, collapsing the rest behind ellipsis markers.
+ */
+function pageItems(current: number, total: number): (number | "…")[] {
+  if (total <= 7) {
+    return Array.from({ length: total }, (_, index) => index + 1);
+  }
+  const items: (number | "…")[] = [1];
+  const start = Math.max(2, current - 1);
+  const end = Math.min(total - 1, current + 1);
+  if (start > 2) items.push("…");
+  for (let page = start; page <= end; page += 1) items.push(page);
+  if (end < total - 1) items.push("…");
+  items.push(total);
+  return items;
+}
+
+/** `base` is the first page href (already base-URL prefixed by call sites). */
+function pageHref(page: number) {
+  return page === 1 ? base : `${base}page/${page}/`;
+}
 ---
 
 {
   total > 1 && (
-    <nav class="mt-12 flex items-center justify-between border-t border-[var(--border-soft)] pt-8" aria-label="Pagination">
-      {current > 1 ? (
-        <a class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--accent)]" href={current === 2 ? base : `${base}page/${current - 1}/`}>
-          ← Newer posts
-        </a>
-      ) : <span />}
-      <span class="text-sm text-[var(--text-muted)]">
-        Page {current} of {total}
-      </span>
-      {current < total ? (
-        <a class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--accent)]" href={`${base}page/${current + 1}/`}>
-          Older posts →
-        </a>
-      ) : <span />}
+    <nav class="mt-12 border-t border-[var(--border-soft)] pt-8" aria-label="Pagination">
+      <div class="flex flex-col items-center gap-3 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:gap-4">
+        {current > 1 ? (
+          <a
+            class="inline-flex h-8 items-center gap-1.5 rounded-full border border-[var(--border-soft)] px-3 text-sm font-medium text-[var(--text-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] sm:justify-self-start"
+            href={current === 2 ? base : `${base}page/${current - 1}/`}
+          >
+            <span aria-hidden="true">←</span>
+            Newer posts
+          </a>
+        ) : (
+          <span class="hidden sm:block" />
+        )}
+
+        <ol class="flex flex-wrap items-center justify-center gap-2" aria-label="Pages">
+          {pageItems(current, total).map((item) =>
+            item === "…" ? (
+              <li aria-hidden="true">
+                <span class="grid size-8 place-items-center text-sm text-[var(--text-muted)]">…</span>
+              </li>
+            ) : item === current ? (
+              <li>
+                <span
+                  aria-current="page"
+                  class="grid size-8 place-items-center rounded-full border border-[var(--accent)] bg-[color-mix(in_oklab,var(--accent)_14%,transparent)] text-sm font-medium text-[var(--accent)]"
+                >
+                  {item}
+                </span>
+              </li>
+            ) : (
+              <li>
+                <a
+                  class="grid size-8 place-items-center rounded-full border border-[var(--border-soft)] text-sm text-[var(--text-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                  href={pageHref(item)}
+                >
+                  {item}
+                </a>
+              </li>
+            )
+          )}
+        </ol>
+
+        {current < total ? (
+          <a
+            class="inline-flex h-8 items-center gap-1.5 rounded-full border border-[var(--border-soft)] px-3 text-sm font-medium text-[var(--text-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] sm:justify-self-end"
+            href={`${base}page/${current + 1}/`}
+          >
+            Older posts
+            <span aria-hidden="true">→</span>
+          </a>
+        ) : (
+          <span class="hidden sm:block" />
+        )}
+      </div>
+
+      <div class="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-sm text-[var(--text-muted)]">
+        <span>
+          Page {current} of {total}
+        </span>
+        <span class="text-[var(--border-soft)]" aria-hidden="true">/</span>
+
+        <form
+          class="flex flex-wrap items-center gap-2"
+          novalidate
+          data-page-jump
+          data-page-total={total}
+          data-page-current={current}
+          data-page-base={base}
+          hidden
+        >
+          <label for="pagination-page-input" class="text-[var(--text-muted)]">Go to page</label>
+          <input
+            id="pagination-page-input"
+            class="h-8 w-16 rounded-full border border-[var(--border-soft)] bg-transparent px-3 text-center text-[var(--text-strong)] focus:border-[var(--accent)]"
+            type="number"
+            min="1"
+            max={total}
+            inputmode="numeric"
+            autocomplete="off"
+            aria-label="Page number"
+          />
+          <button
+            type="submit"
+            class="h-8 cursor-pointer rounded-full border border-[var(--border-soft)] px-3 font-medium text-[var(--text-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+          >
+            Go
+          </button>
+        </form>
+      </div>
     </nav>
   )
 }
+
+<script>
+  // Progressive enhancement: static sites cannot answer a GET form submit, so
+  // the jump form stays hidden until this script wires it to client-side nav.
+  document.querySelectorAll("[data-page-jump]").forEach((form) => {
+    if (!(form instanceof HTMLFormElement)) return;
+    const input = form.querySelector("input[type='number']");
+    if (!input) return;
+
+    const total = Number(form.dataset.pageTotal);
+    const current = Number(form.dataset.pageCurrent);
+    const rawBase = form.dataset.pageBase;
+    if (!rawBase) return;
+    const base = rawBase.endsWith("/") ? rawBase : `${rawBase}/`;
+    form.hidden = false;
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const target = Number(input.value);
+      if (!Number.isFinite(target)) {
+        input.select();
+        return;
+      }
+      const page = Math.min(Math.max(1, Math.round(target)), total);
+      if (page === current) return;
+      window.location.assign(page === 1 ? base : `${base}page/${page}/`);
+    });
+  });
+</script>

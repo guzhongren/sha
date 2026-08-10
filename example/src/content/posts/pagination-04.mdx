@@ -1,0 +1,17 @@
+---
+title: "接口设计的三个边界"
+description: "参数校验、幂等性和失败语义，是接口稳定性的三条线。"
+publishDate: "2026-07-25"
+category: Backend
+tags: ["API", "Design"]
+featured: false
+draft: false
+---
+
+## 校验要早
+
+入参校验放在入口处，错误信息给出可操作的提示，而不是笼统的 400。
+
+## 幂等与重试
+
+让写操作具备幂等语义，客户端重试才不会有副作用。

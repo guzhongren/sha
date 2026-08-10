@@ -9,7 +9,7 @@ test.describe("post list description", () => {
       const feed = await fetchFeedPosts(request);
       await page.goto(path);
 
-      const expectedCount = path === "/" ? feed.length : Math.min(feed.length, POSTS_PER_PAGE);
+      const expectedCount = Math.min(feed.length, POSTS_PER_PAGE);
       await expect(page.locator(".post-item")).toHaveCount(expectedCount);
 
       const descriptions = page.locator(DESCRIPTION_SELECTOR);
