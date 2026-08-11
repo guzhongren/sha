@@ -93,6 +93,10 @@ Post files can be placed directly under `src/content/posts` or nested by date, f
 
 Set `routes: false` to disable injected pages and use the exported components manually.
 
+## Pagination
+
+The posts archive (`/posts`) paginates when there are more posts than `postsPerPage`. The pagination block keeps the previous/next links, adds clickable page numbers (collapsed with ellipsis when there are many pages), and marks the current page. A `Go to page` input lets readers type a page number and jump straight to it; it clamps out-of-range values and is a progressive enhancement, so the numbered links work even without JavaScript.
+
 ## Social links
 
 Home page social links render as icon-only buttons. Configure them in `blogTheme(...)`:
