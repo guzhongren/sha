@@ -1,0 +1,39 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+
+  "timezone": "Asia/Shanghai",
+
+  "pruneStaleBranches": true,
+  "dependencyDashboard": true,
+  "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "description": "Non-destructive update: PR is created after 7 days of release",
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true,
+      "automergeType": "pr",
+      "minimumReleaseAge": "7 days",
+      "internalChecksFilter": "strict"
+    },
+    {
+      "description": "Destructive update: PR created after 14 days of release",
+      "matchUpdateTypes": ["major"],
+      "minimumReleaseAge": "14 days",
+      "internalChecksFilter": "strict",
+      "automerge": false
+    },
+    {
+      "description": "Vulnerability alerts",
+      "matchPackageNames": ["*"],
+      "matchUpdateTypes": ["patch", "minor", "major"],
+      "automerge": true,
+      "automergeType": "pr",
+      "minimumReleaseAge": null
+    }
+  ],
+
+  "vulnerabilityAlerts": {
+    "enabled": true
+  }
+}
