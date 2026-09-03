@@ -18,6 +18,9 @@
   --text-body: var(--color-gray-700);
   --text-muted: var(--color-gray-500);
   --accent: var(--color-sky-500);
+  --callout-tip: var(--color-emerald-600);
+  --callout-warning: var(--color-amber-600);
+  --callout-question: var(--color-violet-600);
 }
 
 .dark {
@@ -31,6 +34,9 @@
   --text-body: var(--color-gray-300);
   --text-muted: var(--color-gray-400);
   --accent: var(--color-sky-400);
+  --callout-tip: var(--color-emerald-400);
+  --callout-warning: var(--color-amber-400);
+  --callout-question: var(--color-violet-400);
 }
 
 html {
@@ -681,6 +687,39 @@ a {
   border-radius: 0.75rem;
   background: var(--panel-bg);
   padding: 1rem 1.25rem;
+}
+
+.prose .callout-tip {
+  border-left: 3px solid var(--callout-tip);
+}
+
+.prose .callout-warning {
+  border-left: 3px solid var(--callout-warning);
+}
+
+.prose .callout-question {
+  border-left: 3px solid var(--callout-question);
+}
+
+.prose .callout > p:first-child {
+  font-weight: 650;
+  color: var(--text-strong);
+}
+
+.prose .callout-tip > p:first-child {
+  color: var(--callout-tip);
+}
+
+.prose .callout-warning > p:first-child {
+  color: var(--callout-warning);
+}
+
+.prose .callout-question > p:first-child {
+  color: var(--callout-question);
+}
+
+.prose .callout > p + p {
+  margin-top: 0.5rem;
 }
 
 .prose ul,

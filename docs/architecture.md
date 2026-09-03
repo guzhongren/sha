@@ -168,7 +168,7 @@ The current design intent is a refined technical writing blog, not a marketing h
 
 - `example/astro.config.mjs` imports Tailwind Vite plugin, `blogTheme`, and MDX. `blogTheme` is registered before `mdx()` so content shortcodes are preprocessed before MDX parsing.
 - `example/src/content.config.ts` re-exports theme collections.
-- `example/src/content/posts` contains published, featured, no-cover, diagram, ECharts, emoji, and draft examples.
+- `example/src/content/posts` contains published, featured, no-cover, diagram, ECharts, emoji, callout, and draft examples.
 - `example/public` contains sample avatar and cover assets.
 
 Use the example app for development, verification, and documentation examples.
@@ -188,6 +188,7 @@ Current scope:
 - Pagefind full-text search page and global search dialog.
 - Image viewer for post content images with zoom and pan.
 - Link references: numbered external links with a "参考" section at the end of posts.
+- Callouts: `[!tip]`, `[!warning]`, and `[!question]` blockquote markers render as styled panels with type-specific accents.
 
 Known limits:
 
