@@ -9,6 +9,7 @@ import sitemap from "@astrojs/sitemap";
 import * as pagefind from "pagefind";
 import remarkGemoji from "remark-gemoji";
 import { normalizeOptions } from "./config";
+import rehypeCallouts from "./rehype-callouts";
 import rehypeLinkReferences from "./rehype-link-references";
 import { transformContentShortcodes } from "./shortcodes";
 import { SIMPLE_ICONS_INCLUDE } from "./socialIcons";
@@ -103,7 +104,7 @@ export default function blogTheme(options: BlogThemeOptions): AstroIntegration {
           markdown: {
             processor: unified({
               remarkPlugins: [remarkGemoji],
-              rehypePlugins: config.linkReferences ? [rehypeLinkReferences] : [],
+              rehypePlugins: [rehypeCallouts, ...(config.linkReferences ? [rehypeLinkReferences] : [])],
             }),
           },
           vite: {
