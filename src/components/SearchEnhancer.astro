@@ -5,7 +5,7 @@
   <section class="search-modal" data-search-root data-search-mode="modal" data-search-limit="8">
     <div class="search-modal-header">
       <p class="utility-note text-xs">full-text search</p>
-      <button class="search-close" type="button" data-search-close aria-label="Close search">Esc</button>
+      <button class="btn btn-sm" type="button" data-search-close aria-label="Close search">Esc</button>
     </div>
     <label class="search-field">
       <span class="sr-only">Search posts</span>
@@ -100,6 +100,7 @@
               id="${list.id}-option-${index}"
               href="${escapeHtml(result.url)}"
               data-search-result
+              data-active="false"
               role="option"
               aria-selected="false"
             >
@@ -134,7 +135,7 @@
       activeIndex = count === 0 ? -1 : ((index % count) + count) % count;
       links.forEach((link, linkIndex) => {
         const isActive = linkIndex === activeIndex;
-        link.classList.toggle("is-active", isActive);
+        link.dataset.active = isActive ? "true" : "false";
         link.setAttribute("aria-selected", isActive ? "true" : "false");
       });
       return links[activeIndex];
@@ -161,7 +162,7 @@
     }
 
     function activeResult() {
-      return list.querySelector("[data-search-result].is-active");
+      return list.querySelector('[data-search-result][data-active="true"]');
     }
 
     async function runSearch() {

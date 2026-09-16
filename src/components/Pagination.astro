@@ -1,4 +1,7 @@
 ---
+import config from "virtual:blog-theme/config";
+import { accentClasses } from "../accent";
+
 interface Props {
   current: number;
   total: number;
@@ -6,6 +9,7 @@ interface Props {
 }
 
 const { current, total, base } = Astro.props;
+const accent = accentClasses(config.theme.accent);
 
 /**
  * Windowed page list: keep the first/last pages and the neighbors of the
@@ -33,11 +37,11 @@ function pageHref(page: number) {
 
 {
   total > 1 && (
-    <nav class="mt-12 border-t border-[var(--border-soft)] pt-8" aria-label="Pagination">
+    <nav class="mt-12 border-t border-gray-950/[0.08] pt-8 dark:border-white/10" aria-label="Pagination">
       <div class="flex flex-col items-center gap-3 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:gap-4">
         {current > 1 ? (
           <a
-            class="inline-flex h-8 items-center gap-1.5 rounded-full border border-[var(--border-soft)] px-3 text-sm font-medium text-[var(--text-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] sm:justify-self-start"
+            class:list={["btn", accent.hoverBorder, accent.hoverText, "sm:justify-self-start"]}
             href={current === 2 ? base : `${base}page/${current - 1}/`}
           >
             <span aria-hidden="true">←</span>
@@ -51,13 +55,13 @@ function pageHref(page: number) {
           {pageItems(current, total).map((item) =>
             item === "…" ? (
               <li aria-hidden="true">
-                <span class="grid size-8 place-items-center text-sm text-[var(--text-muted)]">…</span>
+                <span class="grid size-8 place-items-center text-sm text-gray-500 dark:text-gray-400">…</span>
               </li>
             ) : item === current ? (
               <li>
                 <span
                   aria-current="page"
-                  class="grid size-8 place-items-center rounded-full border border-[var(--accent)] bg-[color-mix(in_oklab,var(--accent)_14%,transparent)] text-sm font-medium text-[var(--accent)]"
+                  class:list={["btn btn-page font-medium", accent.border, accent.text, accent.softBg]}
                 >
                   {item}
                 </span>
@@ -65,7 +69,7 @@ function pageHref(page: number) {
             ) : (
               <li>
                 <a
-                  class="grid size-8 place-items-center rounded-full border border-[var(--border-soft)] text-sm text-[var(--text-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                  class:list={["btn btn-page", accent.hoverBorder, accent.hoverText]}
                   href={pageHref(item)}
                 >
                   {item}
@@ -77,7 +81,7 @@ function pageHref(page: number) {
 
         {current < total ? (
           <a
-            class="inline-flex h-8 items-center gap-1.5 rounded-full border border-[var(--border-soft)] px-3 text-sm font-medium text-[var(--text-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] sm:justify-self-end"
+            class:list={["btn", accent.hoverBorder, accent.hoverText, "sm:justify-self-end"]}
             href={`${base}page/${current + 1}/`}
           >
             Older posts
@@ -88,11 +92,11 @@ function pageHref(page: number) {
         )}
       </div>
 
-      <div class="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-sm text-[var(--text-muted)]">
+      <div class="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-sm text-gray-500 dark:text-gray-400">
         <span>
           Page {current} of {total}
         </span>
-        <span class="text-[var(--border-soft)]" aria-hidden="true">/</span>
+        <span class="text-gray-950/[0.08] dark:text-white/10" aria-hidden="true">/</span>
 
         <form
           class="flex flex-wrap items-center gap-2"
@@ -103,10 +107,10 @@ function pageHref(page: number) {
           data-page-base={base}
           hidden
         >
-          <label for="pagination-page-input" class="text-[var(--text-muted)]">Go to page</label>
+          <label for="pagination-page-input" class="text-gray-500 dark:text-gray-400">Go to page</label>
           <input
             id="pagination-page-input"
-            class="h-8 w-16 rounded-full border border-[var(--border-soft)] bg-transparent px-3 text-center text-[var(--text-strong)] focus:border-[var(--accent)]"
+            class:list={["h-8 w-16 rounded-full border border-gray-950/[0.08] bg-transparent px-3 text-center text-gray-950 dark:border-white/10 dark:text-white", accent.focusBorder]}
             type="number"
             min="1"
             max={total}
@@ -116,7 +120,7 @@ function pageHref(page: number) {
           />
           <button
             type="submit"
-            class="h-8 cursor-pointer rounded-full border border-[var(--border-soft)] px-3 font-medium text-[var(--text-muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+            class:list={["btn", accent.hoverBorder, accent.hoverText]}
           >
             Go
           </button>

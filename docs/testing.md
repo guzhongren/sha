@@ -11,12 +11,34 @@ Run commands from the repository root unless noted otherwise.
 Run these before committing changes:
 
 ```sh
+pnpm run check:styles
 ASTRO_TELEMETRY_DISABLED=1 ./node_modules/.bin/astro sync --root example
 ASTRO_TELEMETRY_DISABLED=1 ./node_modules/.bin/astro check --root example
 ASTRO_TELEMETRY_DISABLED=1 ./node_modules/.bin/astro build --root example
 ```
 
 For small style-only changes, `check` and `build` are usually sufficient, but `sync` should be run after content schema, route, or integration changes.
+
+`astro check` currently fails on TypeScript 7.x, which does not expose the programmatic compiler API `astro check` needs; CI runs it with `|| true` until a compatible TypeScript is available. Treat `astro build` and the e2e suite as the binding checks.
+
+## Style Architecture Checks
+
+`pnpm run check:styles` runs `scripts/check-styles.mjs`, a dependency-free guard over `src/`. It fails when:
+
+- a template reads a custom property (`text-[var(--text-muted)]`);
+- a removed color property (`--page-bg`, `--panel-bg`, `--border-soft`, `--text-*`, `--callout-*`) reappears;
+- a class name is assembled dynamically (`class={`btn-${variant}`}` or `"bg-" + color`);
+- an `is-*` state class is used instead of a `data-*` attribute.
+
+`src/styles/global.css` may only read `--accent`, `--color-*` and `--font-*`. The guard runs in the CI `check` job.
+
+Style refactors should also confirm by inspection that the built stylesheet no longer carries the old properties and that decoration still renders:
+
+```sh
+rg -n -- '--(page-bg|panel-bg|border-soft|text-muted)' example/dist/_astro/*.css || echo "no legacy properties"
+```
+
+Then spot check the home page, a post page, the search page and the posts pagination in light and dark mode; the decorated surfaces (page gutters, section frame corner ticks, post hover rule, code frames) must keep their previous appearance.
 
 When changes affect routing or links, also verify the GitHub Pages subpath build, which sets `base` to `/<repo>/`:
 

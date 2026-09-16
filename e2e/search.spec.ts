@@ -61,11 +61,11 @@ test.describe("search page", () => {
     await expect(results.first()).toBeVisible({ timeout: 30_000 });
 
     // The first result is highlighted as soon as results render.
-    await expect(results.first()).toHaveClass(/is-active/);
+    await expect(results.first()).toHaveAttribute("data-active", "true");
 
     await page.keyboard.press("ArrowDown");
-    await expect(results.nth(1)).toHaveClass(/is-active/);
-    await expect(results.first()).not.toHaveClass(/is-active/);
+    await expect(results.nth(1)).toHaveAttribute("data-active", "true");
+    await expect(results.first()).toHaveAttribute("data-active", "false");
     await expect(input).toBeFocused();
 
     const href = await results.nth(1).getAttribute("href");
@@ -84,9 +84,9 @@ test.describe("search page", () => {
     expect(await results.count()).toBeGreaterThan(1);
 
     await page.keyboard.press("ArrowUp");
-    await expect(results.last()).toHaveClass(/is-active/);
+    await expect(results.last()).toHaveAttribute("data-active", "true");
     await page.keyboard.press("ArrowDown");
-    await expect(results.first()).toHaveClass(/is-active/);
+    await expect(results.first()).toHaveAttribute("data-active", "true");
   });
 
   test("keeps focus in the search box so typing continues after arrow keys", async ({ page }) => {
@@ -181,12 +181,12 @@ test.describe("global search dialog", () => {
     await input.fill("Astro");
     await expect(results.first()).toBeVisible({ timeout: 30_000 });
 
-    await expect(results.first()).toHaveClass(/is-active/);
+    await expect(results.first()).toHaveAttribute("data-active", "true");
     await expect(input).toHaveAttribute("aria-activedescendant", await results.first().getAttribute("id"));
 
     await page.keyboard.press("ArrowDown");
-    await expect(results.nth(1)).toHaveClass(/is-active/);
-    await expect(results.first()).not.toHaveClass(/is-active/);
+    await expect(results.nth(1)).toHaveAttribute("data-active", "true");
+    await expect(results.first()).toHaveAttribute("data-active", "false");
 
     // Tab hands focus to the highlighted result instead of the first one.
     await page.keyboard.press("Tab");
@@ -194,7 +194,7 @@ test.describe("global search dialog", () => {
 
     await input.click();
     await page.keyboard.press("ArrowDown");
-    await expect(results.nth(2)).toHaveClass(/is-active/);
+    await expect(results.nth(2)).toHaveAttribute("data-active", "true");
 
     const href = await results.nth(2).getAttribute("href");
     await page.keyboard.press("Enter");

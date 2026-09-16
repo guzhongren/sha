@@ -93,6 +93,27 @@ Post files can be placed directly under `src/content/posts` or nested by date, f
 
 Set `routes: false` to disable injected pages and use the exported components manually.
 
+## Theming and styles
+
+The theme follows the `design.md` class-naming architecture: colors come from the built-in Tailwind palette, reusable UI patterns live in `@layer components` classes, and templates use stock utilities for local tweaks. Dark mode is class based, so `dark:` utilities follow the `.dark` class the theme toggles on `<html>`.
+
+Accent color is configurable and is emitted as a `data-accent` attribute plus accent utility classes:
+
+```js
+blogTheme({
+  theme: {
+    defaultMode: "system", // "system" | "light" | "dark"
+    accent: "sky", // "sky" | "teal" | "violet" | "pink"
+  },
+});
+```
+
+`--accent` is the only custom color property the theme exposes; it is set from a Tailwind palette token and drives decoration that class names cannot reach (focus rings, gradients, corner ticks, hover rules). Everything else is colored with Tailwind utilities.
+
+To restyle the theme, override Tailwind utilities in your own stylesheet or wrap the exported components. The theme no longer publishes per-color CSS variables (`--page-bg`, `--panel-bg`, `--border-soft`, `--text-*`, `--callout-*`); the equivalent selectors are `bg-white dark:bg-gray-950`, `bg-gray-950/[0.025] dark:bg-white/5`, `border-gray-950/[0.08] dark:border-white/10` and `text-gray-950 dark:text-white` / `text-gray-500 dark:text-gray-400`.
+
+Run `pnpm run check:styles` when changing styles or templates: it enforces the architecture rules (Tailwind palette utilities, no dynamic class names, `data-*` state attributes).
+
 ## Pagination
 
 The posts archive (`/posts`) paginates when there are more posts than `postsPerPage`. The pagination block keeps the previous/next links, adds clickable page numbers (collapsed with ellipsis when there are many pages), and marks the current page. A `Go to page` input lets readers type a page number and jump straight to it; it clamps out-of-range values and is a progressive enhancement, so the numbered links work even without JavaScript.

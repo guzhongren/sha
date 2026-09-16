@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { DARK_CLASS } from "./helpers";
 
 // This spec only runs in the mobile-chromium project (see playwright.config.ts).
 test.describe("mobile layout", () => {
@@ -38,12 +39,12 @@ test.describe("mobile layout", () => {
     // OS is light, so the first click leaves system for dark.
     await toggle.click();
     await expect(html).toHaveAttribute("data-theme", "dark");
-    await expect(html).toHaveClass(/dark/);
+    await expect(html).toHaveClass(DARK_CLASS);
     expect(await page.evaluate(() => localStorage.getItem("theme"))).toBe("dark");
 
     await toggle.click();
     await expect(html).toHaveAttribute("data-theme", "light");
-    await expect(html).not.toHaveClass(/dark/);
+    await expect(html).not.toHaveClass(DARK_CLASS);
     expect(await page.evaluate(() => localStorage.getItem("theme"))).toBe("light");
   });
 

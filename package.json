@@ -31,6 +31,7 @@
     "dev": "cd example && astro dev",
     "sync": "cd example && astro sync",
     "check": "cd example && astro check",
+    "check:styles": "node scripts/check-styles.mjs",
     "build": "cd example && astro build",
     "preview": "cd example && astro preview",
     "test:e2e": "ASTRO_TELEMETRY_DISABLED=1 pnpm build && ASTRO_TELEMETRY_DISABLED=1 playwright test"

@@ -25,6 +25,7 @@ jobs:
 
       - run: pnpm install --no-frozen-lockfile --ignore-scripts
       - run: pnpm run sync
+      - run: pnpm run check:styles
       - run: pnpm run check || true
 
   e2e:

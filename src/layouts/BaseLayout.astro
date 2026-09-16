@@ -30,7 +30,12 @@ gtag('config', ${JSON.stringify(ga.id)}${Object.keys(ga.config).length > 0 ? `, 
 ---
 
 <!doctype html>
-<html lang={config.site.lang} data-default-theme={defaultMode}>
+<html
+  lang={config.site.lang}
+  data-default-theme={defaultMode}
+  data-accent={config.theme.accent}
+  class="scheme-light-dark bg-white font-sans text-gray-700 dark:bg-gray-950 dark:text-gray-300 dark:scheme-dark"
+>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -120,14 +125,14 @@ gtag('config', ${JSON.stringify(ga.id)}${Object.keys(ga.config).length > 0 ? `, 
       })();
     </script>
   </head>
-  <body class="min-h-dvh bg-[var(--page-bg)] text-[var(--text-body)] antialiased">
+  <body class="page-canvas min-h-dvh min-w-80 antialiased">
     <Header />
     <div class="mx-auto grid min-h-dvh max-w-7xl grid-cols-1 pt-14 lg:grid-cols-[2rem_minmax(0,1fr)_2rem]">
-      <div class="gutter-stripes hidden border-x border-[var(--border-soft)] lg:block" aria-hidden="true"></div>
+      <div class="page-gutter gutter-stripes" aria-hidden="true"></div>
       <main id="main-content">
         <slot />
       </main>
-      <div class="gutter-stripes hidden border-x border-[var(--border-soft)] lg:block" aria-hidden="true"></div>
+      <div class="page-gutter gutter-stripes" aria-hidden="true"></div>
     </div>
     <Footer />
     <EmojiEnhancer />

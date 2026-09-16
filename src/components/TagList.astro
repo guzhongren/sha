@@ -1,4 +1,6 @@
 ---
+import config from "virtual:blog-theme/config";
+import { accentClasses } from "../accent";
 import { withBase } from "../utils";
 
 interface Props {
@@ -6,13 +8,14 @@ interface Props {
 }
 
 const { tags } = Astro.props;
+const accent = accentClasses(config.theme.accent);
 ---
 
 {
   tags.length > 0 && (
     <div class="flex flex-wrap gap-2">
       {tags.map((tag) => (
-        <a class="rounded-full border border-[var(--border-soft)] px-2.5 py-1 font-mono text-xs text-[var(--text-muted)] hover:text-[var(--accent)]" href={withBase(`/tags/${tag}`)}>
+        <a class:list={["pill", accent.hoverText]} href={withBase(`/tags/${tag}`)}>
           {tag}
         </a>
       ))}

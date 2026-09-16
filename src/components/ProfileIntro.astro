@@ -8,10 +8,10 @@ import config from "virtual:blog-theme/config";
   <div class="section-frame rounded-xl px-4 py-10 sm:px-8">
   <div class="utility-note mb-5 text-xs">prose dark:system latest-posts</div>
   <Avatar size="lg" class="mx-auto profile-mark" />
-  <h1 class="mt-5 text-2xl font-semibold tracking-tight text-[var(--text-strong)]">{config.site.name}</h1>
-  {config.author.headline && <p class="mt-3 text-sm text-[var(--text-body)]">{config.author.headline}</p>}
-  {config.author.bio && <p class="mx-auto mt-4 max-w-2xl text-sm/7 text-[var(--text-muted)]">{config.author.bio}</p>}
-  <div class="mt-5 flex justify-center gap-4 text-[var(--text-muted)]">
+  <h1 class="mt-5 text-2xl font-semibold tracking-tight text-gray-950 dark:text-white">{config.site.name}</h1>
+  {config.author.headline && <p class="mt-3 text-sm text-gray-700 dark:text-gray-300">{config.author.headline}</p>}
+  {config.author.bio && <p class="mx-auto mt-4 max-w-2xl text-sm/7 text-gray-500 dark:text-gray-400">{config.author.bio}</p>}
+  <div class="mt-5 flex justify-center gap-4 text-gray-500 dark:text-gray-400">
     {config.socialLinks.map((link) => (
       <SocialLink icon={link.icon} href={link.href} label={link.label} />
     ))}
