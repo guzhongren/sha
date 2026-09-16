@@ -18,10 +18,24 @@ const posts = sortPosts((await getCollection("posts")).filter(isPublished));
     <div class="search-page mt-8" data-search-root data-search-mode="page" data-search-limit="20">
       <label class="search-field">
         <span class="sr-only">Search posts</span>
-        <input data-search-input type="search" placeholder="Search posts..." autocomplete="off" />
+        <input
+          data-search-input
+          type="search"
+          placeholder="Search posts..."
+          autocomplete="off"
+          role="combobox"
+          aria-autocomplete="list"
+          aria-expanded="false"
+        />
       </label>
       <p class="search-status" data-search-status>Type at least 2 characters to search.</p>
-      <ol class="search-results" data-search-results></ol>
+      <ol
+        class="search-results"
+        data-search-results
+        id="search-results-page"
+        role="listbox"
+        aria-label="Search results"
+      ></ol>
       <div data-search-fallback>
         <div class="rule-fade my-8"></div>
         <p class="font-mono text-xs font-medium uppercase tracking-widest text-[var(--text-muted)]">All published posts</p>

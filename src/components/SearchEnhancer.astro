@@ -9,10 +9,24 @@
     </div>
     <label class="search-field">
       <span class="sr-only">Search posts</span>
-      <input data-search-input type="search" placeholder="Search posts..." autocomplete="off" />
+      <input
+        data-search-input
+        type="search"
+        placeholder="Search posts..."
+        autocomplete="off"
+        role="combobox"
+        aria-autocomplete="list"
+        aria-expanded="false"
+      />
     </label>
     <p class="search-status" data-search-status>Type at least 2 characters to search.</p>
-    <ol class="search-results" data-search-results></ol>
+    <ol
+      class="search-results"
+      data-search-results
+      id="search-results-modal"
+      role="listbox"
+      aria-label="Search results"
+    ></ol>
   </section>
 </dialog>
 
@@ -22,6 +36,7 @@
   const pagefindPath = withBase("/pagefind/pagefind.js");
   let pagefindModule;
   let pagefindLoad;
+  let searchRootCounter = 0;
 
   function loadPagefind() {
     pagefindLoad ??= import(/* @vite-ignore */ pagefindPath).then((module) => {
@@ -71,7 +86,7 @@
 
     status.textContent = `${results.length} result${results.length === 1 ? "" : "s"}`;
     list.innerHTML = results
-      .map((result) => {
+      .map((result, index) => {
         const title = result.meta?.title || result.url;
         const category = result.meta?.category;
         const date = result.meta?.date;
@@ -79,8 +94,15 @@
         const excerpt = result.excerpt || result.sub_results?.[0]?.excerpt || "";
 
         return `
-          <li>
-            <a class="search-result" href="${escapeHtml(result.url)}" data-search-result>
+          <li role="presentation">
+            <a
+              class="search-result"
+              id="${list.id}-option-${index}"
+              href="${escapeHtml(result.url)}"
+              data-search-result
+              role="option"
+              aria-selected="false"
+            >
               <span class="search-result-meta">${escapeHtml(meta)}</span>
               <span class="search-result-title">${highlight(title, query)}</span>
               ${excerpt ? `<span class="search-result-excerpt">${excerpt}</span>` : ""}
@@ -99,9 +121,48 @@
     const limit = Number(root.dataset.searchLimit || 20);
     let timer;
     let token = 0;
+    let activeIndex = -1;
 
     if (!input || !status || !list || root.dataset.searchReady === "true") return;
     root.dataset.searchReady = "true";
+    if (!list.id) list.id = `search-results-${(searchRootCounter += 1)}`;
+    input.setAttribute("aria-controls", list.id);
+
+    function setActiveResult(index) {
+      const links = list.querySelectorAll("[data-search-result]");
+      const count = links.length;
+      activeIndex = count === 0 ? -1 : ((index % count) + count) % count;
+      links.forEach((link, linkIndex) => {
+        const isActive = linkIndex === activeIndex;
+        link.classList.toggle("is-active", isActive);
+        link.setAttribute("aria-selected", isActive ? "true" : "false");
+      });
+      return links[activeIndex];
+    }
+
+    function highlightResult(index, { focus = false, scroll = true } = {}) {
+      const active = setActiveResult(index);
+      if (!active) {
+        input.removeAttribute("aria-activedescendant");
+        input.setAttribute("aria-expanded", "false");
+        return;
+      }
+      input.setAttribute("aria-activedescendant", active.id);
+      input.setAttribute("aria-expanded", "true");
+      if (scroll) active.scrollIntoView({ block: "nearest" });
+      if (focus) active.focus({ preventScroll: true });
+    }
+
+    function clearResults() {
+      list.innerHTML = "";
+      activeIndex = -1;
+      input.removeAttribute("aria-activedescendant");
+      input.setAttribute("aria-expanded", "false");
+    }
+
+    function activeResult() {
+      return list.querySelector("[data-search-result].is-active");
+    }
 
     async function runSearch() {
       const query = input.value.trim();
@@ -109,7 +170,7 @@
       const current = token;
 
       if (query.length < 2) {
-        list.innerHTML = "";
+        clearResults();
         status.textContent = "Type at least 2 characters to search.";
         setFallback(root, root.dataset.searchMode === "page");
         return;
@@ -124,9 +185,10 @@
         const data = await Promise.all(search.results.slice(0, limit).map((result) => result.data()));
         if (current !== token) return;
         renderResults(root, data, query);
+        highlightResult(0, { scroll: false });
       } catch (error) {
         if (current !== token) return;
-        list.innerHTML = "";
+        clearResults();
         status.textContent = "Search index is available after a production build.";
         setFallback(root, root.dataset.searchMode === "page");
         console.error(error);
@@ -139,6 +201,37 @@
     });
     input.addEventListener("focus", () => {
       loadPagefind().catch(() => undefined);
+    });
+
+    root.addEventListener("keydown", (event) => {
+      if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
+
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        const count = list.querySelectorAll("[data-search-result]").length;
+        if (count === 0) return;
+        event.preventDefault();
+        const delta = event.key === "ArrowDown" ? 1 : -1;
+        const next = activeIndex < 0 ? (delta === 1 ? 0 : count - 1) : activeIndex + delta;
+        highlightResult(next, { focus: event.target !== input });
+        return;
+      }
+
+      if (event.target !== input) return;
+
+      if (event.key === "Enter") {
+        const active = activeResult();
+        if (!active) return;
+        event.preventDefault();
+        active.click();
+        return;
+      }
+
+      if (event.key === "Tab" && !event.shiftKey) {
+        const active = activeResult();
+        if (!active) return;
+        event.preventDefault();
+        active.focus();
+      }
     });
 
     root.addEventListener("click", (event) => {
