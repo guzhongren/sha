@@ -2,10 +2,10 @@
 ---
 
 <dialog class="image-viewer-dialog" data-image-viewer-dialog aria-label="Image viewer">
-  <div class="image-viewer-stage" data-image-viewer-stage>
+  <div class="image-viewer-stage" data-image-viewer-stage data-grabbing="false">
     <img data-image-viewer-image alt="" draggable="false" />
   </div>
-  <button class="image-viewer-close" type="button" data-image-viewer-close aria-label="Close">Esc</button>
+  <button class="btn btn-sm" type="button" data-image-viewer-close aria-label="Close">Esc</button>
   <p class="utility-note image-viewer-hint">drag to pan · scroll to zoom</p>
 </dialog>
 
@@ -110,7 +110,7 @@
     if (pointers.size === 1) {
       pointerStart = { x: event.clientX, y: event.clientY, tx, ty };
       dragMoved = false;
-      stage.classList.add("is-grabbing");
+      stage.dataset.grabbing = "true";
     } else if (pointers.size === 2) {
       const [first, second] = [...pointers.values()];
       pinch = {
@@ -159,7 +159,7 @@
     if (pointers.size === 0) {
       pointerStart = null;
       pinch = null;
-      stage?.classList.remove("is-grabbing");
+      if (stage) stage.dataset.grabbing = "false";
     } else if (pointers.size === 1 && pinch) {
       const [remaining] = [...pointers.values()];
       pointerStart = { x: remaining.x, y: remaining.y, tx, ty };
@@ -209,7 +209,7 @@
     pointerStart = null;
     pinch = null;
     dragMoved = false;
-    stage?.classList.remove("is-grabbing");
+    if (stage) stage.dataset.grabbing = "false";
   });
 
   window.addEventListener("resize", () => {

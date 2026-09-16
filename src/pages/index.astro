@@ -4,22 +4,24 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import ProfileIntro from "../components/ProfileIntro.astro";
 import PostList from "../components/PostList.astro";
 import config from "virtual:blog-theme/config";
+import { accentClasses } from "../accent";
 import { isPublished, sortPosts, withBase } from "../utils";
 
 const allPosts = sortPosts((await getCollection("posts")).filter(isPublished));
 const posts = allPosts.slice(0, config.postsPerPage);
+const accent = accentClasses(config.theme.accent);
 ---
 
 <BaseLayout title="Home" description={config.site.description}>
   <ProfileIntro />
   <section class="mx-auto max-w-5xl px-4 pb-20 sm:px-6">
-    <div class="line-y bg-[var(--panel-bg)] px-3 py-5 sm:px-4">
-      <p class="font-mono text-xs font-medium uppercase tracking-widest text-[var(--text-muted)]">Latest writing</p>
+    <div class="line-y bg-gray-950/[0.025] px-3 py-5 sm:px-4 dark:bg-white/5">
+      <p class="eyebrow">Latest writing</p>
     </div>
     <PostList posts={posts} featuredFirst={true} />
     {allPosts.length > config.postsPerPage && (
       <div class="mt-10 text-center">
-        <a class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--accent)]" href={withBase("/posts/")}>
+        <a class:list={["text-sm font-medium text-gray-500 dark:text-gray-400", accent.hoverText]} href={withBase("/posts/")}>
           View all posts →
         </a>
       </div>

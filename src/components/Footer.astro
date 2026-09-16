@@ -3,13 +3,13 @@ import config from "virtual:blog-theme/config";
 import { withBase } from "../utils";
 ---
 
-<footer class="border-t border-[var(--border-soft)] bg-[var(--page-bg)]">
-  <div class="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-10 text-sm text-[var(--text-muted)] sm:flex-row sm:items-center sm:justify-between sm:px-6">
+<footer class="border-t border-gray-950/[0.08] bg-white dark:border-white/10 dark:bg-gray-950">
+  <div class="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-10 text-sm text-gray-500 sm:flex-row sm:items-center sm:justify-between sm:px-6 dark:text-gray-400">
     <p>&copy; {new Date().getFullYear()} {config.author.name}</p>
     <div class="flex flex-wrap gap-4">
       {config.nav.map((item) => (
         <a
-          class="hover:text-[var(--text-strong)]"
+          class="hover:text-gray-950 dark:hover:text-white"
           href={withBase(item.href)}
           target={item.newTab ? "_blank" : undefined}
           rel={item.newTab ? "noopener noreferrer" : undefined}

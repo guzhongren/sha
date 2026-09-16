@@ -7,6 +7,15 @@ import { nameToEmoji } from "gemoji";
  */
 export const POSTS_PER_PAGE = 10;
 
+/**
+ * Matches the standalone `.dark` class on `<html>`.
+ *
+ * `<html>` also carries `dark:` variant utilities (for example
+ * `dark:bg-gray-950`), so a loose `/dark/` regex would match even in light
+ * mode. Keep this anchored to whole class names.
+ */
+export const DARK_CLASS = /(^|\s)dark(\s|$)/;
+
 /** Title of the draft fixture post (example/src/content/posts/draft-note.mdx). */
 export const DRAFT_TITLE = "这是一篇草稿";
 

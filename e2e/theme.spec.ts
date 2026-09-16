@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { DARK_CLASS } from "./helpers";
 
 test.describe("theme", () => {
   test("defaults to system and respects prefers-color-scheme", async ({ page }) => {
@@ -6,11 +7,11 @@ test.describe("theme", () => {
     await page.goto("/");
     await expect(page.locator("html")).toHaveAttribute("data-default-theme", "system");
     await expect(page.locator("html")).toHaveAttribute("data-theme", "system");
-    await expect(page.locator("html")).toHaveClass(/dark/);
+    await expect(page.locator("html")).toHaveClass(DARK_CLASS);
 
     await page.emulateMedia({ colorScheme: "light" });
     await page.reload();
-    await expect(page.locator("html")).not.toHaveClass(/dark/);
+    await expect(page.locator("html")).not.toHaveClass(DARK_CLASS);
   });
 
   test("toggle switches only between light and dark and persists", async ({ page }) => {
@@ -25,17 +26,17 @@ test.describe("theme", () => {
     // OS is light, so the first click leaves system and goes to dark.
     await toggle.click();
     await expect(html).toHaveAttribute("data-theme", "dark");
-    await expect(html).toHaveClass(/dark/);
+    await expect(html).toHaveClass(DARK_CLASS);
     expect(await page.evaluate(() => localStorage.getItem("theme"))).toBe("dark");
 
     await toggle.click();
     await expect(html).toHaveAttribute("data-theme", "light");
-    await expect(html).not.toHaveClass(/dark/);
+    await expect(html).not.toHaveClass(DARK_CLASS);
     expect(await page.evaluate(() => localStorage.getItem("theme"))).toBe("light");
 
     await toggle.click();
     await expect(html).toHaveAttribute("data-theme", "dark");
-    await expect(html).toHaveClass(/dark/);
+    await expect(html).toHaveClass(DARK_CLASS);
     expect(await page.evaluate(() => localStorage.getItem("theme"))).toBe("dark");
   });
 
@@ -44,7 +45,7 @@ test.describe("theme", () => {
     await page.evaluate(() => localStorage.setItem("theme", "dark"));
     await page.reload();
     await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-    await expect(page.locator("html")).toHaveClass(/dark/);
+    await expect(page.locator("html")).toHaveClass(DARK_CLASS);
   });
 
   test("every toggle click gives visible feedback even when system matches the OS", async ({ page }) => {
@@ -85,5 +86,34 @@ test.describe("theme", () => {
     const dark = await page.evaluate(() => getComputedStyle(document.documentElement).backgroundColor);
 
     expect(light).not.toBe(dark);
+  });
+
+  test("accent option drives the accent property in both modes", async ({ page }) => {
+    await page.goto("/");
+
+    const html = page.locator("html");
+    await expect(html).toHaveAttribute("data-accent", "sky");
+
+    const accent = () =>
+      page.evaluate(() =>
+        getComputedStyle(document.documentElement).getPropertyValue("--accent").trim(),
+      );
+
+    // The configured accent resolves to a palette token.
+    const configured = await accent();
+    expect(configured).not.toBe("");
+
+    // Switching the accent rewires the property that CSS-only decorations use.
+    await page.evaluate(() => {
+      document.documentElement.dataset.accent = "teal";
+    });
+    const teal = await accent();
+    expect(teal).not.toBe(configured);
+
+    // Dark mode keeps its own accent value.
+    await page.evaluate(() => {
+      document.documentElement.classList.add("dark");
+    });
+    expect(await accent()).not.toBe(teal);
   });
 });

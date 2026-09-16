@@ -3,19 +3,22 @@ import config from "virtual:blog-theme/config";
 import { Icon } from "astro-icon/components";
 import Avatar from "./Avatar.astro";
 import ThemeToggle from "./ThemeToggle.astro";
+import { accentClasses } from "../accent";
 import { withBase } from "../utils";
+
+const accent = accentClasses(config.theme.accent);
 ---
 
-<header class="fixed inset-x-0 top-0 z-50 border-b border-[var(--border-soft)] bg-[var(--page-bg)]/90 backdrop-blur">
+<header class="fixed inset-x-0 top-0 z-50 border-b border-gray-950/[0.08] bg-white/90 backdrop-blur dark:border-white/10 dark:bg-gray-950/90">
   <div class="mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
-    <a href={withBase("/")} class="flex min-w-0 items-center gap-2 font-semibold text-[var(--text-strong)]" aria-label={config.site.name}>
+    <a href={withBase("/")} class="flex min-w-0 items-center gap-2 font-semibold text-gray-950 dark:text-white" aria-label={config.site.name}>
       <Avatar size="sm" />
       <span class="truncate">{config.site.name}</span>
     </a>
-    <nav class="header-nav hidden items-center text-sm font-medium text-[var(--text-muted)] md:flex" aria-label="Primary">
+    <nav class="header-nav hidden items-center text-sm font-medium text-gray-500 md:flex dark:text-gray-400" aria-label="Primary">
       {config.nav.map((item) => (
         <a
-          class="hover:text-[var(--text-strong)]"
+          class="hover:text-gray-950 dark:hover:text-white"
           href={withBase(item.href)}
           target={item.newTab ? "_blank" : undefined}
           rel={item.newTab ? "noopener noreferrer" : undefined}
@@ -25,7 +28,12 @@ import { withBase } from "../utils";
       ))}
       {
         config.routes.search && (
-          <button class="search-trigger" type="button" data-search-trigger aria-label="Open search">
+          <button
+            class:list={["search-trigger", accent.hoverBorder, "hover:text-gray-950 dark:hover:text-white"]}
+            type="button"
+            data-search-trigger
+            aria-label="Open search"
+          >
             <span>Search</span>
             <kbd>⌘K</kbd>
           </button>
@@ -34,11 +42,11 @@ import { withBase } from "../utils";
       <ThemeToggle />
     </nav>
     <div class="flex items-center gap-3 md:hidden">
-      {config.routes.search && <button class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-strong)]" type="button" data-search-trigger>Search</button>}
+      {config.routes.search && <button class="text-sm font-medium text-gray-500 hover:text-gray-950 dark:text-gray-400 dark:hover:text-white" type="button" data-search-trigger>Search</button>}
       <ThemeToggle />
       <button
         type="button"
-        class="grid size-8 cursor-pointer place-items-center rounded-full border border-[var(--border-soft)] text-[var(--text-muted)] hover:text-[var(--text-strong)]"
+        class="btn btn-round hover:text-gray-950 dark:hover:text-white"
         aria-label="Open menu"
         aria-controls="mobile-menu"
         aria-expanded="false"
@@ -49,12 +57,12 @@ import { withBase } from "../utils";
     </div>
   </div>
   <div id="mobile-menu" class="md:hidden" hidden>
-    <nav class="border-t border-[var(--border-soft)] bg-[var(--page-bg)]/95 px-4 py-2 backdrop-blur" aria-label="Primary">
-      <ul class="divide-y divide-[var(--border-hairline)]">
+    <nav class="border-t border-gray-950/[0.08] bg-white/95 px-4 py-2 backdrop-blur dark:border-white/10 dark:bg-gray-950/95" aria-label="Primary">
+      <ul class="divide-y divide-gray-950/5 dark:divide-white/[0.06]">
         {config.nav.map((item) => (
           <li>
             <a
-              class="block py-2.5 text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-strong)]"
+              class="block py-2.5 text-sm font-medium text-gray-500 hover:text-gray-950 dark:text-gray-400 dark:hover:text-white"
               href={withBase(item.href)}
               target={item.newTab ? "_blank" : undefined}
               rel={item.newTab ? "noopener noreferrer" : undefined}

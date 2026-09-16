@@ -9,9 +9,9 @@ const posts = sortPosts((await getCollection("posts")).filter(isPublished));
 
 <BaseLayout title="Search" description="Static article index">
   <section class="mx-auto max-w-4xl px-4 py-12 sm:px-6">
-    <p class="font-mono text-xs font-medium uppercase tracking-widest text-[var(--text-muted)]">Search</p>
-    <h1 class="mt-3 text-4xl font-semibold tracking-tight text-[var(--text-strong)]">Search posts</h1>
-    <p class="mt-4 text-sm/7 text-[var(--text-muted)]">
+    <p class="eyebrow">Search</p>
+    <h1 class="mt-3 text-4xl font-semibold tracking-tight text-gray-950 dark:text-white">Search posts</h1>
+    <p class="mt-4 text-sm/7 text-gray-500 dark:text-gray-400">
       Search across published article titles, descriptions, and body content.
     </p>
 
@@ -38,7 +38,7 @@ const posts = sortPosts((await getCollection("posts")).filter(isPublished));
       ></ol>
       <div data-search-fallback>
         <div class="rule-fade my-8"></div>
-        <p class="font-mono text-xs font-medium uppercase tracking-widest text-[var(--text-muted)]">All published posts</p>
+        <p class="eyebrow">All published posts</p>
         <div class="mt-4">
           <PostList posts={posts} />
         </div>

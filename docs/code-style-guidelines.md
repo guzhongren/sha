@@ -53,16 +53,21 @@ export { collections } from "@guzhongren/sha/content";
 
 ## CSS And Visual Style
 
-- Keep global tokens and prose rules in `src/styles/global.css`.
-- Keep component-specific layout mostly in utility classes.
-- Use CSS variables for page, panel, border, text, and accent colors.
-- Preserve light and dark mode parity.
+- Keep every style rule in `src/styles/global.css`, placed in `@theme` (fonts only), `@layer base` or `@layer components`. Tailwind owns the utilities layer, so custom utilities are unnecessary; never leave a rule unlayered, because unlayered CSS outranks every Tailwind layer and utilities could not override it.
+- Use Tailwind palette utilities for color: `bg-white dark:bg-gray-950`, `text-gray-500 dark:text-gray-400`, `border-gray-950/[0.08] dark:border-white/10`. Do not introduce project color variables and do not use `text-[var(--x)]` in templates.
+- `--accent` is the only custom color property, and only `global.css` may read it, for decoration that class names cannot express (pseudo elements, gradients, masks, focus rings). Markup gets accent colors from the class-name map in `src/accent.ts` via `accentClasses(config.theme.accent)`.
+- Promote repeated utility clusters into `@layer components` classes built with `@apply`, and keep one-off layout, spacing and responsive tweaks as utilities in the template.
+- Name component classes kebab-case with a component prefix: `btn-primary`, `btn-round`, `pill-md`, `card-header`. Modifiers connect with `-`.
+- Never build class names dynamically (`class={`btn-${variant}`}`, `"bg-" + color`). Add a complete class-name entry to a map, or branch with `class:list`.
+- Express component state with `data-*` attributes (`data-active="true"`, `data-grabbing="true"`, `data-depth="3"`) and style them from CSS or Tailwind `data-*` variants; do not add `is-*` state classes.
+- Keep dark mode class driven: `@custom-variant dark` binds `dark:` to the `.dark` class on `<html>`. Preserve light and dark mode parity and check both.
 - Use fine structure: rules, gutters, panels, monospace labels, and code styling.
 - Avoid decorative blobs, oversized marketing hero sections, and heavy card stacks.
 - Use cards only for meaningful surfaces; article lists should remain index-like.
 - Keep article prose readable and restrained. Body headings should not have extra decorative marks above them.
 - Use stable dimensions for repeated UI elements such as toggles, tags, covers, and code buttons.
 - Confirm mobile layouts do not overflow.
+- Run `pnpm run check:styles` after touching styles or templates; it fails on removed color properties, custom properties in templates, dynamic class names and `is-*` state classes.
 
 ## Routes
 
@@ -76,7 +81,7 @@ export { collections } from "@guzhongren/sha/content";
 
 - Use clear component names: `PostCard`, `PostList`, `ProfileIntro`, `TableOfContents`.
 - Use config option names that match consumer mental models.
-- Use CSS utility names for reusable visual primitives: `line-b`, `section-frame`, `surface-block`.
+- Use CSS class names for reusable visual primitives, prefixed by role: `line-b`, `section-frame`, `surface-block`, `btn-round`, `pill-md`, `eyebrow`.
 - Avoid clever labels in UI copy; use direct, scannable text.
 
 ## Documentation
@@ -92,4 +97,3 @@ export { collections } from "@guzhongren/sha/content";
 - Keep commits focused.
 - Run example validation before committing.
 - If committing from an automated agent, use the repository's requested `git commit --no-verify` workflow only when the user asked for it.
-

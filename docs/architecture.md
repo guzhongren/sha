@@ -47,7 +47,7 @@ Major option groups:
 - `author`: name, headline, bio, optional avatar.
 - `nav`: primary navigation labels and hrefs, with an optional `newTab` flag to open a link in a new browser tab.
 - `socialLinks`: social links rendered as icon-only buttons, given as a record where each key is an icon value and each value is the profile URL (e.g. `{ github: "https://github.com/username" }`). `rss` also accepts `true`, which resolves to the theme's `/rss.xml` route when the RSS route is enabled. `wechat` takes the path to a WeChat QR code image; hovering the icon shows it in a popup (`SocialLink.astro`). Icons map to Iconify sets (simple-icons / ph) and cover the top 20 global social platforms plus `github`, `x`, `rss`, `mail`, and `link`; the accessible name (`aria-label` / `title`) is derived from the icon via `SOCIAL_LABELS`.
-- `theme`: `system`, `light`, or `dark` default mode plus accent token.
+- `theme`: `system`, `light`, or `dark` default mode plus accent token. The accent (`sky`, `teal`, `violet`, `pink`) is emitted as `<html data-accent>` and drives both the `--accent` property and the class-name map in `src/accent.ts`.
 - `diagrams`: Mermaid and PlantUML rendering toggles.
 - `imageViewer`: opens post content images in a full-screen viewer dialog with zoom and pan; `true` by default.
 - `linkReferences`: numbers external `http(s)` links in post content with superscripts and appends a "参考" section listing each link; `true` by default.
@@ -147,18 +147,23 @@ Only post detail articles include `data-pagefind-body`. Listing pages, tag/categ
 
 ## Styling System
 
-`src/styles/global.css` imports Tailwind CSS v4 and declares explicit `@source` paths for theme and example files.
+`src/styles/global.css` is the single styling entry point. It imports Tailwind CSS v4, declares explicit `@source` paths for theme and example files, and is organized in the three layers described in `design.md`:
 
-The visual system is based on:
+1. **Tokens** — `@theme` declares only the font stacks (`--font-sans`, `--font-mono`). Colors, spacing and radii come from the built-in Tailwind palette, so markup uses stock utilities such as `bg-white dark:bg-gray-950`, `text-gray-500 dark:text-gray-400` or `border-gray-950/[0.08]` instead of project color variables.
+2. **Component classes** — `@layer components` holds the semantic classes that say *what* a thing is: `.page-canvas`, `.page-gutter`, `.line-*`, `.rule-fade`, `.rule-dashed`, `.section-frame`, `.surface-block`, `.gutter-stripes`, `.utility-note`, `.eyebrow`, `.btn` (+ `.btn-sm`, `.btn-round`, `.btn-plain`, `.btn-page`), `.pill` (+ `.pill-md`), `.search-trigger`, `.toc-link`, `.post-item`, `.avatar-mark`, `.profile-mark`, `.prose` and its callout/table/pre/reference rules, `.diagram*`, `.echarts-*`, `.code-copy-*`, `.search-*` and `.image-viewer-*`. Each class is built from stock utilities with `@apply`; hand-written declarations are limited to what utilities cannot express (pseudo elements, gradients, masks, backdrop filters, `box-shadow` and long geometry values).
+3. **Utility tweaks** — templates add stock utilities for one-off layout and spacing, e.g. `<article class="post-item group line-b px-3 py-8 sm:px-4">`.
 
-- CSS custom properties for page, panel, border, text, and accent colors.
-- `.dark` root class for dark mode.
-- fine-line utilities: `.line-y`, `.line-t`, `.line-b`, `.line-x`.
-- structural rules: `.rule-fade`, `.rule-dashed`.
-- framed surfaces: `.section-frame`, `.surface-block`.
-- technical texture: `.gutter-stripes`, `.utility-note`.
-- prose styling for headings, links, inline code, pre blocks, hr, blockquotes, tables, callouts, lists, and diagrams.
-- chart styling for ECharts containers.
+Because the components layer is declared before Tailwind's utilities layer, utilities always win over component classes, and no rule is left unlayered (an unlayered rule would outrank every Tailwind layer).
+
+Dark mode is class driven: `@custom-variant dark (&:where(.dark, .dark *))` binds every `dark:` utility to the `.dark` class that `BaseLayout` toggles and `localStorage` persists. `color-scheme` follows the same class through `scheme-light-dark dark:scheme-dark` on `<html>`.
+
+### Accent
+
+`--accent` is the only custom color property. `BaseLayout` writes `<html data-accent="sky|teal|violet|pink">`, `global.css` maps each value to a Tailwind palette token (with a different companion token in dark mode), and CSS-only decoration reads `var(--accent)`: focus rings, the body gradient and dot grid, `.section-frame` corner ticks, `.post-item::before`, profile glow, blockquote rules and the search backdrop.
+
+Everything markup can color uses `src/accent.ts` instead. `ACCENT_CLASSES` maps each `AccentColor` to complete class-name strings (`text`, `hoverText`, `groupHoverText`, `border`, `hoverBorder`, `focusBorder`, `softBg`), and components read them through `accentClasses(config.theme.accent)`. Class names are always whole literals, so Tailwind can see them and no dynamic concatenation is needed.
+
+Client scripts drive component state with `data-*` attributes (`data-active` on search results, `data-grabbing` on the image viewer stage, `data-depth` on table-of-contents links) instead of `is-*` classes.
 
 The current design intent is a refined technical writing blog, not a marketing homepage. Decoration should come from structure: gutters, rules, panels, code blocks, and content hierarchy.
 
