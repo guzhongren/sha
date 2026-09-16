@@ -129,7 +129,7 @@ Theme initialization and switching run inline in `BaseLayout.astro` before page 
 
 `CodeCopyEnhancer.astro` scans `.prose pre > code`, wraps each block in a frame, inserts a `Copy` button, writes code text to the Clipboard API, and briefly changes the label to `Copied`.
 
-`SearchEnhancer.astro` provides a native `<dialog>` search modal and upgrades the `/search` page. It lazy-loads `/pagefind/pagefind.js`, debounces queries, renders a custom result template with highlighted titles and Pagefind excerpts, and falls back to the static post list when the search bundle is unavailable.
+`SearchEnhancer.astro` provides a native `<dialog>` search modal and upgrades the `/search` page. It lazy-loads `/pagefind/pagefind.js`, debounces queries, renders a custom result template with highlighted titles and Pagefind excerpts, and falls back to the static post list when the search bundle is unavailable. Results are keyboard navigable in both roots: the first result is highlighted as soon as results render, `↑`/`↓` move the highlight (wrapping at both ends) while focus stays in the search box, `Tab` hands focus to the highlighted result, and `Enter` opens it. The input is exposed as an ARIA combobox driving a listbox of `option` results.
 
 `ImageViewerEnhancer.astro` wraps eligible `.prose` images (excluding covers, diagram figures, and linked images) in a button that opens a native `<dialog>` viewer. The image starts fitted to the viewport; wheel and pinch gestures zoom anchored at the cursor, double-click toggles between fit and 2.5×, arrow keys and drag/touch gestures pan in all four directions, and Esc or the close button resets and closes the viewer.
 

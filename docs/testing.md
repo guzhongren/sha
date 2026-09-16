@@ -175,6 +175,8 @@ When changing `SearchEnhancer.astro` or search route behavior:
 - Confirm `Cmd+K` and `Ctrl+K` open the dialog.
 - Confirm Escape closes the dialog.
 - Confirm `/search` renders an inline search input and static fallback list.
+- Confirm the first result is highlighted when results render, `↑`/`↓` move the highlight (wrapping at both ends) while focus stays in the search box, `Tab` focuses the highlighted result, and `Enter` opens it.
+- Confirm `↑`/`↓`/`Enter` do not navigate or move focus when a query has no results.
 - Confirm `example/dist/pagefind/pagefind.js` is generated after build.
 - Confirm post detail pages contain `data-pagefind-body`.
 - Confirm listing/search/category/tag pages are not marked as Pagefind bodies.

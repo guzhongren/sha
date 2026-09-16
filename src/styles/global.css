@@ -360,7 +360,8 @@ a {
 }
 
 .search-result:hover,
-.search-result:focus-visible {
+.search-result:focus-visible,
+.search-result.is-active {
   border-color: color-mix(in oklab, var(--accent) 45%, var(--border-soft));
   background: linear-gradient(90deg, color-mix(in oklab, var(--accent) 7%, transparent), var(--panel-bg));
 }
