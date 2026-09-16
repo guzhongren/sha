@@ -40,7 +40,11 @@ jobs:
       - run: corepack enable
 
       - run: pnpm install --no-frozen-lockfile --ignore-scripts
-      - run: pnpm dlx playwright install --with-deps chromium
+      # Install browsers with the Playwright version this repo pins: `pnpm dlx`
+      # would fetch the latest release, whose browser revision does not match
+      # the one @playwright/test expects at runtime. `chromium` alone does not
+      # include the headless shell that headless test runs launch.
+      - run: pnpm exec playwright install --with-deps chromium chromium-headless-shell
       - run: pnpm run test:e2e
 
       - uses: actions/upload-artifact@v4

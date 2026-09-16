@@ -96,10 +96,13 @@ test -f example/dist/pagefind/pagefind.js
 
 The Playwright suite (`e2e/`, `playwright.config.ts`) guards existing behavior against regressions. It builds the `example/` app and runs against the built output served by `astro preview` (port 4322), Chromium only, on desktop (1280x800) and mobile (Pixel 5) projects.
 
-First-time setup (needs network):
+First-time setup (needs network). Use the repo-pinned Playwright through
+`pnpm exec`; `pnpm dlx playwright` would download a different browser revision
+than `@playwright/test` expects. `chromium-headless-shell` is installed
+separately because headless runs launch the shell, not full Chromium:
 
 ```sh
-pnpm dlx playwright install chromium
+pnpm exec playwright install --with-deps chromium chromium-headless-shell
 ```
 
 Run the full suite:
