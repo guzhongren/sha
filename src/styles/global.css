@@ -346,6 +346,34 @@
     @apply overflow-x-auto rounded-xl border border-white/[0.12] bg-gray-950 p-4 font-mono text-sm/7 text-gray-100;
   }
 
+  /*
+   * Line numbers are generated chrome: they live in pseudo elements, so they
+   * never enter the text layer (copy, search index) and never need markup.
+   * The gutter follows Shiki's own foreground color, which keeps it coherent
+   * with any code theme.
+   */
+  .prose pre code {
+    counter-reset: line;
+  }
+
+  .prose pre .line::before {
+    @apply mr-3 inline-block w-[2ch] text-right select-none;
+    counter-increment: line;
+    content: counter(line);
+    color: color-mix(in oklab, currentColor 50%, transparent);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* A single-line snippet has nothing to index. */
+  .prose pre .line:only-child::before {
+    content: none;
+  }
+
+  /* blogTheme({ code: { lineNumbers: false } }) */
+  [data-code-line-numbers="off"] .prose pre .line::before {
+    content: none;
+  }
+
   .prose img {
     @apply h-auto max-w-full;
   }

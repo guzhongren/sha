@@ -60,6 +60,7 @@ export { collections } from "@guzhongren/sha/content";
 - Name component classes kebab-case with a component prefix: `btn-primary`, `btn-round`, `pill-md`, `card-header`. Modifiers connect with `-`.
 - Never build class names dynamically (`class={`btn-${variant}`}`, `"bg-" + color`). Add a complete class-name entry to a map, or branch with `class:list`.
 - Express component state with `data-*` attributes (`data-active="true"`, `data-grabbing="true"`, `data-depth="3"`) and style them from CSS or Tailwind `data-*` variants; do not add `is-*` state classes.
+- Implement display chrome that must never be copied or indexed (code line numbers, gutters) with pseudo elements or CSS counters, so it stays out of the text layer and needs no markup.
 - Keep dark mode class driven: `@custom-variant dark` binds `dark:` to the `.dark` class on `<html>`. Preserve light and dark mode parity and check both.
 - Use fine structure: rules, gutters, panels, monospace labels, and code styling.
 - Avoid decorative blobs, oversized marketing hero sections, and heavy card stacks.

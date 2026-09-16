@@ -140,6 +140,20 @@ Because icons come from Iconify sets, projects that use social links must also i
 pnpm add @iconify-json/simple-icons @iconify-json/ph
 ```
 
+## Code blocks
+
+Fenced code blocks render through Shiki and carry per-line numbers by default. The numbers are presentation-only: they never enter the copied text, the text layer, or the Pagefind index, and blocks that contain a single line are left unnumbered. Turn them off site-wide with:
+
+```js
+blogTheme({
+  code: {
+    lineNumbers: false,
+  },
+});
+```
+
+The gutter reserves a fixed `2ch` column plus a `0.75rem` gap, counts blank lines so numbers stay aligned with an editor, and derives its color from Shiki's own foreground color, so it stays coherent if you swap the Shiki theme. The theme writes the current state to `<html data-code-line-numbers="on|off">` if you want to restyle the gutter in your own CSS.
+
 ## Diagrams
 
 Enable Mermaid and PlantUML from `astro.config.mjs`:

@@ -34,6 +34,7 @@ gtag('config', ${JSON.stringify(ga.id)}${Object.keys(ga.config).length > 0 ? `, 
   lang={config.site.lang}
   data-default-theme={defaultMode}
   data-accent={config.theme.accent}
+  data-code-line-numbers={config.code.lineNumbers ? "on" : "off"}
   class="scheme-light-dark bg-white font-sans text-gray-700 dark:bg-gray-950 dark:text-gray-300 dark:scheme-dark"
 >
   <head>

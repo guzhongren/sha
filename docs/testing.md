@@ -122,7 +122,7 @@ ASTRO_TELEMETRY_DISABLED=1 pnpm build
 ./node_modules/.bin/playwright test e2e/search.spec.ts
 ```
 
-The suite covers: public route inventory and draft 404s, RSS validity, home/profile and post ordering, posts pagination (numeric links and page jump input), post detail metadata/TOC/anchors, post list descriptions (two-line clamp and hover tooltip), tags and categories, the search page and global dialog (including `Cmd/Ctrl+K`), theme modes and persistence, code copy, callouts, Mermaid/ECharts/Emoji rendering, the image viewer, link references, and mobile layout sanity checks. GitHub Actions runs it in the `e2e` job and uploads `playwright-report/` on failure.
+The suite covers: public route inventory and draft 404s, RSS validity, home/profile and post ordering, posts pagination (numeric links and page jump input), post detail metadata/TOC/anchors, post list descriptions (two-line clamp and hover tooltip), tags and categories, the search page and global dialog (including `Cmd/Ctrl+K`), theme modes and persistence, code copy, code line numbers (gutter geometry, blank-line counting, single-line skip, `code.lineNumbers` opt-out), callouts, Mermaid/ECharts/Emoji rendering, the image viewer, link references, and mobile layout sanity checks. GitHub Actions runs it in the `e2e` job and uploads `playwright-report/` on failure.
 
 Keep the suite data-driven: post lists are derived from `/rss.xml`, so adding or removing fixture posts requires no test edits. If `example/astro.config.mjs` changes `postsPerPage`, update `POSTS_PER_PAGE` in `e2e/helpers.ts`. If new route families are added, extend `HTML_ROUTES`/`ASSET_ROUTES` there.
 

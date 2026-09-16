@@ -78,6 +78,14 @@ export type BlogThemeOptions = {
    * Defaults to `true`.
    */
   linkReferences?: boolean;
+  code?: {
+    /**
+     * Show per-line numbers in rendered code blocks. Numbers are decorative
+     * (they never enter copied text or the search index), and blocks that
+     * contain a single line are left unnumbered. Defaults to `true`.
+     */
+    lineNumbers?: boolean;
+  };
   routes?:
     | false
     | {
@@ -164,6 +172,9 @@ export type NormalizedBlogThemeOptions = {
   };
   imageViewer: boolean;
   linkReferences: boolean;
+  code: {
+    lineNumbers: boolean;
+  };
   routes: {
     home: boolean;
     posts: boolean;
