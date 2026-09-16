@@ -54,6 +54,9 @@ export function normalizeOptions(options: BlogThemeOptions): NormalizedBlogTheme
     },
     imageViewer: options.imageViewer ?? true,
     linkReferences: options.linkReferences ?? true,
+    code: {
+      lineNumbers: options.code?.lineNumbers ?? true,
+    },
     routes:
       options.routes === false
         ? {

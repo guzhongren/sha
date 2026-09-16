@@ -26,6 +26,9 @@ test.describe("code copy enhancer", () => {
     await expect(button).toHaveText("Copied");
     await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe(expectedCode);
 
+    // Line numbers are generated chrome: the clipboard must start with code.
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toMatch(/^import/);
+
     // The label returns to "Copy" after the 1200ms timeout.
     await expect(button).toHaveText("Copy", { timeout: 5000 });
   });

@@ -51,6 +51,7 @@ Major option groups:
 - `diagrams`: Mermaid and PlantUML rendering toggles.
 - `imageViewer`: opens post content images in a full-screen viewer dialog with zoom and pan; `true` by default.
 - `linkReferences`: numbers external `http(s)` links in post content with superscripts and appends a "参考" section listing each link; `true` by default.
+- `code`: `lineNumbers` (default `true`) renders per-line numbers in code blocks. `BaseLayout` exposes the resolved state as `<html data-code-line-numbers="on|off">`.
 - `routes`: individual route switches or `false` to disable all injected pages.
 - `analytics`: optional GA4 measurement. `googleAnalytics.id` enables the standard gtag.js snippet in the shared layout; `partytown` (default `true`) offloads it to a Web Worker through the auto-registered Partytown integration; `includeInDev` controls dev loading; `config` is passed through to `gtag('config', ...)`.
 - `seo`: `sitemap` (default `true`) generates `sitemap-index.xml` and `sitemap-0.xml` through the auto-registered `@astrojs/sitemap` integration.
@@ -164,6 +165,10 @@ Dark mode is class driven: `@custom-variant dark (&:where(.dark, .dark *))` bind
 Everything markup can color uses `src/accent.ts` instead. `ACCENT_CLASSES` maps each `AccentColor` to complete class-name strings (`text`, `hoverText`, `groupHoverText`, `border`, `hoverBorder`, `focusBorder`, `softBg`), and components read them through `accentClasses(config.theme.accent)`. Class names are always whole literals, so Tailwind can see them and no dynamic concatenation is needed.
 
 Client scripts drive component state with `data-*` attributes (`data-active` on search results, `data-grabbing` on the image viewer stage, `data-depth` on table-of-contents links) instead of `is-*` classes.
+
+### Code blocks
+
+Astro's Shiki highlighter already wraps every line in `<span class="line">`, so `.prose pre code` only resets a `line` CSS counter and `.prose pre .line::before` renders the number. The gutter is presentation-only: pseudo-element content is not part of `textContent`, so the copy button (`CodeCopyEnhancer`), the text layer, and the Pagefind index stay numbers-free, while `user-select: none` keeps manual selection clean. Blocks whose code element holds a single line skip the gutter via `:only-child`, and `[data-code-line-numbers="off"]` (emitted by `BaseLayout` from `code.lineNumbers`) disables numbering globally. Gutter color derives from `currentColor`, so it follows whatever Shiki theme is configured.
 
 The current design intent is a refined technical writing blog, not a marketing homepage. Decoration should come from structure: gutters, rules, panels, code blocks, and content hierarchy.
 
