@@ -16,8 +16,15 @@
 
       try {
         const options = JSON.parse(decodeURIComponent(chart.getAttribute("data-echarts-options") || "%7B%7D"));
+        // Chart text is painted into a canvas, so it cannot inherit the page
+        // font through CSS. Hand ECharts the container's resolved stack; chart
+        // authors can still override any specific textStyle they set.
+        const fontFamily = getComputedStyle(chart).fontFamily;
         const instance = echarts.init(chart, document.documentElement.classList.contains("dark") ? "dark" : undefined);
-        instance.setOption(options);
+        instance.setOption({ ...options, textStyle: { fontFamily, ...options.textStyle } });
+        // Canvas text leaves nothing in the DOM to inspect, so record the
+        // resolved stack for styling hooks and tests.
+        chart.dataset.chartFont = fontFamily;
 
         const resize = () => instance.resize();
         window.addEventListener("resize", resize);

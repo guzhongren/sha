@@ -17,8 +17,8 @@
  * ----------------------------------------------------------------------- */
 
 @theme {
-  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
-  --font-mono: "IBM Plex Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-sans: "Maple Mono CN Subset", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  --font-mono: "Maple Mono CN Subset", "IBM Plex Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 /*
@@ -29,6 +29,26 @@
  * rings and color-mix surfaces.
  */
 @layer base {
+  /*
+   * Self-hosted font for the whole site, declared inside `@layer base` so no
+   * rule is left unlayered. `MapleMono-CN-Subset-Regular.woff2` is the GB2312
+   * repertoire of Maple Mono NF CN v8.002 (SIL OFL 1.1, license text ships
+   * next to the font in src/assets/fonts) cut down from the 7 MB upstream
+   * build by `scripts/build-font-subset.py`. It leads both `--font-sans` and
+   * `--font-mono`, so body copy, headings, code and monospace chrome share one
+   * face. Hanzi keep the font's 2:1 advance against the 600 unit Latin
+   * advance, so Chinese stays on the monospace grid everywhere; characters
+   * outside the subset fall back to the system stack. `calt` code ligatures
+   * are preserved.
+   */
+  @font-face {
+    font-family: "Maple Mono CN Subset";
+    src: url("../assets/fonts/MapleMono-CN-Subset-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
   :root {
     --accent: var(--color-sky-500);
   }
@@ -496,7 +516,8 @@
     @apply mx-auto max-w-full;
   }
 
-  .diagram-plantuml img {
+  .diagram-plantuml img,
+  .diagram-plantuml svg {
     @apply min-h-32;
   }
 

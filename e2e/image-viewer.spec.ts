@@ -67,21 +67,16 @@ test.describe("image viewer", () => {
     // The cover image stays a plain img above the prose content.
     await expect(page.locator("article > img[src='/covers/astro-theme.svg']")).toBeVisible();
 
-    // PlantUML figures are created client-side; wait until the img exists,
-    // then confirm it was not wrapped in a lightbox trigger.
-    await expect(page.locator("figure.diagram-plantuml img")).toHaveCount(1, { timeout: 30_000 });
-    const unwrapped = await page.locator("figure.diagram-plantuml img").evaluate((img) => {
-      return !img.parentElement?.classList.contains("image-lightbox-trigger");
-    });
-    expect(unwrapped).toBe(true);
+    // PlantUML figures are created client-side as an `<img>` and upgraded to
+    // inline SVG once they scroll into view; either way they stay unwrapped.
+    const plantuml = page.locator("figure.diagram-plantuml");
+    await expect(plantuml.locator("img, svg")).toHaveCount(1, { timeout: 30_000 });
+    expect(await plantuml.evaluate((figure) => !figure.closest(".image-lightbox-trigger"))).toBe(true);
 
-    // Only the sample content image becomes a trigger; every other prose
-    // image is an excluded diagram.
-    const proseImages = await page.locator(".prose img").count();
+    // Only the sample content image becomes a trigger; diagram output is excluded.
     const triggers = await page.locator(".prose .image-lightbox-trigger").count();
-    const diagramImages = await page.locator(".prose figure.diagram img").count();
-    expect(proseImages).toBeGreaterThan(0);
+    const wrappedImages = await page.locator(".prose .image-lightbox-trigger img").count();
     expect(triggers).toBe(1);
-    expect(proseImages).toBe(triggers + diagramImages);
+    expect(wrappedImages).toBe(1);
   });
 });
