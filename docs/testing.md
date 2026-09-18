@@ -186,6 +186,8 @@ When changing `DiagramEnhancer.astro`:
 - Confirm PlantUML blocks render when `diagrams.plantuml` is enabled.
 - Confirm plaintext blocks starting with `@startuml` are supported.
 - Confirm disabled diagram options leave code blocks untouched.
+- Confirm Mermaid SVG text uses the theme font (`e2e/enhancers.spec.ts` checks the SVG's computed stack and the font-family inside Mermaid's own `<style>`).
+- Confirm PlantUML SVG output is fetched, sanitized and inlined with the theme font (`data-diagram-font="inline"`), and that a raster or non-CORS server keeps the plain image (`data-diagram-font="server"`) instead of failing.
 
 When changing `EChartsEnhancer.astro` or shortcode preprocessing:
 
@@ -193,6 +195,7 @@ When changing `EChartsEnhancer.astro` or shortcode preprocessing:
 - Confirm `blogTheme(...)` remains before `mdx()` in `example/astro.config.mjs`.
 - Confirm invalid chart JSON shows the non-fatal error caption.
 - Confirm normal code copy behavior does not wrap generated ECharts containers.
+- Confirm chart text uses the page font stack: `data-chart-font` must equal the container's computed `font-family`, and an author-supplied `textStyle` must still win.
 
 When changing `SearchEnhancer.astro` or search route behavior:
 
@@ -271,6 +274,9 @@ When changing `src/styles/global.css` or class-heavy components:
 - Confirm prose headings are plain and readable.
 - Confirm code blocks scroll horizontally instead of breaking layout.
 - Confirm search dialog and search page results do not overflow on mobile.
+- Confirm the built stylesheet declares `@font-face` for `Maple Mono CN Subset` and that `astro build` emits the hashed `_astro/*.woff2` (about 1.6 MB) into `example/dist`.
+- Confirm all text — body copy, headings, code and monospace chrome — uses the webfont (`e2e/styles.spec.ts` checks the body and `.prose pre` stacks, `document.fonts.check` and the served `font/woff2` response) and that hanzi keep a 2:1 advance against Latin, so Chinese stays on the monospace grid.
+- Regenerate the webfont only with `python3 scripts/build-font-subset.py --source <MapleMono-NF-CN-Regular.woff2> --license <LICENSE.txt>`; it needs `pip install fonttools brotli` and is not run in CI.
 
 ## Known Warnings
 

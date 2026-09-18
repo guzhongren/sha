@@ -32,6 +32,64 @@ const { diagrams } = Astro.props;
     ];
   }
 
+  const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
+
+  /**
+   * A PlantUML server paints the labels itself, so an `<img>` keeps the
+   * server's font. Fetching the SVG back (plantuml.com sends
+   * `access-control-allow-origin: *`, and a self-hosted server needs CORS)
+   * lets the page restyle it and render labels in the theme font.
+   */
+  function inlinePlantUml(markup, fontFamily) {
+    const parsed = new DOMParser().parseFromString(markup, "image/svg+xml");
+    const svg = parsed.documentElement;
+    if (parsed.querySelector("parsererror") || svg.tagName.toLowerCase() !== "svg") return null;
+
+    // Remote markup: keep it inert before it enters the page.
+    svg.querySelectorAll("script").forEach((node) => node.remove());
+    svg.querySelectorAll("*").forEach((node) => {
+      for (const attribute of [...node.attributes]) {
+        if (/^on/i.test(attribute.name) || /^\s*javascript:/i.test(attribute.value)) {
+          node.removeAttribute(attribute.name);
+        }
+      }
+    });
+
+    /*
+     * PlantUML sets `font-family="sans-serif"` as a presentation attribute on
+     * a wrapper group; this rule outranks it for every text node. `textLength`
+     * attributes are kept on purpose: the server computed the label boxes and
+     * connector anchors from its own font metrics, so locking the text to that
+     * width keeps boxes, arrows and labels aligned.
+     */
+    const style = parsed.createElementNS(SVG_NAMESPACE, "style");
+    style.textContent = `text, tspan { font-family: ${fontFamily} !important; }`;
+    svg.insertBefore(style, svg.firstChild);
+    svg.setAttribute("role", "img");
+    svg.setAttribute("aria-label", "PlantUML diagram");
+    return document.importNode(svg, true);
+  }
+
+  async function upgradePlantUml(figure, src) {
+    try {
+      const response = await fetch(src, { mode: "cors" });
+      const contentType = response.headers.get("content-type") || "";
+      if (!response.ok || !contentType.includes("svg")) {
+        throw new Error(`unusable PlantUML response (${response.status}, ${contentType || "no type"})`);
+      }
+      const fontFamily = getComputedStyle(document.documentElement).fontFamily;
+      const svg = inlinePlantUml(await response.text(), fontFamily);
+      if (!svg) throw new Error("unparsable PlantUML SVG");
+      figure.replaceChildren(svg);
+      figure.dataset.diagramFont = "inline";
+    } catch (error) {
+      // Non-fatal: the image stays, so a server without CORS or a PNG response
+      // still renders, just with the server's own fonts.
+      figure.dataset.diagramFont = "server";
+      console.warn("PlantUML font upgrade skipped:", error);
+    }
+  }
+
   async function renderPlantUml(diagrams) {
     if (!diagrams.plantuml.enabled) return;
 
@@ -39,13 +97,30 @@ const { diagrams } = Astro.props;
     if (blocks.length === 0) return;
 
     const { encode } = await import("plantuml-encoder");
+    const serverUrl = diagrams.plantuml.serverUrl.replace(/\/$/, "");
+
+    // The image keeps its lazy loading; it is only upgraded to inline SVG once
+    // it scrolls close to the viewport.
+    const observer =
+      "IntersectionObserver" in window
+        ? new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+                observer.unobserve(entry.target);
+                const img = entry.target.querySelector("img");
+                if (img) upgradePlantUml(entry.target, img.src);
+              });
+            },
+            { rootMargin: "200px" },
+          )
+        : null;
 
     blocks.forEach((code) => {
       const pre = code.parentElement;
       const source = code.textContent || "";
       const figure = document.createElement("figure");
       const img = document.createElement("img");
-      const serverUrl = diagrams.plantuml.serverUrl.replace(/\/$/, "");
 
       figure.className = "diagram diagram-plantuml";
       img.alt = "PlantUML diagram";
@@ -53,6 +128,8 @@ const { diagrams } = Astro.props;
       img.src = `${serverUrl}/${encode(source)}`;
       figure.append(img);
       pre.replaceWith(figure);
+      if (observer) observer.observe(figure);
+      else upgradePlantUml(figure, img.src);
     });
   }
 
@@ -63,10 +140,15 @@ const { diagrams } = Astro.props;
     if (blocks.length === 0) return;
 
     const { default: mermaid } = await import("mermaid/dist/mermaid.esm.min.mjs");
+    // Mermaid writes the font into the generated SVG (and into htmlLabels), so
+    // the page stack has to be passed through its config instead of CSS.
+    const fontFamily = getComputedStyle(document.documentElement).fontFamily;
     mermaid.initialize({
       startOnLoad: false,
       securityLevel: "strict",
       theme: document.documentElement.classList.contains("dark") ? "dark" : "default",
+      fontFamily,
+      themeVariables: { fontFamily },
     });
 
     await Promise.all(

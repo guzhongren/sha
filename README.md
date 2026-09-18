@@ -110,6 +110,23 @@ blogTheme({
 
 `--accent` is the only custom color property the theme exposes; it is set from a Tailwind palette token and drives decoration that class names cannot reach (focus rings, gradients, corner ticks, hover rules). Everything else is colored with Tailwind utilities.
 
+### Fonts
+
+The whole site — body copy, headings, code blocks, inline code, code gutters, `eyebrow` labels, tags, the avatar mark, and ECharts/Mermaid/PlantUML diagram text — renders with a self-hosted webfont: **Maple Mono CN Subset**, the GB2312 repertoire of [Maple Mono NF CN](https://github.com/subframe7536/maple-font) v8.002 (6,763 hanzi plus Latin, Greek, Cyrillic, symbol, box drawing, fullwidth and CJK punctuation), licensed under the SIL Open Font License 1.1. The license text ships in the package next to the font, and the theme leads both `--font-sans` and `--font-mono` with it, so no configuration is needed.
+
+The subset is about 1.6 MB and browsers download it on every page, since all text uses it. Hanzi keep Maple Mono's 2:1 advance against the Latin advance, so Chinese stays on the monospace grid for prose and code alike; characters outside the subset (rare hanzi, CJK extension blocks) fall back to the system CJK font. Code ligatures (`calt`) stay enabled by default. Only the Regular weight ships, so bold headings and `<strong>` text use the browser's synthetic bold.
+
+To use different faces, override the tokens in your own stylesheet:
+
+```css
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Iosevka", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+```
+
+`scripts/build-font-subset.py` regenerates the bundled subset from an upstream `MapleMono-NF-CN-Regular.woff2`; it is a maintainer tool and is not part of the published package.
+
 To restyle the theme, override Tailwind utilities in your own stylesheet or wrap the exported components. The theme no longer publishes per-color CSS variables (`--page-bg`, `--panel-bg`, `--border-soft`, `--text-*`, `--callout-*`); the equivalent selectors are `bg-white dark:bg-gray-950`, `bg-gray-950/[0.025] dark:bg-white/5`, `border-gray-950/[0.08] dark:border-white/10` and `text-gray-950 dark:text-white` / `text-gray-500 dark:text-gray-400`.
 
 Run `pnpm run check:styles` when changing styles or templates: it enforces the architecture rules (Tailwind palette utilities, no dynamic class names, `data-*` state attributes).
@@ -184,7 +201,9 @@ A -> B
 ```
 ````
 
-Mermaid is rendered client-side from the bundled `mermaid` package. PlantUML is rendered as an image using the configured PlantUML server.
+Mermaid is rendered client-side from the bundled `mermaid` package with the page font stack passed through `fontFamily` and `themeVariables.fontFamily`, so diagram labels match the surrounding prose.
+
+PlantUML is drawn by the configured PlantUML server, so the theme fetches the SVG back over CORS, strips anything executable, and inlines it with a rule that puts every label in the theme font. The public server (`https://www.plantuml.com/plantuml/svg`) sends `access-control-allow-origin: *`, so this works out of the box; a self-hosted server needs CORS enabled. When the fetch fails or the server answers with a raster image, the original `<img>` stays and its labels keep the server's fonts (the figure reports which happened through `data-diagram-font="inline|server"`). Label geometry is preserved: `textLength` attributes from the server are kept, so boxes, arrows and text stay aligned.
 
 ## Image viewer
 
@@ -225,7 +244,7 @@ Use Hugo-style shortcode blocks for ECharts options:
 {{< /echarts >}}
 ````
 
-The theme converts the shortcode before MDX parsing and renders the chart client-side with the bundled `echarts` package.
+The theme converts the shortcode before MDX parsing and renders the chart client-side with the bundled `echarts` package. Chart text (title, legend, axis labels, series labels) is painted into a canvas, so the theme passes the page font stack into `textStyle`; a `textStyle` you set in the options still wins, and the resolved stack is exposed as `data-chart-font` on the chart container.
 
 ## Search
 
