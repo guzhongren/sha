@@ -187,7 +187,7 @@ When changing `DiagramEnhancer.astro`:
 - Confirm plaintext blocks starting with `@startuml` are supported.
 - Confirm disabled diagram options leave code blocks untouched.
 - Confirm Mermaid SVG text uses the theme font (`e2e/enhancers.spec.ts` checks the SVG's computed stack and the font-family inside Mermaid's own `<style>`).
-- Confirm PlantUML diagrams are drawn locally — `e2e/enhancers.spec.ts` asserts the figure holds a sanitized SVG and that no request leaves for a PlantUML server — and that `data-diagram-theme` follows the page theme.
+- Confirm PlantUML diagrams are drawn locally — `e2e/enhancers.spec.ts` asserts that every `@startuml` block on the page becomes a figure holding a sanitized SVG, and that no request leaves for a PlantUML server — and that `data-diagram-theme` follows the page theme.
 - Confirm a diagram the engine cannot draw leaves its code block readable and marked with `data-diagram-error="plantuml"`.
 
 When changing `EChartsEnhancer.astro` or shortcode preprocessing:

@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { plantumlBlocks } from "./helpers";
 
 async function readTransform(page: import("@playwright/test").Page) {
   return page.evaluate(() => {
@@ -69,10 +70,14 @@ test.describe("image viewer", () => {
 
     // PlantUML diagrams are drawn client-side once they scroll into view and
     // stay unwrapped. The wait covers the bundled engine's lazy load.
-    await page.locator('pre[data-language="plaintext"]', { hasText: "@startuml" }).scrollIntoViewIfNeeded();
+    const blocks = plantumlBlocks(page);
+    await blocks.first().scrollIntoViewIfNeeded();
     const plantuml = page.locator("figure.diagram-plantuml");
-    await expect(plantuml.locator("img, svg")).toHaveCount(1, { timeout: 60_000 });
-    expect(await plantuml.evaluate((figure) => !figure.closest(".image-lightbox-trigger"))).toBe(true);
+    await expect(plantuml).toHaveCount(await blocks.count(), { timeout: 60_000 });
+    for (const figure of await plantuml.all()) {
+      await expect(figure.locator("img, svg")).toHaveCount(1);
+      expect(await figure.evaluate((element) => !element.closest(".image-lightbox-trigger"))).toBe(true);
+    }
 
     // Only the sample content image becomes a trigger; diagram output is excluded.
     const triggers = await page.locator(".prose .image-lightbox-trigger").count();
