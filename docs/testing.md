@@ -183,11 +183,12 @@ When changing `CodeCopyEnhancer.astro`:
 When changing `DiagramEnhancer.astro`:
 
 - Confirm Mermaid blocks render when `diagrams.mermaid` is true.
-- Confirm PlantUML blocks render when `diagrams.plantuml` is enabled.
+- Confirm PlantUML blocks render when `diagrams.plantuml` is enabled, and that a diagram near the viewport starts the engine load.
 - Confirm plaintext blocks starting with `@startuml` are supported.
 - Confirm disabled diagram options leave code blocks untouched.
 - Confirm Mermaid SVG text uses the theme font (`e2e/enhancers.spec.ts` checks the SVG's computed stack and the font-family inside Mermaid's own `<style>`).
-- Confirm PlantUML SVG output is fetched, sanitized and inlined with the theme font (`data-diagram-font="inline"`), and that a raster or non-CORS server keeps the plain image (`data-diagram-font="server"`) instead of failing.
+- Confirm PlantUML diagrams are drawn locally — `e2e/enhancers.spec.ts` asserts the figure holds a sanitized SVG and that no request leaves for a PlantUML server — and that `data-diagram-theme` follows the page theme.
+- Confirm a diagram the engine cannot draw leaves its code block readable and marked with `data-diagram-error="plantuml"`.
 
 When changing `EChartsEnhancer.astro` or shortcode preprocessing:
 
@@ -283,6 +284,7 @@ When changing `src/styles/global.css` or class-heavy components:
 These warnings are currently accepted when the build succeeds:
 
 - Shiki does not know the `plantuml` language and can fall back to plaintext.
+- The PlantUML engine (`@plantuml/core`) and its Graphviz layer are large assets that the browser fetches only when a diagram scrolls into view.
 - Mermaid may create large client chunks because it is imported for client-side rendering.
 
 Do not ignore new errors or warnings unrelated to these known items.

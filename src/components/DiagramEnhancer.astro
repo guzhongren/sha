@@ -11,6 +11,15 @@ const { diagrams } = Astro.props;
 <script id="blog-theme-diagrams" type="application/json" set:html={JSON.stringify(diagrams)}></script>
 
 <script>
+  // `viz-global.js` is the Graphviz layout engine that the PlantUML build needs
+  // for class/state/component diagrams. It is a classic script that publishes
+  // `globalThis.Viz`, so it is loaded by URL instead of being bundled.
+  import vizGlobalUrl from "@plantuml/core/viz-global.js?url";
+  // The engine is served as-is. Bundling it rewrites the state it sets up at
+  // module scope, so it is imported from its own file at runtime.
+  import plantumlUrl from "@plantuml/core/plantuml.js?url";
+  import plantumlThemesUrl from "@plantuml/core/themes.js?url";
+
   function readDiagramConfig() {
     const element = document.getElementById("blog-theme-diagrams");
     return element?.textContent ? JSON.parse(element.textContent) : null;
@@ -32,20 +41,57 @@ const { diagrams } = Astro.props;
     ];
   }
 
-  const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
+  function diagramLines(text) {
+    const lines = text.split(/\r\n|\r|\n/);
+    if (lines.length > 1 && lines[lines.length - 1] === "") lines.pop();
+    return lines;
+  }
+
+  function loadScript(url) {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = url;
+      script.async = true;
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error(`Failed to load ${url}`));
+      document.head.append(script);
+    });
+  }
+
+  let plantUmlEngine = null;
 
   /**
-   * A PlantUML server paints the labels itself, so an `<img>` keeps the
-   * server's font. Fetching the SVG back (plantuml.com sends
-   * `access-control-allow-origin: *`, and a self-hosted server needs CORS)
-   * lets the page restyle it and render labels in the theme font.
+   * PlantUML resolves `themes.js` and the standard-library bundles against the
+   * page, so the page has to provide them itself: the themes ship with the
+   * engine, and standard-library bundles (`!include <C4/...>`, sprites, ...)
+   * are fetched from `PLANTUML_STDLIB_BASE` when a diagram asks for one.
+   *
+   * The engine is only fetched when a diagram is about to render, so pages
+   * without PlantUML blocks never download its several megabytes.
    */
-  function inlinePlantUml(markup, fontFamily) {
+  function loadPlantUmlEngine(plantuml) {
+    plantUmlEngine ??= (async () => {
+      if (plantuml.stdlibBase) {
+        Object.assign(window, { PLANTUML_STDLIB_BASE: plantuml.stdlibBase });
+      }
+      await loadScript(vizGlobalUrl);
+      if (plantuml.themes) await loadScript(plantumlThemesUrl);
+      return import(/* @vite-ignore */ plantumlUrl);
+    })().catch((error) => {
+      // Let a later page view retry instead of caching the failure.
+      plantUmlEngine = null;
+      throw error;
+    });
+    return plantUmlEngine;
+  }
+
+  function plantUmlSvg(markup) {
     const parsed = new DOMParser().parseFromString(markup, "image/svg+xml");
     const svg = parsed.documentElement;
     if (parsed.querySelector("parsererror") || svg.tagName.toLowerCase() !== "svg") return null;
 
-    // Remote markup: keep it inert before it enters the page.
+    // Diagram sources can pull in remote content (`!include`), so the markup
+    // is kept inert before it enters the page.
     svg.querySelectorAll("script").forEach((node) => node.remove());
     svg.querySelectorAll("*").forEach((node) => {
       for (const attribute of [...node.attributes]) {
@@ -55,82 +101,90 @@ const { diagrams } = Astro.props;
       }
     });
 
-    /*
-     * PlantUML sets `font-family="sans-serif"` as a presentation attribute on
-     * a wrapper group; this rule outranks it for every text node. `textLength`
-     * attributes are kept on purpose: the server computed the label boxes and
-     * connector anchors from its own font metrics, so locking the text to that
-     * width keeps boxes, arrows and labels aligned.
-     */
-    const style = parsed.createElementNS(SVG_NAMESPACE, "style");
-    style.textContent = `text, tspan { font-family: ${fontFamily} !important; }`;
-    svg.insertBefore(style, svg.firstChild);
     svg.setAttribute("role", "img");
     svg.setAttribute("aria-label", "PlantUML diagram");
     return document.importNode(svg, true);
   }
 
-  async function upgradePlantUml(figure, src) {
-    try {
-      const response = await fetch(src, { mode: "cors" });
-      const contentType = response.headers.get("content-type") || "";
-      if (!response.ok || !contentType.includes("svg")) {
-        throw new Error(`unusable PlantUML response (${response.status}, ${contentType || "no type"})`);
-      }
-      const fontFamily = getComputedStyle(document.documentElement).fontFamily;
-      const svg = inlinePlantUml(await response.text(), fontFamily);
-      if (!svg) throw new Error("unparsable PlantUML SVG");
-      figure.replaceChildren(svg);
-      figure.dataset.diagramFont = "inline";
-    } catch (error) {
-      // Non-fatal: the image stays, so a server without CORS or a PNG response
-      // still renders, just with the server's own fonts.
-      figure.dataset.diagramFont = "server";
-      console.warn("PlantUML font upgrade skipped:", error);
-    }
+  function renderPlantUmlSvg(renderToString, lines, dark) {
+    return new Promise((resolve, reject) => {
+      renderToString(
+        lines,
+        (svg) => resolve(svg),
+        (message) =>
+          reject(new Error(typeof message === "string" ? message : "PlantUML render failed")),
+        { dark },
+      );
+    });
   }
 
-  async function renderPlantUml(diagrams) {
-    if (!diagrams.plantuml.enabled) return;
+  async function renderPlantUml(plantuml) {
+    if (!plantuml.enabled) return;
 
     const blocks = plantUmlBlocks();
     if (blocks.length === 0) return;
 
-    const { encode } = await import("plantuml-encoder");
-    const serverUrl = diagrams.plantuml.serverUrl.replace(/\/$/, "");
+    let started = false;
+    const start = async () => {
+      if (started) return;
+      started = true;
 
-    // The image keeps its lazy loading; it is only upgraded to inline SVG once
-    // it scrolls close to the viewport.
-    const observer =
-      "IntersectionObserver" in window
-        ? new IntersectionObserver(
-            (entries) => {
-              entries.forEach((entry) => {
-                if (!entry.isIntersecting) return;
-                observer.unobserve(entry.target);
-                const img = entry.target.querySelector("img");
-                if (img) upgradePlantUml(entry.target, img.src);
-              });
-            },
-            { rootMargin: "200px" },
-          )
-        : null;
+      let engine;
+      try {
+        engine = await loadPlantUmlEngine(plantuml);
+      } catch (error) {
+        blocks.forEach((code) => {
+          code.parentElement.dataset.diagramError = "plantuml";
+        });
+        console.error(error);
+        return;
+      }
 
-    blocks.forEach((code) => {
-      const pre = code.parentElement;
-      const source = code.textContent || "";
-      const figure = document.createElement("figure");
-      const img = document.createElement("img");
+      /*
+       * The engine keeps the diagram it is working on in module state and the
+       * next call overwrites it, so renders have to be serialized. The page
+       * theme is read once, like Mermaid, because the SVG bakes its colors in.
+       */
+      const dark = document.documentElement.classList.contains("dark");
+      for (const code of blocks) {
+        const pre = code.parentElement;
+        try {
+          const markup = await renderPlantUmlSvg(
+            engine.renderToString,
+            diagramLines(code.textContent || ""),
+            dark,
+          );
+          const svg = plantUmlSvg(markup);
+          if (!svg) throw new Error("unparsable PlantUML SVG");
 
-      figure.className = "diagram diagram-plantuml";
-      img.alt = "PlantUML diagram";
-      img.loading = "lazy";
-      img.src = `${serverUrl}/${encode(source)}`;
-      figure.append(img);
-      pre.replaceWith(figure);
-      if (observer) observer.observe(figure);
-      else upgradePlantUml(figure, img.src);
-    });
+          const figure = document.createElement("figure");
+          figure.className = "diagram diagram-plantuml";
+          figure.dataset.diagramTheme = dark ? "dark" : "light";
+          figure.append(svg);
+          pre.replaceWith(figure);
+        } catch (error) {
+          // The code block stays readable when the diagram cannot be drawn.
+          pre.dataset.diagramError = "plantuml";
+          console.error(error);
+        }
+      }
+    };
+
+    // Loading the engine costs a few megabytes, so the first diagram close to
+    // the viewport triggers the render instead of the initial page load.
+    if (!("IntersectionObserver" in window)) {
+      start();
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        observer.disconnect();
+        start();
+      },
+      { rootMargin: "200px" },
+    );
+    blocks.forEach((code) => observer.observe(code.parentElement));
   }
 
   async function renderMermaid(diagrams) {
@@ -172,7 +226,7 @@ const { diagrams } = Astro.props;
 
   const diagrams = readDiagramConfig();
   if (diagrams) {
-    renderPlantUml(diagrams);
+    renderPlantUml(diagrams.plantuml);
     renderMermaid(diagrams);
   }
 </script>

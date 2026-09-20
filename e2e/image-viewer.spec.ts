@@ -67,10 +67,11 @@ test.describe("image viewer", () => {
     // The cover image stays a plain img above the prose content.
     await expect(page.locator("article > img[src='/covers/astro-theme.svg']")).toBeVisible();
 
-    // PlantUML figures are created client-side as an `<img>` and upgraded to
-    // inline SVG once they scroll into view; either way they stay unwrapped.
+    // PlantUML diagrams are drawn client-side once they scroll into view and
+    // stay unwrapped. The wait covers the bundled engine's lazy load.
+    await page.locator('pre[data-language="plaintext"]', { hasText: "@startuml" }).scrollIntoViewIfNeeded();
     const plantuml = page.locator("figure.diagram-plantuml");
-    await expect(plantuml.locator("img, svg")).toHaveCount(1, { timeout: 30_000 });
+    await expect(plantuml.locator("img, svg")).toHaveCount(1, { timeout: 60_000 });
     expect(await plantuml.evaluate((figure) => !figure.closest(".image-lightbox-trigger"))).toBe(true);
 
     // Only the sample content image becomes a trigger; diagram output is excluded.

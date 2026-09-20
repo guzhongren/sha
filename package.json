@@ -49,12 +49,12 @@
     "@astrojs/sitemap": "^3.7.4",
     "@iconify-json/ph": "^1.2.2",
     "@iconify-json/simple-icons": "^1.2.92",
+    "@plantuml/core": "^1.2026.8",
     "astro-icon": "^1.1.5",
     "echarts": "^6.1.0",
     "gemoji": "^8.1.0",
     "mermaid": "^11.16.0",
     "pagefind": "^1.5.2",
-    "plantuml-encoder": "^1.4.0",
     "remark-gemoji": "^8.0.0"
   },
   "devDependencies": {

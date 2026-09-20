@@ -179,9 +179,7 @@ Enable Mermaid and PlantUML from `astro.config.mjs`:
 blogTheme({
   diagrams: {
     mermaid: true,
-    plantuml: {
-      serverUrl: "https://www.plantuml.com/plantuml/svg",
-    },
+    plantuml: true,
   },
 });
 ```
@@ -203,7 +201,26 @@ A -> B
 
 Mermaid is rendered client-side from the bundled `mermaid` package with the page font stack passed through `fontFamily` and `themeVariables.fontFamily`, so diagram labels match the surrounding prose.
 
-PlantUML is drawn by the configured PlantUML server, so the theme fetches the SVG back over CORS, strips anything executable, and inlines it with a rule that puts every label in the theme font. The public server (`https://www.plantuml.com/plantuml/svg`) sends `access-control-allow-origin: *`, so this works out of the box; a self-hosted server needs CORS enabled. When the fetch fails or the server answers with a raster image, the original `<img>` stays and its labels keep the server's fonts (the figure reports which happened through `data-diagram-font="inline|server"`). Label geometry is preserved: `textLength` attributes from the server are kept, so boxes, arrows and text stay aligned.
+PlantUML is drawn in the browser by the official [`@plantuml/core`](https://npmx.dev/package/@plantuml/core) engine: the diagrams never leave the page, so there is no PlantUML server, no CORS setup and no round trip. The engine and its Graphviz layer are only fetched once a diagram scrolls close to the viewport, and the generated SVG is stripped of scripts and event handlers before it is inserted, because a diagram may pull in remote content through `!include`.
+
+Two optional settings cover the diagrams that need extra PlantUML bundles:
+
+```js
+blogTheme({
+  diagrams: {
+    plantuml: {
+      // Standard-library bundles (`!include <C4/C4_Context>`, sprites, ...).
+      // Anything reachable here is fetched lazily, and only for diagrams that
+      // include something. Omit it to keep rendering fully offline.
+      stdlibBase: "https://plantuml.github.io/plantuml/js-plantuml/",
+      // Ship the bundled `!theme` definitions (~320 kB) so `!theme` works.
+      themes: true,
+    },
+  },
+});
+```
+
+Both the figure and its SVG are marked so you can style or verify them: the wrapper carries `data-diagram-theme="light|dark"` (the theme is read when the diagram is drawn, like Mermaid) and the SVG carries `role="img"` plus an accessible label. When the engine cannot load or a diagram is invalid, the fenced code block stays on the page and is marked with `data-diagram-error="plantuml"`.
 
 ## Image viewer
 

@@ -516,7 +516,6 @@
     @apply mx-auto max-w-full;
   }
 
-  .diagram-plantuml img,
   .diagram-plantuml svg {
     @apply min-h-32;
   }

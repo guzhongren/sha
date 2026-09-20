@@ -42,12 +42,151 @@ flowchart TD
 
 ```plantuml
 @startuml
-actor Author
-Author -> Astro: writes MDX
-Astro -> Theme: renders post
-Theme -> Reader: shows diagram
+autonumber
+skin rose
+
+title "OAuth 2.0 Authorization Code Flow"
+
+actor "User \n Resource Owner" as User
+
+box "3rd party" #Blue
+participant "3rd Party Web App \n Client" as App
+participant "3rd Party Server \n App Backend" as Server
+
+end box
+
+box "Open Platform" #Green
+participant "Authorization Server" as AuthServer
+participant "Resource Server" as ResourceServer
+end box
+
+==Issue Authorization Code==
+User -> App: Start App
+
+App -> App: Guided to authorize
+
+App -> AuthServer: Redirect to Auth Service
+
+AuthServer -> AuthServer: Validate 3rd party complaince \n Validate redirect_url
+AuthServer -> AuthServer: Validate user login status
+AuthServer -> AuthServer: Validate 3rd party scopes
+
+AuthServer -> AuthServer: Generate authorization page
+
+AuthServer --> App: Render Login page
+
+User -> App: Input credential
+
+App -> AuthServer: Authorize
+
+AuthServer -> AuthServer: Validate user's scopes with 3rd party's scopes
+
+AuthServer -> AuthServer: Genere authorization code
+note right
+1.Give a expiry date
+2.Store the releationship of authorization code and user's scopes
+end note
+
+AuthServer --> App: Redirect to App with authorization code
+
+App -> Server: Request with authorization code
+
+Server -> Server: Get authorization code
+
+==Generate Access Token==
+Server -> AuthServer: Post to get acceess_token with authorization code
+
+AuthServer -> AuthServer: Validate 3rd party is exsting(app_id & app_secret)
+AuthServer -> AuthServer: Validate authorization code is valid
+note right
+Remove authorization code after validation
+end note
+
+AuthServer -> AuthServer: Generate access_token & refresh_token
+note right
+1.Set expires_in for access_token
+2.Bind access_token with authorization scopes
+end note
+
+AuthServer --> Server: Return access_token
+
+==Get Resource Info==
+Server -> ResourceServer: Request resource server to get info with access_token
+
+ResourceServer --> Server: Reture resource info
+
+Server -> App: Render resource info
+
+App -> User: show resource info
+
 @enduml
+
 ```
+
+
+```plantuml
+@startuml
+autonumber
+skin rose
+
+title "OIDC Code Flow"
+
+actor "End User (EU)" as EndUser
+
+box "3rd party" #Blue
+participant "3rd party App \nUser Agent(RP)" as App
+end box
+
+box "Open Platform" #Green
+participant "OIDC Authorization Server(OP)" as AuthServer
+end box
+
+==Issue Authorization Code==
+EndUser -> App: Access 3rd App
+App -> AuthServer: Redirect to OIDC Server
+AuthServer -> AuthServer: Not login, redirect to login page
+
+EndUser -> AuthServer: Authorize
+
+AuthServer -> AuthServer: Login & Record login status & Generate code
+
+AuthServer -> App: Redirect to 3rd App with code
+App -> AuthServer: Send post request with code
+
+==Generate Access Token==
+
+AuthServer -> AuthServer: Generate ID_TOKEN, ACCESS_TOKEN
+
+note right
+ID_TOKEN is the key of the OIDC
+end note
+
+AuthServer -> App: Return ID_TOKEN and ACCESS_TOKEN
+
+App -> App: Record login status via ID_TOKEN
+
+note right
+3rd party parse ID_TOKEN to identify who is endUser
+end note
+
+App --> EndUser: Show login info
+
+...Some time passed...
+
+EndUser -> App: Click somewhere
+
+==Get Resource Info==
+
+App -> AuthServer: Get info with ACCESS_TOKEN
+
+AuthServer --> App: Info
+
+App --> EndUser: Refresh App
+
+@enduml
+
+```
+
 
 ## 正文图片示例
 
