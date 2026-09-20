@@ -51,55 +51,40 @@ test.describe("diagram and chart enhancers", () => {
     expect(diagramFont.inline).toContain("Maple Mono CN Subset");
   });
 
-  // PlantUML labels are painted by the PlantUML server, so the theme fetches
-  // the SVG back (the public server sends `access-control-allow-origin: *`)
-  // and inlines it. These tests stub the server: no network, stable markup.
-  const plantUmlSvg =
-    '<svg xmlns="http://www.w3.org/2000/svg" width="120px" height="130px" viewBox="0 0 120 130">' +
-    '<g font-family="sans-serif" lengthAdjust="spacing">' +
-    '<rect x="10" y="10" width="41" height="30" fill="#E2E2F0"/>' +
-    '<text x="17" y="30" fill="#000" font-size="14" textLength="27">Bob</text>' +
-    "</g></svg>";
-
-  test("plantuml svg is inlined so labels use the theme font", async ({ page }) => {
-    await page.route("**/plantuml/svg/**", (route) =>
-      route.fulfill({
-        status: 200,
-        contentType: "image/svg+xml",
-        headers: { "access-control-allow-origin": "*" },
-        body: plantUmlSvg,
-      }),
-    );
+  test("plantuml blocks are drawn in the browser, with no server involved", async ({ page }) => {
+    // The engine is bundled, so a diagram must never reach a PlantUML server.
+    const plantumlRequests: string[] = [];
+    page.on("request", (request) => {
+      if (/plantuml/i.test(request.url()) && !request.url().startsWith("http://127.0.0.1:")) {
+        plantumlRequests.push(request.url());
+      }
+    });
 
     await page.goto("/posts/astro-theme");
-    const figure = page.locator("figure.diagram-plantuml");
-    await figure.scrollIntoViewIfNeeded();
-    await expect(figure).toHaveAttribute("data-diagram-font", "inline", { timeout: 30_000 });
+    // Loading the engine is deferred until a diagram nears the viewport, so
+    // scroll the code block into view and wait for it to become a figure.
+    await page.locator('pre[data-language="plaintext"]', { hasText: "@startuml" }).scrollIntoViewIfNeeded();
 
-    // The inline rule must outrank PlantUML's own `font-family` attribute.
-    const labelFont = await figure
-      .locator("svg text")
-      .evaluate((element) => getComputedStyle(element).fontFamily);
-    expect(labelFont.startsWith('"Maple Mono CN Subset"')).toBe(true);
+    const figure = page.locator("figure.diagram-plantuml");
+    const svg = figure.locator("svg");
+    await expect(svg).toBeVisible({ timeout: 60_000 });
+    // The fixture block is Shiki plaintext, detected through `@startuml`.
+    await expect(figure.locator("svg text", { hasText: "Author" }).first()).toBeVisible();
     await expect(figure.locator("img")).toHaveCount(0);
+    await expect(figure.locator("pre")).toHaveCount(0);
+    expect(plantumlRequests).toEqual([]);
   });
 
-  test("plantuml keeps the server image when the response is not svg", async ({ page }) => {
-    // 1x1 PNG: a raster response (or a server without CORS) has to stay a
-    // non-fatal fallback, because its labels cannot be restyled.
-    const pixel = Buffer.from(
-      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
-      "base64",
-    );
-    await page.route("**/plantuml/svg/**", (route) =>
-      route.fulfill({ status: 200, contentType: "image/png", body: pixel }),
-    );
-
+  test("plantuml diagrams are drawn for the active theme", async ({ page }) => {
+    await page.emulateMedia({ colorScheme: "dark" });
     await page.goto("/posts/astro-theme");
+
+    await page.locator('pre[data-language="plaintext"]', { hasText: "@startuml" }).scrollIntoViewIfNeeded();
     const figure = page.locator("figure.diagram-plantuml");
-    await figure.scrollIntoViewIfNeeded();
-    await expect(figure).toHaveAttribute("data-diagram-font", "server", { timeout: 30_000 });
-    await expect(figure.locator("img")).toHaveCount(1);
+    await expect(figure).toHaveAttribute("data-diagram-theme", "dark", { timeout: 60_000 });
+
+    // Dark output paints light labels, so this cannot be the light diagram.
+    await expect(figure.locator("svg text").first()).toHaveAttribute("fill", "#FFFFFF");
   });
 
   test("echarts shortcode renders a canvas instead of raw text", async ({ page }) => {

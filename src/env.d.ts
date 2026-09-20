@@ -1,3 +1,8 @@
+declare module "*?url" {
+  const url: string;
+  export default url;
+}
+
 declare module "virtual:blog-theme/config" {
   import type { NormalizedBlogThemeOptions } from "./types";
 

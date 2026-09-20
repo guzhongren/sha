@@ -46,10 +46,14 @@ export function normalizeOptions(options: BlogThemeOptions): NormalizedBlogTheme
       mermaid: options.diagrams?.mermaid ?? false,
       plantuml: {
         enabled: Boolean(options.diagrams?.plantuml),
-        serverUrl:
+        stdlibBase:
           typeof options.diagrams?.plantuml === "object"
-            ? (options.diagrams.plantuml.serverUrl ?? "https://www.plantuml.com/plantuml/svg")
-            : "https://www.plantuml.com/plantuml/svg",
+            ? (options.diagrams.plantuml.stdlibBase ?? false)
+            : false,
+        themes:
+          typeof options.diagrams?.plantuml === "object"
+            ? (options.diagrams.plantuml.themes ?? false)
+            : false,
       },
     },
     imageViewer: options.imageViewer ?? true,

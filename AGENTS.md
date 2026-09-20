@@ -46,5 +46,5 @@ ASTRO_TELEMETRY_DISABLED=1 ./node_modules/.bin/astro build --root example
 ## Known Non-Fatal Build Warnings
 
 - Shiki falls back to plaintext for `plantuml`; runtime rendering still detects PlantUML blocks that start with `@startuml`.
+- PlantUML diagrams are rendered in the browser by `@plantuml/core`; its engine and Graphviz assets are loaded on demand, so a large asset payload is expected on posts with diagrams.
 - Mermaid can produce large client chunks because the renderer is bundled for client-side diagram rendering.
-

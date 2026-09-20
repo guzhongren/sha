@@ -25,6 +25,9 @@ importers:
       '@iconify-json/simple-icons':
         specifier: ^1.2.92
         version: 1.2.92
+      '@plantuml/core':
+        specifier: ^1.2026.8
+        version: 1.2026.8
       astro-icon:
         specifier: ^1.1.5
         version: 1.1.5
@@ -40,9 +43,6 @@ importers:
       pagefind:
         specifier: ^1.5.2
         version: 1.5.2
-      plantuml-encoder:
-        specifier: ^1.4.0
-        version: 1.4.0
       remark-gemoji:
         specifier: ^8.0.0
         version: 8.0.0
@@ -587,6 +587,9 @@ packages:
     resolution: {integrity: sha512-Fa2Iyw7kaDRzGMfNYNUXNW2zbL5FQVDgSOcbDHdzBrDEdpqOqg8TcZ68F22ol6NJ9IGzvUdmeyZypLW5dyhqsg==}
     cpu: [x64]
     os: [win32]
+
+  '@plantuml/core@1.2026.8':
+    resolution: {integrity: sha512-md2wGuaIJnAq1yKkedSpQE68cLsvZvctwzWHkDAnC3DTVLe/MSd/2vr4ETwr6jtc1av8cdxCohFuW4VGejMHyw==}
 
   '@playwright/test@1.62.1':
     resolution: {integrity: sha512-DTcUc8qii+cpHvtOwggMtBRMjKZHXYWdw8syRYu2vtzuq4Wxphqq4NfCs5Zt44L6mA8rfDfj+PHnxFc/FeK6mQ==}
@@ -2339,9 +2342,6 @@ packages:
   pkg-types@2.3.1:
     resolution: {integrity: sha512-y+ichcgc2LrADuhLNAx8DFjVfgz91pRxfZdI3UDhxHvcVEZsenLO+7XaU5vOp0u/7V/wZ+plyuQxtrDlZJ+yeg==}
 
-  plantuml-encoder@1.4.0:
-    resolution: {integrity: sha512-sxMwpDw/ySY1WB2CE3+IdMuEcWibJ72DDOsXLkSmEaSzwEUaYBT6DWgOfBiHGCux4q433X6+OEFWjlVqp7gL6g==}
-
   playwright-core@1.62.1:
     resolution: {integrity: sha512-wPYSwEBJY9GHraISXqyqtx0na0LpO3XEX7jNDhntbex7tzUS7kLnZsOlFruFJB4Hi/rhDMjXGqHewDZ68nYZVw==}
     engines: {node: '>=20'}
@@ -3549,6 +3549,8 @@ snapshots:
 
   '@pagefind/windows-x64@1.5.2':
     optional: true
+
+  '@plantuml/core@1.2026.8': {}
 
   '@playwright/test@1.62.1':
     dependencies:
@@ -5669,8 +5671,6 @@ snapshots:
       confbox: 0.2.4
       exsolve: 1.1.1
       pathe: 2.0.3
-
-  plantuml-encoder@1.4.0: {}
 
   playwright-core@1.62.1: {}
 

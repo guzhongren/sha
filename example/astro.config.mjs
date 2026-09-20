@@ -46,9 +46,7 @@ export default defineConfig({
       },
       diagrams: {
         mermaid: true,
-        plantuml: {
-          serverUrl: "https://www.plantuml.com/plantuml/svg",
-        },
+        plantuml: true,
       },
       rss: {
         // Keep the feed in sync with all fixture posts: the e2e suite treats

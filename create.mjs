@@ -135,7 +135,8 @@ export default defineConfig({
       // Diagram rendering (optional).
       diagrams: {
         mermaid: false,
-        // plantuml: { serverUrl: "https://www.plantuml.com/plantuml/svg" },
+        // PlantUML renders in the browser with the bundled engine:
+        // plantuml: { themes: true, stdlibBase: "https://plantuml.github.io/plantuml/js-plantuml/" },
         plantuml: false,
       },
 

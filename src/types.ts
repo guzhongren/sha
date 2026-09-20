@@ -61,10 +61,27 @@ export type BlogThemeOptions = {
   };
   diagrams?: {
     mermaid?: boolean;
+    /**
+     * Render `plantuml` code blocks in the browser with the bundled
+     * `@plantuml/core` engine: no PlantUML server, no network round trip.
+     */
     plantuml?:
       | boolean
       | {
-          serverUrl?: string;
+          /**
+           * Base URL (with a trailing slash) that the engine prepends to the
+           * standard-library bundles it loads on demand, for example
+           * `https://plantuml.github.io/plantuml/js-plantuml/` for
+           * `!include <C4/C4_Context>` or sprites. Defaults to `false`, which
+           * keeps rendering offline and leaves such diagrams incomplete.
+           */
+          stdlibBase?: string | false;
+          /**
+           * Load the bundled `!theme` definitions (~320 kB, fetched on demand).
+           * Defaults to `false`; a diagram asking for a theme is then drawn
+           * with the default look.
+           */
+          themes?: boolean;
         };
   };
   /**
@@ -167,7 +184,8 @@ export type NormalizedBlogThemeOptions = {
     mermaid: boolean;
     plantuml: {
       enabled: boolean;
-      serverUrl: string;
+      stdlibBase: string | false;
+      themes: boolean;
     };
   };
   imageViewer: boolean;
