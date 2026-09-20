@@ -1,4 +1,4 @@
-import type { APIRequestContext } from "@playwright/test";
+import type { APIRequestContext, Page } from "@playwright/test";
 import { nameToEmoji } from "gemoji";
 
 /**
@@ -112,4 +112,15 @@ export async function expectStatus(request: APIRequestContext, path: string, sta
   if (response.status() !== status) {
     throw new Error(`Expected ${path} to return ${status}, got ${response.status()}`);
   }
+}
+
+/**
+ * PlantUML code blocks before the enhancer turns them into figures. Shiki has
+ * no `plantuml` grammar, so most fixtures arrive as plaintext and are
+ * recognized by their `@startuml` marker, exactly like the enhancer does.
+ */
+export function plantumlBlocks(page: Page) {
+  return page.locator('pre[data-language="plantuml"], pre[data-language="plaintext"]', {
+    hasText: "@startuml",
+  });
 }

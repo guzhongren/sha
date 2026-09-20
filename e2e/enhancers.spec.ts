@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { plantumlBlocks } from "./helpers";
 
 test.describe("code copy enhancer", () => {
   test("wraps code blocks and copies plain code text", async ({ page }) => {
@@ -52,7 +53,7 @@ test.describe("diagram and chart enhancers", () => {
   });
 
   test("plantuml blocks are drawn in the browser, with no server involved", async ({ page }) => {
-    // The engine is bundled, so a diagram must never reach a PlantUML server.
+    // The engine ships with the theme, so a diagram must never reach a server.
     const plantumlRequests: string[] = [];
     page.on("request", (request) => {
       if (/plantuml/i.test(request.url()) && !request.url().startsWith("http://127.0.0.1:")) {
@@ -61,17 +62,23 @@ test.describe("diagram and chart enhancers", () => {
     });
 
     await page.goto("/posts/astro-theme");
-    // Loading the engine is deferred until a diagram nears the viewport, so
-    // scroll the code block into view and wait for it to become a figure.
-    await page.locator('pre[data-language="plaintext"]', { hasText: "@startuml" }).scrollIntoViewIfNeeded();
+    // Loading the engine is deferred until a diagram nears the viewport; every
+    // block on the page is then drawn, including the ones below the fold.
+    const blocks = plantumlBlocks(page);
+    const blockCount = await blocks.count();
+    expect(blockCount).toBeGreaterThan(0);
+    await blocks.first().scrollIntoViewIfNeeded();
 
-    const figure = page.locator("figure.diagram-plantuml");
-    const svg = figure.locator("svg");
-    await expect(svg).toBeVisible({ timeout: 60_000 });
-    // The fixture block is Shiki plaintext, detected through `@startuml`.
-    await expect(figure.locator("svg text", { hasText: "Author" }).first()).toBeVisible();
-    await expect(figure.locator("img")).toHaveCount(0);
-    await expect(figure.locator("pre")).toHaveCount(0);
+    const figures = page.locator("figure.diagram-plantuml");
+    await expect(figures).toHaveCount(blockCount, { timeout: 60_000 });
+    for (const figure of await figures.all()) {
+      await expect(figure.locator("svg")).toBeVisible();
+      // A drawn diagram carries its own labels and no leftover code block.
+      expect(await figure.locator("svg text").count()).toBeGreaterThan(0);
+      await expect(figure.locator("img, pre")).toHaveCount(0);
+    }
+    await expect(blocks).toHaveCount(0);
+    await expect(page.locator('pre[data-diagram-error="plantuml"]')).toHaveCount(0);
     expect(plantumlRequests).toEqual([]);
   });
 
@@ -79,8 +86,8 @@ test.describe("diagram and chart enhancers", () => {
     await page.emulateMedia({ colorScheme: "dark" });
     await page.goto("/posts/astro-theme");
 
-    await page.locator('pre[data-language="plaintext"]', { hasText: "@startuml" }).scrollIntoViewIfNeeded();
-    const figure = page.locator("figure.diagram-plantuml");
+    await plantumlBlocks(page).first().scrollIntoViewIfNeeded();
+    const figure = page.locator("figure.diagram-plantuml").first();
     await expect(figure).toHaveAttribute("data-diagram-theme", "dark", { timeout: 60_000 });
 
     // Dark output paints light labels, so this cannot be the light diagram.
