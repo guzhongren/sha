@@ -67,7 +67,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Run code review
-        uses: tirth8205/code-review-graph@v2.3.7
+        uses: tirth8205/code-review-graph@v2.4.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
   publish:
